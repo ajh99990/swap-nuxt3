@@ -1,0 +1,14 @@
+{
+  // https://v3.nuxtjs.org/concepts/typescript
+  "extends": "./.nuxt/tsconfig.json",
+  "vueCompilerOptions":{
+    "experimentalDisableTemplateSupport":true
+  },
+  "compilerOptions": {
+    "types": [
+      "nuxt-windicss",
+      "@vueuse/nuxt",
+      "vite/client",//https://vitejs.cn/guide/features.html#client-types
+    ]
+  }
+}
