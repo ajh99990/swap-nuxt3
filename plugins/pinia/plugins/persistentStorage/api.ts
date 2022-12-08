@@ -6,7 +6,7 @@ export function setupApis({ store }: PiniaPluginContext) {
   const { removeItem } = storageHanlder({ prefix: store.$id })
 
   store.clearCache = function clearCache() {
-    store._persistentStateNames.forEach((name) => removeItem(name))
+    store.persistentStateNames.forEach((name) => removeItem(name))
   }
 
   store.clearCacheByName = function clearCacheByName(stateName: string | string[]) {

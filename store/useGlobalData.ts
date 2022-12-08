@@ -9,6 +9,6 @@ export default defineStore("globalData", {
   },
   /** 需要缓存的state的key值 */
   persistentState: (names) => {
-    return [names.test1,names.test2]
+    return [names.test1]
   },
 })

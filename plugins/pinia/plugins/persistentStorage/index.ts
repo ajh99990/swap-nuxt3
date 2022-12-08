@@ -8,8 +8,8 @@ declare module 'pinia' {
   }
   export interface PiniaCustomProperties<Id, S, G, A> {
     /** persistentState中所有的key */
-    set _persistentStateNames(value: Set<Exclude<keyof S, symbol | number>>)
-    get _persistentStateNames(): Set<Exclude<keyof S, symbol | number>>
+    set persistentStateNames(value: Set<Exclude<keyof S, symbol | number>>)
+    get persistentStateNames(): Set<Exclude<keyof S, symbol | number>>
 
     /** state中所有的key */
     set stateNames(value: Record<Exclude<keyof S, symbol | number>, Exclude<keyof S, symbol | number>>)

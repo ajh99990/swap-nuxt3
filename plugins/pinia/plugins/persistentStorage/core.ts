@@ -16,7 +16,7 @@ export function setStateValueOnInit({ options, store }: PiniaPluginContext) {
     return nameCollector
   }, {} as { [x: string]: string })
   const persistentStates = options.persistentState(stateNames)
-  store._persistentStateNames = new Set(persistentStates)
+  store.persistentStateNames = new Set(persistentStates)
   store.stateNames = stateNames
   for (let i = 0; i < persistentStates.length; i++) {
     const stateName = persistentStates[i]
@@ -35,7 +35,7 @@ export function setStateValueOnInit({ options, store }: PiniaPluginContext) {
 export function saveStateValueOnChange({ options, store }: PiniaPluginContext) {
   store.$subscribe((mutation, state) => {
     const { setItem } = storageHanlder({ prefix: store.$id })
-    const psn = store._persistentStateNames
+    const psn = store.persistentStateNames
     if (psn.size <= 0) return;
     for (let name of psn) {
       setItem(name, JSON.stringify(state[name]))

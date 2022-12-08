@@ -44,7 +44,7 @@ import useGlobalData from "@/store/useGlobalData"
 
 const globalData = useGlobalData()
 const clearTarget = ref(globalData.stateNames.test1)
-const stateNames = computed(() => Object.keys(globalData.stateNames))
+const stateNames = computed(() => globalData.persistentStateNames)
 const testPatch = () => {
   globalData.$patch({
     test1: "test1$patch",
