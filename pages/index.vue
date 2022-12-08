@@ -1,6 +1,6 @@
 
 <template>
-  <div class="home-page">
+  <div class="home-page pb-200px">
     <component :is="processManager.entry" />
     <br />
 

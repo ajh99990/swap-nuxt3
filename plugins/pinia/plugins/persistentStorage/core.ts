@@ -1,5 +1,5 @@
 import type { _DeepPartial, PiniaPluginContext, StateTree, _GettersTree } from "pinia"
-import { localStorageHanlder, determineInitValue } from "./helper"
+import { storageHanlder } from "./storageHanlder"
 /**
 * 按照options.persistentState返回的属性名列表从localStorage中取出缓存值，
 * 并将其设置给options.state中相应的state
@@ -7,7 +7,7 @@ import { localStorageHanlder, determineInitValue } from "./helper"
 export function setStateValueOnInit({ options, store }: PiniaPluginContext) {
   if (!options.state || !options.persistentState) return;
 
-  const { getItemFromLocalStorage } = localStorageHanlder({ prefix: store.$id })
+  const { getItem } = storageHanlder({ prefix: store.$id })
   let patchTargets = {} as _DeepPartial<StateTree>
 
   const originStates = options.state()
@@ -16,13 +16,13 @@ export function setStateValueOnInit({ options, store }: PiniaPluginContext) {
     return nameCollector
   }, {} as { [x: string]: string })
   const persistentStates = options.persistentState(stateNames)
-  store._persistentStateNames = persistentStates
-
+  store._persistentStateNames = new Set(persistentStates)
+  store.stateNames = stateNames
   for (let i = 0; i < persistentStates.length; i++) {
     const stateName = persistentStates[i]
     const defaultValue = originStates[stateName];
-    const localStorageValue = getItemFromLocalStorage(stateName)
-    const initValue = determineInitValue({ defaultValue, localStorageValue })
+    const storageValue = getItem(stateName)
+    const initValue = storageValue || defaultValue
     patchTargets[stateName] = initValue
   }
 
@@ -34,12 +34,11 @@ export function setStateValueOnInit({ options, store }: PiniaPluginContext) {
  */
 export function saveStateValueOnChange({ options, store }: PiniaPluginContext) {
   store.$subscribe((mutation, state) => {
-    const { setItemToLocalStorage } = localStorageHanlder({ prefix: store.$id })
+    const { setItem } = storageHanlder({ prefix: store.$id })
     const psn = store._persistentStateNames
-    if (!psn) return;
-    for (let i = 0; i < psn.length; i++) {
-      const stateName = psn[i]
-      setItemToLocalStorage(stateName, JSON.stringify(state[stateName]))
+    if (psn.size <= 0) return;
+    for (let name of psn) {
+      setItem(name, JSON.stringify(state[name]))
     }
   })
 }
