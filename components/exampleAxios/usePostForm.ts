@@ -9,6 +9,7 @@ export default function () {
     baseApi.post(({ api }) => {
       return {
         api: api.buy,
+        //onlySend:true,//同时只能存在一个请求
         data: {
           formData: formData.value
         },
