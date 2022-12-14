@@ -2,7 +2,7 @@ import { isString } from "./helper"
 
 interface Performer {
   setItem: (name: string, value: unknown) => void,
-  getItem: (name: string) => any,
+  getItem: <T>(name: string) => T,
   removeItem: (name: string) => void
 }
 

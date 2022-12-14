@@ -1,7 +1,7 @@
 
 <template>
   <div class="home-page pb-200px">
-    <component :is="processManager.entry" />
+    <!--<component :is="processManager.entry" />
     <br />
 
     <button @click="switchProcessManager">切换链</button>
@@ -9,7 +9,8 @@
     <br />
     <br />
     <br />
-    <ExamplePersistentState />
+     <ExamplePersistentState /> -->
+    <ExampleAxios />
   </div>
 </template>
 
