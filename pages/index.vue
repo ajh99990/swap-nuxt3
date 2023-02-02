@@ -15,14 +15,14 @@
 </template>
 
 <script setup lang="ts">
-import { processNames } from "@/helper/enum"
+import { ProcessNames } from "@/helper/enum"
 
 const { changeProcessManager, processManager } = useNuxtApp().$managerScheduler
 const switchProcessManager = () => {
-  if (processManager.value.name === processNames.Eth) {
-    changeProcessManager(processNames.Tron, { transfer: true })
+  if (processManager.value.name === ProcessNames.Eth) {
+    changeProcessManager(ProcessNames.Tron, { transfer: true })
   } else {
-    changeProcessManager(processNames.Eth, { transfer: true })
+    changeProcessManager(ProcessNames.Eth, { transfer: true })
   }
 }
 </script>

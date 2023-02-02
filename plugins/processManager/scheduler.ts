@@ -1,61 +1,40 @@
-import { processNames } from "@/helper/enum"
-import type { ProcessManager } from "~~/@types"
-import { isTransfer } from "~~/@types/helper"
-import useEth from "@/composables/useEth"
-import useTron from "@/composables/useTron"
-import type { Ref, ComputedRef } from "vue"
+import type { ComputedRef, Ref, DefineComponent } from "vue"
+import { ProcessNames } from "@/helper/enum"
+import { getPm, transferDatas } from "./core"
+
+export interface componFuncCollectors { }
+
+export type TransferStation = Pick<ProcessManager, 'payTokenCount' | "payTokenType" | "receiveTokenCount" | "receiveTokenType">
+
+export interface Transferable {
+  transferTo: () => TransferStation
+  transferFrom: (transferStation: TransferStation) => void
+}
+
+export interface ProcessManager extends componFuncCollectors {
+  name: ProcessNames
+  entry: any,//todo 这里不能用any 再探索下合适的类型
+  payTokenType: Ref,
+  payTokenCount: Ref,
+  receiveTokenType: Ref,
+  receiveTokenCount: Ref,
+}
 
 export interface changeProcessManagerOptions {
   transfer?: boolean,
 }
 
 export interface ManagerScheduler {
-  pm: Ref<processNames>,
-  changeProcessManager: (target: processNames, options?: changeProcessManagerOptions) => void,
+  changeProcessManager: (target: ProcessNames, options?: changeProcessManagerOptions) => void,
   processManager: ComputedRef<ProcessManager>
 }
 
-function nameMappingUse (name: processNames): ProcessManager{
-  if (name === processNames.Eth) {
-    return useEth()
-  } else {
-    return useTron()
-  }
-}
-
-const managerStorage = new Map<string, ProcessManager>();
-function getPm(managerName:processNames):ProcessManager{
-  let instances: ProcessManager | undefined = {} as ProcessManager;
-    if (managerStorage.has(managerName)) {
-      instances = managerStorage.get(managerName)
-    } else {
-      instances = nameMappingUse(managerName)
-      managerStorage.set(managerName, instances)
-    }
-    if (!instances) {
-      throw new Error("值异常")
-    }
-    return instances
-}
-
-/** 链切换时候做数据转移 */
-function transferDatas(origin: processNames, target: processNames) {
-  const originPm = getPm(origin)
-  const targetPm = getPm(target)
-  const originPmIsTransferable = originPm && isTransfer(originPm)
-  const targetPmIsTransferable = targetPm && isTransfer(targetPm)
-  const isTransferable = originPmIsTransferable && targetPmIsTransferable
-  if (isTransferable) {
-    const station = originPm.transferTo();
-    targetPm.transferFrom(station);
-  }
-}
-
 export default function (): ManagerScheduler {
-  const pm = ref(processNames.Eth)
+  /** 当前使用的processManager的名字,值取自ProcessNames */
+  const pm = ref(ProcessNames.Eth)
 
-  const changeProcessManager = (target: processNames, options?: changeProcessManagerOptions) => {
-    const { transfer = false} = options || {}
+  const changeProcessManager = (target: ProcessNames, options?: changeProcessManagerOptions) => {
+    const { transfer = false } = options || {}
     if (transfer) {
       transferDatas(processManager.value.name, target)
     }
@@ -63,12 +42,13 @@ export default function (): ManagerScheduler {
   }
 
   const processManager = computed((): ProcessManager => {
-    return  getPm(pm.value)
+    return getPm(pm.value)
   })
 
   return {
-    pm,
+    /** 切换当前使用的processManager */
     changeProcessManager,
+    /** processManager实例 */
     processManager
   }
 }

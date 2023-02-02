@@ -1,4 +1,4 @@
-export enum processNames {
+export enum ProcessNames {
   Eth = "Eth",
   Tron = "Tron"
 }

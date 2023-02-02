@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import type { ComputedRef } from "vue";
-import { ProcessManager } from "~~/@types";
+import { ProcessManager } from "@/plugins/processManager/scheduler";
 
 const pm: ComputedRef<ProcessManager> = useNuxtApp().$managerScheduler.processManager
 const calculatorProvider = computed(() => {

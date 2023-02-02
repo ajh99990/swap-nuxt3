@@ -1,10 +1,12 @@
 import TronEntry from "~/components/TronEntry.vue"
-import type { ProcessManagerTron, TransferStation } from "~~/@types"
-import { processNames } from "~~/helper/enum"
+import type { TransferStation, ProcessManager, Transferable } from "@/plugins/processManager/scheduler"
+import { ProcessNames } from "~~/helper/enum"
 import useAccumulator from "./useAccumulator"
 
+export interface ProcessManagerTron extends ProcessManager, Transferable {
+}
 export default function (): ProcessManagerTron {
-  const name = processNames.Tron
+  const name = ProcessNames.Tron
   const calculatorProvider = useAccumulator()
 
   const payTokenType = ref('tokenType1');
@@ -21,7 +23,7 @@ export default function (): ProcessManagerTron {
     }
   }
   const transferFrom = (transferStation: TransferStation) => {
-    console.log('tron接收',transferStation.payTokenType.value,transferStation.payTokenCount.value)
+    console.log('tron接收', transferStation.payTokenType.value, transferStation.payTokenCount.value)
     payTokenType.value = transferStation.payTokenType.value
     payTokenCount.value = transferStation.payTokenCount.value
     receiveTokenType.value = transferStation.receiveTokenType.value

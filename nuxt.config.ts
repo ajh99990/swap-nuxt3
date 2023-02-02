@@ -1,4 +1,3 @@
-const lifecycle = process.env.npm_lifecycle_event;
 import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   ssr: false,//不使用服务端渲染能力

@@ -1,11 +1,15 @@
 import EthEntry from "~/components/EthEntry.vue"
-import type { ProcessManagerEth, TransferStation } from "~~/@types"
-import { processNames } from "~~/helper/enum"
+import type { Ref} from "vue"
+import type { ProcessManager, TransferStation,Transferable } from "@/plugins/processManager/scheduler"
+import { ProcessNames } from "~~/helper/enum"
 import useAccumulator from "./useAccumulator"
 
+export interface ProcessManagerEth extends ProcessManager,Transferable{
+  ethCustomValue:Ref,
+}
 
 export default function (): ProcessManagerEth {
-  const name: processNames = processNames.Eth
+  const name: ProcessNames = ProcessNames.Eth
   const calculatorProvider = useAccumulator()
 
   const payTokenType = ref('tokenType1');
