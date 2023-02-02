@@ -43,5 +43,5 @@ export default function () {
     return res
   }
 
-  return { formData, submit, submit2, resText }
+  return { formData, resText, submit, submit2,  }
 }

@@ -24,10 +24,28 @@ export default defineNuxtConfig({
       link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.png" }],
     },
   },
+  css: [
+    '@/assets/style/index.less',
+  ],
   modules: [
     "@pinia/nuxt",//按照pinia官方文档的用法是放在buildMdules里面就足够了
     '@vueuse/nuxt',//按vueuse文档配置
     "nuxt-windicss",
+    '@nuxtjs/i18n'
   ],
+  i18n: {
+    locales: ['en', 'zh'],
+    defaultLocale: 'zh',
+    vueI18n: {
+      fallbackLocale: 'zh',
+      messages: {
+        en: require('./locales/en.json'),
+        zh: require('./locales/zh.json')
+      }
+    }
+  },
+  experimental: {
+    externalVue: true,
+  },
   components: true,
 });

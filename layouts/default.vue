@@ -1,5 +1,5 @@
 <template>
-    <div class="default-layout">
+    <div>
         <slot></slot>
     </div>
 </template>
@@ -8,5 +8,4 @@
 </script>
 
 <style lang="scss" scoped>
-.default-layout {}
 </style>
