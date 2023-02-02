@@ -1,7 +1,10 @@
 import nameMappingComposable from "./pmStore"
-import { isTransfer } from "~~/@types/helper"
 import { ProcessNames } from "@/helper/enum"
-import type { ProcessManager } from "@/plugins/processManager/scheduler"
+import type { ProcessManager,Transferable } from "@/plugins/processManager/scheduler"
+
+export function isTransfer(pm:unknown): pm is Transferable {
+  return (<Transferable>pm).transferTo !== undefined && (<Transferable>pm).transferFrom !== undefined
+}
 
 export function getPm(managerName: ProcessNames): ProcessManager {
   let instances: ProcessManager | undefined = {} as ProcessManager;
