@@ -1,42 +1,14 @@
-# Nuxt 3 Minimal Starter
+## 约定
+1. 所有的processManagers都放在根目录的`/processManagers`目录下
+2. `/plugins`目录内的插件提供了一些基础功能。这部分代码在写业务代码的过程中是不需要做任何改动的。
+3. `/pages`内的每个页面都应该在`/modules`内对应一个同名文件夹，这个文件夹是用来存放页面需要用到的私有组件的。index页面对应的文件夹名为home
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
-## Setup
 
-Make sure to install the dependencies:
 
-```bash
-# yarn
-yarn install
-
-# npm
-npm install
-
-# pnpm
-pnpm install --shamefully-hoist
-```
-
-## Development Server
-
-Start the development server on http://localhost:3000
-
-```bash
-npm run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-npm run build
-```
-
-Locally preview production build:
-
-```bash
-npm run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## todo
+### /api/service
+1. mode切换
+2. JSONbig的支持
+3. 拦截器的支持
+4. 原始构造函数的支持

@@ -1,18 +1,22 @@
-import TronEntry from "~/components/TronEntry.vue"
-import type { TransferStation, ProcessManager, Transferable } from "@/plugins/processManager/scheduler"
+import EthEntry from "./EthEntry.vue"
+import type { Ref} from "vue"
+import type { ProcessManager, TransferStation,Transferable } from "@/plugins/processManager/scheduler"
 import { ProcessNames } from "~~/helper/enum"
 import useAccumulator from "./useAccumulator"
 
-export interface ProcessManagerTron extends ProcessManager, Transferable {
+export interface ProcessManagerEth extends ProcessManager,Transferable{
+  ethCustomValue:Ref,
 }
-export default function (): ProcessManagerTron {
-  const name = ProcessNames.Tron
+
+export default function (): ProcessManagerEth {
+  const name: ProcessNames = ProcessNames.Eth
   const calculatorProvider = useAccumulator()
 
   const payTokenType = ref('tokenType1');
   const payTokenCount = ref(0);
   const receiveTokenType = ref("tokenType2");
   const receiveTokenCount = ref(0);
+  const ethCustomValue = ref('这是eth交易流程特有的数据');
 
   const transferTo = (): TransferStation => {
     return {
@@ -22,8 +26,9 @@ export default function (): ProcessManagerTron {
       receiveTokenCount
     }
   }
+
   const transferFrom = (transferStation: TransferStation) => {
-    console.log('tron接收', transferStation.payTokenType.value, transferStation.payTokenCount.value)
+    console.log('eth接收',transferStation.payTokenType.value,transferStation.payTokenCount.value)
     payTokenType.value = transferStation.payTokenType.value
     payTokenCount.value = transferStation.payTokenCount.value
     receiveTokenType.value = transferStation.receiveTokenType.value
@@ -32,13 +37,14 @@ export default function (): ProcessManagerTron {
 
   return {
     name,
-    entry: TronEntry,
+    entry: EthEntry,
     calculatorProvider,
 
     payTokenType,
     payTokenCount,
     receiveTokenType,
     receiveTokenCount,
+    ethCustomValue,
 
     transferTo,
     transferFrom

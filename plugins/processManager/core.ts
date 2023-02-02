@@ -1,4 +1,4 @@
-import nameMappingComposable from "./pmStore"
+import nameMappingComposable from "@/processManagers"
 import { ProcessNames } from "@/helper/enum"
 import type { ProcessManager,Transferable } from "@/plugins/processManager/scheduler"
 
