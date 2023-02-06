@@ -1,0 +1,21 @@
+@import './base.scss';
+@import './font.scss';
+
+:root {
+  --body-color: #191e35;
+  --minor-color: #7e84a3;
+  --desc-color: #909AB5;
+  --hei-color: #1c1c1c;
+  --title-color: #333333;
+  --content-color: #666666;
+  --primary-color: #597BF6;
+  --van-blue: var(--primary-color) !important;
+}
+
+.text-body {
+  color: var(--body-color);
+}
+
+.text-minor {
+  color: var(--minor-color);
+}

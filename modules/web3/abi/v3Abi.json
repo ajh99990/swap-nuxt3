@@ -1,0 +1,150 @@
+[
+  {
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "coin0",
+              "type": "address"
+          },
+          {
+              "internalType": "uint24",
+              "name": "fee0",
+              "type": "uint24"
+          },
+          {
+              "internalType": "address",
+              "name": "coin1",
+              "type": "address"
+          },
+          {
+              "internalType": "uint24",
+              "name": "fee1",
+              "type": "uint24"
+          },
+          {
+              "internalType": "address",
+              "name": "coin2",
+              "type": "address"
+          },
+          {
+              "internalType": "uint24",
+              "name": "fee2",
+              "type": "uint24"
+          },
+          {
+              "internalType": "address",
+              "name": "coin3",
+              "type": "address"
+          },
+          {
+              "internalType": "address",
+              "name": "route",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "amountIn",
+              "type": "uint256"
+          },
+          {
+              "internalType": "uint256",
+              "name": "amountMinOut",
+              "type": "uint256"
+          },
+          {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "deadline",
+              "type": "uint256"
+          }
+      ],
+      "name": "swapExactTokensForTokens",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "coin0",
+              "type": "address"
+          },
+          {
+              "internalType": "uint24",
+              "name": "fee0",
+              "type": "uint24"
+          },
+          {
+              "internalType": "address",
+              "name": "coin1",
+              "type": "address"
+          },
+          {
+              "internalType": "uint24",
+              "name": "fee1",
+              "type": "uint24"
+          },
+          {
+              "internalType": "address",
+              "name": "coin2",
+              "type": "address"
+          },
+          {
+              "internalType": "uint24",
+              "name": "fee2",
+              "type": "uint24"
+          },
+          {
+              "internalType": "address",
+              "name": "coin3",
+              "type": "address"
+          },
+          {
+              "internalType": "address",
+              "name": "route",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "amountInMax",
+              "type": "uint256"
+          },
+          {
+              "internalType": "uint256",
+              "name": "amountOut",
+              "type": "uint256"
+          },
+          {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "deadline",
+              "type": "uint256"
+          }
+      ],
+      "name": "swapTokensForExactTokens",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "amountIn",
+              "type": "uint256"
+          }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+  }
+]
