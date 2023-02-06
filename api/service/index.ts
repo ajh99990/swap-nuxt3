@@ -1,4 +1,4 @@
-import type { AxiosRequestConfig, AxiosResponse } from "axios"
+import type { AxiosRequestConfig, AxiosResponse,CreateAxiosDefaults,AxiosInstance } from "axios"
 import axios from "axios"
 import _ from 'lodash'
 import { ServerMode, RouteParams, Api, SuccessEntity, ErrorEntity, ApiRes } from "./shared"
@@ -46,7 +46,7 @@ export interface ServiceMethod<A> {
   delete: (optionSetup: OptionSetup<A>) => Promise<any>
   patch: (optionSetup: OptionSetup<A>) => Promise<any>
 }
-export type Service<A> = ServiceMethod<A>
+export interface Service<A> extends ServiceMethod<A>, Pick<AxiosInstance,Exclude<keyof AxiosInstance, keyof ServiceMethod<A>>> {}
 
 
 
@@ -57,7 +57,8 @@ export interface ServiceAddress {
 }
 export interface DefineServiceOption<A> {
   api: () => A,
-  address: ServiceAddress
+  address: ServiceAddress,
+  axiosStatic?:CreateAxiosDefaults
 }
 
 export type method = "get" | "post" | "delete" | "put" | "patch"
@@ -90,7 +91,8 @@ export function defineService<Id extends string, A extends Api>(id: Id, options:
   service = {} as Service<A>;
   nuxtApp.provide(id, service)
 
-  const instance = axios.create({}) //todo 这个构建过程应该接受一些axios的实例化参数
+  const axiosStatic = options?.axiosStatic||{}
+  const instance = axios.create(axiosStatic) //todo 这个构建过程应该接受一些axios的实例化参数
   const methods: Array<method> = ["get", "post", "delete", "put", "patch"];
   const env = (process.env.NODE_ENV || ServerMode.Development) as ServerMode
   const serviceAddress = options.address
@@ -119,7 +121,6 @@ export function defineService<Id extends string, A extends Api>(id: Id, options:
       removePadding(requestConfig);
       addPadding(requestConfig);
 
-      console.log(JSON.stringify(requestConfig,null,2))
       //发送请求
       let res = await instance
         .request(requestConfig)
@@ -131,5 +132,5 @@ export function defineService<Id extends string, A extends Api>(id: Id, options:
     }
   });
 
-  return service
+  return  {...instance,...service} 
 }
