@@ -35,14 +35,14 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n'
   ],
   i18n: {
-    locales: ['en', 'zh'],
+    locales: [
+      { code: 'en', file: 'en.json' }, 
+      { code: 'zh', file: 'zh.json' }
+    ],
+    langDir:'./locales/',
     defaultLocale: 'zh',
     vueI18n: {
       fallbackLocale: 'zh',
-      messages: {
-        en: en,
-        zh: zh
-      }
     }
   },
   postcss:{
