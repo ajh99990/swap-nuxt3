@@ -2,17 +2,17 @@
 	<div>
 		<div class="h-336px relative">
 			<div id="windowUp">
-				<HomePagesWindow :class=" order ? '' : 'translate-y-170px' " class="transform duration-400" :coinData="tradingPair[0]" @showCoinList="showCoinList" />
+				<HomeWindowesWindow :class=" order ? '' : 'translate-y-170px' " class="transform duration-400" :coinData="tradingPair[0]" @showCoinList="showCoinList" />
 			</div>
 			<div id="windowDown">
-				<HomePagesWindow :class=" order ? '' : '-translate-y-170px' " class="transform duration-400 mt-4px" :coinData="tradingPair[1]" @showCoinList="showCoinList" />
+				<HomeWindowesWindow :class=" order ? '' : '-translate-y-170px' " class="transform duration-400 mt-4px" :coinData="tradingPair[1]" @showCoinList="showCoinList" />
 			</div>
-			<HomePagesSwitchWindowIcon @click="switchTrade" class="w-34px absolute top-0 z-10 left-0 right-0 bottom-0 m-auto" />
+			<HomeWindowesSwitchWindowIcon @click="switchTrade" class="w-34px absolute top-0 z-10 left-0 right-0 bottom-0 m-auto" />
 		</div>
 		<div class="mt-16px">
-			<HomePagesExchangeButton />
+			<HomeExchangeButton />
 		</div>
-		<HomePagesSwitchCoin :popupState="popupState" />
+		<HomeCoinListSwitchChain :popupState="popupState" />
 	</div>
 </template>
 

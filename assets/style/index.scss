@@ -19,3 +19,9 @@
 .text-minor {
   color: var(--minor-color);
 }
+
+.hidder-scrollbar{
+  &::-webkit-scrollbar {
+  display: none;
+}
+}

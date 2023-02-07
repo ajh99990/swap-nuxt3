@@ -1,6 +1,4 @@
 import { defineNuxtConfig } from 'nuxt/config'
-import en from './locales/en.json'
-import zh from './locales/zh.json'
 export default defineNuxtConfig({
   ssr: false,//不使用服务端渲染能力
   imports: {

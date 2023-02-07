@@ -1,8 +1,8 @@
 <template>
 	<div class="pt-12px px-16px h-100vh">
-		<HomePagesTradingBox></HomePagesTradingBox>
-		<HomePagesExchangeRate />
-		<HomePagesHistory />
+		<HomeWindowesTradingBox></HomeWindowesTradingBox>
+		<HomeExchangeRate />
+		<HomeHistory />
 	</div>
 </template>
 

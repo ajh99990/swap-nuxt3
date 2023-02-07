@@ -32,13 +32,52 @@
 
 <script setup>
 import { chainInfo } from "~~/helper/chainInfo";
-import useHistory from './useHistory'
+import useBaseApi from "@/api/useBaseApi"
+import useGlobalData from "~~/store/useGlobalData"
 
-const { historyList, deleteHistory } = useHistory()
+const baseApi = useBaseApi
+const globalData = useGlobalData()
+const historyList = ref([])
+
+const getRecentList = ()=> {
+	baseApi.get(({ api }) => {
+      return {
+        api: api.getHistorySwap,
+        params:{
+          chain: globalData.presentChain,
+          address: globalData.ownerAddress
+        },
+        success: (res, config) => {
+          historyList.value = res
+        }
+      }
+    })
+}
+
+const deleteHistory = () => {
+    baseApi.delete(({ api }) => {
+      return {
+        api: api.delHistorySwap,
+        data:{
+          chain: globalData.presentChain,
+          address: globalData.ownerAddress
+        },
+        success: () => {
+          historyList.value = []
+        }
+      }
+    })
+    
+  }
 
 const newTransaction = (trade) => {
 	console.log(trade);
 };
+
+onMounted(()=>{
+	getRecentList()
+})
+
 </script>
 
 <style lang="scss" scoped>

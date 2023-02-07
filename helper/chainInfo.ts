@@ -1,4 +1,5 @@
 
+
 export const chainInfo:any = {
   bsc:{
       fullName: 'BNB Chain',
@@ -291,3 +292,79 @@ export const platformsValue = {
     luaswap: "LuaSwap",
     verseswap: 'VerseSwap'
 }
+export function chainList () {
+    const { t } = useI18n()
+    return [
+        {
+          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/history_l.png",
+          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/history.png",
+          title: t("historical"),
+          code: "history",
+          leftCode: t("historys")
+        },
+        {
+          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/allCoin_l.png",
+          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/allCoin.png",
+          title: t("allCoin"),
+          code: "allChain",
+          leftCode: t("allCoin")
+        },
+        {
+          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/bsc_l.png",
+          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/bsc.png",
+          title: 'BNB Chain',
+          code: "bsc",
+          leftCode: 'BNB Chain'
+        },
+        {
+          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/eth_l.png",
+          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/eth.png",
+          title: 'Ethereum',
+          code: "eth",
+          leftCode: 'Ethereum'
+        },
+        {
+          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/polygon_l.png",
+          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/polygon.png",
+          title: 'Polygon',
+          code: "polygon",
+          leftCode: 'Polygon'
+        },
+        {
+          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/tron_l.png",
+          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/tron.png",
+          title: "Tron",
+          code: "tron",
+          leftCode: "Tron"
+        },
+        {
+          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/arbitrum_l.png",
+          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/arbitrum.png",
+          title: "Arbitrum",
+          code: "arbitrum",
+          leftCode: "Arbitrum"
+        },
+        {
+          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/optimistic_l.png",
+          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/optimistic.png",
+          title: "Optimism",
+          code: "optimistic",
+          leftCode: "Optimism"
+        },
+        {
+          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/heco_l.png",
+          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/heco.png",
+          title: "Heco",
+          code: "heco",
+          leftCode: "Heco"
+        },
+        {
+          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/okex_l.png",
+          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/okex.png",
+          title: "OKX",
+          code: "okex",
+          leftCode: "OKX"
+        },
+  ]
+}
+    

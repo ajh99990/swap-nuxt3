@@ -21,6 +21,7 @@
     "bignumber.js": "^9.1.1",
     "consola": "^2.15.3",
     "lodash": "^4.17.21",
+    "lottie-web": "^5.10.2",
     "nuxt-windicss": "^2.5.5",
     "postcss-px-to-viewport-8-plugin": "^1.1.7",
     "sass": "^1.56.1",

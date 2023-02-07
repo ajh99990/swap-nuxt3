@@ -2,21 +2,21 @@ import { judgePlatform, postMessageAppCallback } from "~~/helper/postMessage"
 import { getOwnerAddress } from "~~/modules/web3"
 import { chainInfo } from "~~/helper/chainInfo"
 import useGlobalData from "~~/store/useGlobalData"
-import useBaseApi from '~~/api/useBaseApi'
 
 export default defineNuxtPlugin((NuxtApp) => {
   const startApp = async ()=>{
-    const baseApi = useBaseApi
     const globalData = useGlobalData()
 
-    let appChainsInfo, presentChain, privateKey
+    let appChainsInfo = [], presentChain, privateKey
     if (judgePlatform('getChainsInfo')) {
       appChainsInfo = await postMessageAppCallback('getChainsInfo')
     } else {
       const chainInfoArray = Object.values(chainInfo)
       const chainKeysArray = Object.keys(chainInfo)
-      appChainsInfo = chainInfoArray.map((item:any,index )=>{
-        return { [chainKeysArray[index]]: item.rpc}
+      chainInfoArray.map((item:any,index )=>{
+        // if(chainKeysArray[index] == 'bsc'){
+          appChainsInfo.push({ [chainKeysArray[index]]: item.rpc })
+        // }
       })
     }
     if(Object.keys(appChainsInfo).length>1){
@@ -34,21 +34,6 @@ export default defineNuxtPlugin((NuxtApp) => {
       //     [item]: []
       //   });
       // })
-    }
-
-    const chainList = () => {
-      baseApi.get(({ api }) => {
-        return {
-          api: api.getChainList,
-          params:{
-            chain: globalData.presentChain,
-            address: globalData.ownerAddress
-          },
-          success: (res, config) => {
-            console.log(res);
-          }
-        }
-      })
     }
 
     globalData.$patch({

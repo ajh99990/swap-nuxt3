@@ -5,7 +5,8 @@
   "windowMax": "全部",
   "tradingBoxSwap": "兑换",
   "homeRecently": "最近兑换",
-  "home": {
-    "contractAddress": "请输入币种名称或合约地址"
-  }
+  "historical": "历史交易币种",
+  "historys": "历史币种",
+  "allCoin": "全部币种",
+  "contractAddress": "请输入币种名称或合约地址"
 }
