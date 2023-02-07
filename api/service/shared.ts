@@ -39,7 +39,7 @@ export interface ErrorEntity {
 }
 
 export enum SuccessCode {
-  Success = 0,
+  Success = "0",
 }
 
 export interface SuccessEntity {

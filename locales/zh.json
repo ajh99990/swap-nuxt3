@@ -4,5 +4,8 @@
   "windowBalance": "余额:",
   "windowMax": "全部",
   "tradingBoxSwap": "兑换",
-  "homeRecently": "最近兑换"
+  "homeRecently": "最近兑换",
+  "home": {
+    "contractAddress": "请输入币种名称或合约地址"
+  }
 }

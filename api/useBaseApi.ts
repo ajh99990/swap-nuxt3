@@ -1,19 +1,37 @@
 import { defineService } from "./service"
+import { judgePlatform, postMessageAppCallback } from "~~/helper/postMessage"
+
+let token:string
+
+export const getToken = async () => {
+  if (token) return token
+  if (judgePlatform('getToken')) {
+    token = await postMessageAppCallback('getToken')
+    return token
+  } else {
+    return 'e6f8008c-a954-4d12-ae09-8254618f5888'
+    // return 'ef21c59b-ead7-4ab0-a8f5-fd467f03295c'
+  }
+}
+
 const instance = defineService('baseApi', {
   api() {
     return {
-      chainList: "chain/list",//链列表
-      tokens: "chain/{chainId}/tokens",//链上所有代币组成的列表
-      buy:"buy" //购买代币
+      getHistorySwap:"swaps/getHistorySwap",//首页最近交易记录
+      delHistorySwap: "swaps/delHistorySwap",//清空首页的最近交易
+      getChainList: "swaps/getChain",//获取当前项目支持的链
+      // chainList: "chain/list",//链列表
+      // tokens: "chain/{chainId}/tokens",//链上所有代币组成的列表
+      // buy:"buy" //购买代币
     }
   },
   address: {
-    development: "https://mock.apifox.cn/m1/607677-0-default/",
-    production: "https://mock.apifox.cn/m1/607677-0-default/",
-    mock: "https://mock.apifox.cn/m1/607677-0-default/"
+    development: "http://aggregate-swap.y7r.cc/api",
+    production: "https://swap.assure.pro/api",
+    mock: "https://mock.apifox.cn/m1/607677-0-default"
   },
   axiosStatic:{
-    headers:{'X-Custom-Header': 'foobar'}
+    headers:{'token': await getToken()}
   }
 })
 

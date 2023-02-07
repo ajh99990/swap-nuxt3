@@ -4,5 +4,8 @@
   "windowBalance": "Balance:",
   "windowMax": "Max",
   "tradingBoxSwap": "Swap",
-  "homeRecently": "Exchange History"
+  "homeRecently": "Exchange History",
+  "home": {
+    "contractAddress": "Please enter the token or contract address"
+  }
 }

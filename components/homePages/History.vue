@@ -4,7 +4,7 @@
 			<p class="flex items-center">
 				<span class="text-12px text-minor">{{ $t('homeRecently') }}</span>
 			</p>
-			<img src="@/assets/images/homehistoryDelete.png" @click="deleteHistory()" class="h-14px w-14px" />
+			<img src="@/assets/images/homehistoryDelete.png" @click="deleteHistory('1')" class="h-14px w-14px" />
 		</div>
 		<div class="w-343px py-9px overflow-y-auto">
 			<div class="h-100px flex">
@@ -32,15 +32,13 @@
 
 <script setup>
 import { chainInfo } from "~~/helper/chainInfo";
-const historyList = ref([]);
+import useHistory from './useHistory'
 
-onMounted(() => {});
+const { historyList, deleteHistory } = useHistory()
 
-const getHistory = () => {};
-
-const deleteHistory = () => {};
-
-const newTransaction = (trade) => {};
+const newTransaction = (trade) => {
+	console.log(trade);
+};
 </script>
 
 <style lang="scss" scoped>

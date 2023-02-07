@@ -38,7 +38,4 @@ const clearInput = () => {};
 		color: #7e84a3;
 	}
 }
-.borders {
-	// border-bottom: 1px solid #000;
-}
 </style>

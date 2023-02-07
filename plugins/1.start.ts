@@ -2,9 +2,13 @@ import { judgePlatform, postMessageAppCallback } from "~~/helper/postMessage"
 import { getOwnerAddress } from "~~/modules/web3"
 import { chainInfo } from "~~/helper/chainInfo"
 import useGlobalData from "~~/store/useGlobalData"
+import useBaseApi from '~~/api/useBaseApi'
+
 export default defineNuxtPlugin((NuxtApp) => {
   const startApp = async ()=>{
+    const baseApi = useBaseApi
     const globalData = useGlobalData()
+
     let appChainsInfo, presentChain, privateKey
     if (judgePlatform('getChainsInfo')) {
       appChainsInfo = await postMessageAppCallback('getChainsInfo')
@@ -31,6 +35,22 @@ export default defineNuxtPlugin((NuxtApp) => {
       //   });
       // })
     }
+
+    const chainList = () => {
+      baseApi.get(({ api }) => {
+        return {
+          api: api.getChainList,
+          params:{
+            chain: globalData.presentChain,
+            address: globalData.ownerAddress
+          },
+          success: (res, config) => {
+            console.log(res);
+          }
+        }
+      })
+    }
+
     globalData.$patch({
       appChainsInfo,
       presentChain,

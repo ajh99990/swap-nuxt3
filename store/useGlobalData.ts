@@ -7,6 +7,7 @@ export default defineStore("globalData", {
       presentChain: 'bsc',
       privateKey: false,
       ownerAddress: '',
+      
       test1: "1",
       test2: "2",
       stateNames:{
