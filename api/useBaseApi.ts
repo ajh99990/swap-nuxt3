@@ -1,5 +1,5 @@
 import { defineService } from "./service"
-const instance = defineService('baseApi', {
+export default defineService('baseApi', {
   api() {
     return {
       chainList: "chain/list",//链列表
@@ -14,12 +14,12 @@ const instance = defineService('baseApi', {
   },
   axiosStatic:{
     headers:{'X-Custom-Header': 'foobar'}
+  },
+  setup(instance){
+    instance.interceptors.request.use(function (config) {
+      console.log("打印日志",config.url)
+      return config;
+    })
   }
 })
 
-instance.interceptors.request.use(function (config) {
-  console.log("打印日志",config.url)
-  return config;
-})
-
-export default instance

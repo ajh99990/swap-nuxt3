@@ -1,7 +1,7 @@
 import useBaseApi from "@/api/useBaseApi"
 
 export default function () {
-  const baseApi = useBaseApi;
+  const baseApi = useBaseApi();
   const formData = ref("");
   const resText = ref("");
 

@@ -1,4 +1,4 @@
-import type { AxiosRequestConfig, AxiosResponse,CreateAxiosDefaults,AxiosInstance } from "axios"
+import type { AxiosRequestConfig, AxiosResponse, CreateAxiosDefaults, AxiosInstance } from "axios"
 import axios from "axios"
 import _ from 'lodash'
 import { ServerMode, RouteParams, Api, SuccessEntity, ErrorEntity, ApiRes } from "./shared"
@@ -46,7 +46,7 @@ export interface ServiceMethod<A> {
   delete: (optionSetup: OptionSetup<A>) => Promise<any>
   patch: (optionSetup: OptionSetup<A>) => Promise<any>
 }
-export interface Service<A> extends ServiceMethod<A>, Pick<AxiosInstance,Exclude<keyof AxiosInstance, keyof ServiceMethod<A>>> {}
+export interface Service<A> extends ServiceMethod<A>, Pick<AxiosInstance, Exclude<keyof AxiosInstance, keyof ServiceMethod<A>>> { }
 
 
 
@@ -58,7 +58,8 @@ export interface ServiceAddress {
 export interface DefineServiceOption<A> {
   api: () => A,
   address: ServiceAddress,
-  axiosStatic?:CreateAxiosDefaults
+  axiosStatic?: CreateAxiosDefaults,
+  setup?: (instance: Service<A>) => void,
 }
 
 export type method = "get" | "post" | "delete" | "put" | "patch"
@@ -81,55 +82,63 @@ function materialProviderBuilder<A extends Api>(options: DefineServiceOption<A>)
   return materialProvider
 }
 
-export function defineService<Id extends string, A extends Api>(id: Id, options: DefineServiceOption<A>): Service<A> {
-  //将实例挂载到nuxt上。避免重复创建实例
-  const nuxtApp = useNuxtApp();
-  let service = nuxtApp[id] as Service<A>;
-  if (service) {
-    return service
-  }
-  service = {} as Service<A>;
-  nuxtApp.provide(id, service)
-  const axiosStatic = options?.axiosStatic||{}
-  const instance = axios.create(axiosStatic) //todo 这个构建过程应该接受一些axios的实例化参数
-  const methods: Array<method> = ["get", "post", "delete", "put", "patch"];
-  const env = (useRuntimeConfig().public.nodeEnv || ServerMode.Development) as ServerMode
-  const serviceAddress = options.address
-  const baseUrl: string = serviceAddress[env]
-  const apiCollector = options.api();//这里返回了一个api对象 
-  //执行configBulder，并将api、枚举等数据传递过去
-  const materialProvider = materialProviderBuilder(options)
-
-  methods.forEach((method) => {
-    service[method] = async (optionSetup: OptionSetup<A>) => {
-      //拿到用户填写的请求数据
-      const config = optionSetup(materialProvider);
-      let { api, routeParams, params, fail, success, complete, ...otherConfig } = config;
-
-      //组装axios的请求对象
-      let url = createQueryUrl({ apis: apiCollector, api, routeParams, baseUrl });
-      params = removeInvalidValue(params)
-      /* const transformResponse = [
-        function (data: any) {
-          return JSONbig.parse(data);
-        },
-      ] */
-      const requestConfig = { ...otherConfig, method, url, /* transformResponse, */ params };
-
-      //阻止重复请求
-      removePadding(requestConfig);
-      addPadding(requestConfig);
-
-      //发送请求
-      let res = await instance
-        .request(requestConfig)
-        .then((res: AxiosResponse<SuccessEntity>) => (res.data))
-        .catch(captureNetworkException)
-        .then((res) => handleGeneric({ res, config: requestConfig, fail, success }))
-        .then((res) => complete ? complete(res, requestConfig) : res);
-      return res;
+export function defineService<Id extends string, A extends Api>(id: Id, options: DefineServiceOption<A>) {
+  return function (nuxtApp?:any): Service<A> {
+    //将实例挂载到nuxt上。避免重复创建实例
+    const _nuxtApp = nuxtApp || useNuxtApp();
+    let service = _nuxtApp[`$${id}`] as Service<A>;
+    if (service) {
+      return service
     }
-  });
+    service = {} as Service<A>;
+    const axiosStatic = options?.axiosStatic || {}
+    const instance = axios.create(axiosStatic) //todo 这个构建过程应该接受一些axios的实例化参数
+    const methods: Array<method> = ["get", "post", "delete", "put", "patch"];
+    const env = (useRuntimeConfig().public.nodeEnv || ServerMode.Development) as ServerMode
+    const serviceAddress = options.address
+    const baseUrl: string = serviceAddress[env]
+    const apiCollector = options.api();//这里返回了一个api对象 
+    //执行configBulder，并将api、枚举等数据传递过去
+    const materialProvider = materialProviderBuilder(options)
 
-  return  {...instance,...service} 
+    methods.forEach((method) => {
+      service[method] = async (optionSetup: OptionSetup<A>) => {
+        //拿到用户填写的请求数据
+        const config = optionSetup(materialProvider);
+        let { api, routeParams, params, fail, success, complete, ...otherConfig } = config;
+
+        //组装axios的请求对象
+        let url = createQueryUrl({ apis: apiCollector, api, routeParams, baseUrl });
+        params = removeInvalidValue(params)
+        /* const transformResponse = [
+          function (data: any) {
+            return JSONbig.parse(data);
+          },
+        ] */
+        const requestConfig = { ...otherConfig, method, url, /* transformResponse, */ params };
+
+        //阻止重复请求
+        removePadding(requestConfig);
+        addPadding(requestConfig);
+
+        //发送请求
+        let res = await instance
+          .request(requestConfig)
+          .then((res: AxiosResponse<SuccessEntity>) => (res.data))
+          .catch(captureNetworkException)
+          .then((res) => handleGeneric({ res, config: requestConfig, fail, success }))
+          .then((res) => complete ? complete(res, requestConfig) : res);
+        return res;
+      }
+    });
+
+    const completeService = { ...instance, ...service }
+
+    if(options.setup){
+      options.setup(completeService)
+    }
+    
+    nuxtApp.provide(id, completeService)
+    return completeService
+  }
 }

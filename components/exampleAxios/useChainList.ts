@@ -1,7 +1,7 @@
 import useBaseApi from "@/api/useBaseApi"
 
 export default function () {
-  const baseApi = useBaseApi;
+  const baseApi = useBaseApi();
   type Chain = { id: string, name: string }
   const chainList = ref<Array<Chain>>([])
   const selectedChain = ref("")
