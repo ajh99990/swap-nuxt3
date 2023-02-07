@@ -90,11 +90,10 @@ export function defineService<Id extends string, A extends Api>(id: Id, options:
   }
   service = {} as Service<A>;
   nuxtApp.provide(id, service)
-
   const axiosStatic = options?.axiosStatic||{}
   const instance = axios.create(axiosStatic) //todo 这个构建过程应该接受一些axios的实例化参数
   const methods: Array<method> = ["get", "post", "delete", "put", "patch"];
-  const env = (process.env.NODE_ENV || ServerMode.Development) as ServerMode
+  const env = (useRuntimeConfig().public.nodeEnv || ServerMode.Development) as ServerMode
   const serviceAddress = options.address
   const baseUrl: string = serviceAddress[env]
   const apiCollector = options.api();//这里返回了一个api对象 

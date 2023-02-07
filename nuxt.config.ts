@@ -7,7 +7,11 @@ export default defineNuxtConfig({
       'composables/*/index.{ts,js,mjs,mts}',
     ]
   },
-  vite: {
+  vite: { },
+  runtimeConfig:{
+    public:{
+      nodeEnv:process.env.NODE_ENV
+    }
   },
   app: {
     head: {

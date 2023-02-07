@@ -14,7 +14,6 @@
 
 <script setup lang="ts">
 import { ProcessNames } from "@/helper/enum"
-
 const { changeProcessManager, processManager } = useNuxtApp().$managerScheduler
 const switchProcessManager = () => {
   if (processManager.value.name === ProcessNames.Eth) {
