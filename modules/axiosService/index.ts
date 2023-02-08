@@ -137,8 +137,7 @@ export function defineService<Id extends string, A extends Api>(id: Id, options:
     if(options.setup){
       options.setup(completeService)
     }
-    
-    nuxtApp.provide(id, completeService)
+    _nuxtApp.provide(id, completeService)
     return completeService
   }
 }
