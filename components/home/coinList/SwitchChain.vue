@@ -15,7 +15,11 @@
 						<span :class="chooseIndex == index ? 'text-[#191e35]' : 'text-[#7e84a3]'" class="text-10px">{{ item.leftCode }}</span>
 					</div>
 				</div>
-				<HomeCoinList :showChain="coinTypeArray[chooseIndex]" :searchValue="searchVal"></HomeCoinList>
+				<div v-for="item,index in coinTypeArray" :key="item.code">
+					<div v-if="index == chooseIndex">
+						<HomeCoinList :showChain="coinTypeArray[chooseIndex]" :searchValue="searchVal"></HomeCoinList>
+					</div>
+				</div>
 			</div>
 		</PopUps>
 	</div>

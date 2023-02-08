@@ -1,4 +1,4 @@
-import { defineService } from "./service"
+import { defineService } from "~~/modules/service"
 import { judgePlatform, postMessageAppCallback } from "~~/helper/postMessage"
 
 let token:string
@@ -14,12 +14,13 @@ export const getToken = async () => {
   }
 }
 
-const instance = defineService('baseApi', {
+export default defineService('baseApi', {
   api() {
     return {
       getHistorySwap:"swaps/getHistorySwap",//首页最近交易记录
       delHistorySwap: "swaps/delHistorySwap",//清空首页的最近交易
-      getChainList: "swaps/getChain",//获取当前项目支持的链
+      coinList: 'swaps/query/coinType/new',//获取币种列表
+      // getChainList: "swaps/getChain",//获取当前项目支持的链
       // chainList: "chain/list",//链列表
       // tokens: "chain/{chainId}/tokens",//链上所有代币组成的列表
       // buy:"buy" //购买代币
@@ -32,12 +33,18 @@ const instance = defineService('baseApi', {
   },
   axiosStatic:{
     headers:{'token': await getToken()}
+  },
+  setup(instance){
+    instance.interceptors.request.use(function (config) {
+      console.log("打印日志",config.url)
+      return config;
+    })
   }
 })
 
-instance.interceptors.request.use(function (config) {
-  console.log("打印日志",config.url)
-  return config;
-})
+// instance.interceptors.request.use(function (config) {
+//   console.log("打印日志",config.url)
+//   return config;
+// })
 
-export default instance
+// export default instance

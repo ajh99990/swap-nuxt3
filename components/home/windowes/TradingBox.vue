@@ -45,7 +45,6 @@ const cssAnimation = () => {
 
 const popupState = ref(false);
 const showCoinList = () => {
-	console.log("enter");
 	popupState.value = true;
 };
 </script>

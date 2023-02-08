@@ -35,7 +35,7 @@ import { chainInfo } from "~~/helper/chainInfo";
 import useBaseApi from "@/api/useBaseApi"
 import useGlobalData from "~~/store/useGlobalData"
 
-const baseApi = useBaseApi
+const baseApi = useBaseApi()
 const globalData = useGlobalData()
 const historyList = ref([])
 
@@ -66,8 +66,7 @@ const deleteHistory = () => {
           historyList.value = []
         }
       }
-    })
-    
+    }) 
   }
 
 const newTransaction = (trade) => {

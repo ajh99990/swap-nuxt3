@@ -8,5 +8,6 @@
   "historical": "Historical trading token",
   "historys": "History",
   "allCoin": "All",
-  "contractAddress": "Please enter the token or contract address"
+  "contractAddress": "Please enter the token or contract address",
+  "noData": "-No data available-"
 }

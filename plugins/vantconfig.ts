@@ -1,5 +1,5 @@
 import { defineNuxtPlugin } from '#app';
-import {Button, Field, CellGroup, Popup, Image as VanImage, Search} from 'vant';
+import {Button, Field, CellGroup, Popup, Image as VanImage, Search, List} from 'vant';
 import 'vant/lib/index.css';
 
 export default defineNuxtPlugin(nuxtApp => {
@@ -10,4 +10,5 @@ export default defineNuxtPlugin(nuxtApp => {
     nuxtApp.vueApp.use(Popup)
     nuxtApp.vueApp.use(VanImage)
     nuxtApp.vueApp.use(Search)
+    nuxtApp.vueApp.use(List)
 })

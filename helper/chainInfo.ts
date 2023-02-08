@@ -300,70 +300,90 @@ export function chainList () {
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/history.png",
           title: t("historical"),
           code: "history",
-          leftCode: t("historys")
+          // leftCode: t("historys"),
+          queryType: 'history',
+          chain: null
         },
         {
           lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/allCoin_l.png",
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/allCoin.png",
           title: t("allCoin"),
           code: "allChain",
-          leftCode: t("allCoin")
+          // leftCode: t("allCoin"),
+          queryType: 'allChain',
+          chain: null
         },
         {
           lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/bsc_l.png",
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/bsc.png",
           title: 'BNB Chain',
           code: "bsc",
-          leftCode: 'BNB Chain'
+          // leftCode: 'BNB Chain',
+          queryType: 'chain',
+          chain: 'bsc'
         },
         {
           lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/eth_l.png",
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/eth.png",
           title: 'Ethereum',
           code: "eth",
-          leftCode: 'Ethereum'
+          // leftCode: 'Ethereum',
+          queryType: 'chain',
+          chain: 'eth'
         },
         {
           lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/polygon_l.png",
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/polygon.png",
           title: 'Polygon',
           code: "polygon",
-          leftCode: 'Polygon'
+          // leftCode: 'Polygon',
+          queryType: 'chain',
+          chain: 'polygon'
         },
         {
           lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/tron_l.png",
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/tron.png",
           title: "Tron",
           code: "tron",
-          leftCode: "Tron"
+          // leftCode: "Tron",
+          queryType: 'chain',
+          chain: 'tron'
         },
         {
           lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/arbitrum_l.png",
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/arbitrum.png",
           title: "Arbitrum",
           code: "arbitrum",
-          leftCode: "Arbitrum"
+          // leftCode: "Arbitrum",
+          queryType: 'chain',
+          chain: 'arbitrum'
         },
         {
           lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/optimistic_l.png",
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/optimistic.png",
           title: "Optimism",
           code: "optimistic",
-          leftCode: "Optimism"
+          // leftCode: "Optimism",
+          queryType: 'chain',
+          chain: 'optimistic'
         },
         {
           lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/heco_l.png",
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/heco.png",
           title: "Heco",
           code: "heco",
-          leftCode: "Heco"
+          // leftCode: "Heco",
+          queryType: 'chain',
+          chain: 'heco'
         },
         {
           lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/okex_l.png",
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/okex.png",
           title: "OKX",
           code: "okex",
-          leftCode: "OKX"
+          // leftCode: "OKX",
+          queryType: 'chain',
+          chain: 'okex'
         },
   ]
 }

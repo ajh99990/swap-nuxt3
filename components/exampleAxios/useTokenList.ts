@@ -2,7 +2,7 @@ import useBaseApi from "@/api/useBaseApi"
 import type { Ref } from "vue-demi"
 
 export default function ({ selectedChain }: { selectedChain: Ref<string> }) {
-  const baseApi = useBaseApi;
+  const baseApi = useBaseApi();
 
   type Token = { id: string, name: string }
   const tokens = ref<Array<Token>>([])

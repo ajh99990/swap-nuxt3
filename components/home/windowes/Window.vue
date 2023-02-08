@@ -48,7 +48,6 @@ const props = defineProps({
 const emits = defineEmits(["showCoinList"]);
 
 const switchCoin = () => {
-	console.log("asdfas");
 	emits("showCoinList");
 };
 

@@ -7,7 +7,8 @@ export default defineStore("globalData", {
       presentChain: 'bsc',
       privateKey: false,
       ownerAddress: '',
-      allCoinList: [],
+      allCoinList: {},
+      searchCoinList: {},
       
       test1: "1",
       test2: "2",
