@@ -1,24 +1,21 @@
 <template>
 	<div>
-		<lottie :animationData="jumpCoinImg" :loop="true" class="w-46px"></lottie>
+		<div class="w-37px h-37px" ref="animaTarget"></div>
 	</div>
 </template>
 
 <script>
-import lottie from "vue-lottie/src/lottie.vue";
-import loadingJson from "";
-loadingJson.assets.forEach((item) => {
-	item.u = "";
-	if (item.w && item.h) {
-		item.p = require(`~~/assets/images/jsonImg/loadingJson/images/${item.p}`);
-	}
-});
+import lottie from "lottie-web";
+import loading from "../public/jsonImg/loadingJson/data.json";
 export default {
-	components: { lottie },
-	data() {
-		return {
-			loadingJson,
-		};
+	mounted() {
+		lottie.loadAnimation({
+			container: this.$refs.animaTarget,
+			renderer: "svg",
+			loop: true,
+			autoplay: true,
+			animationData: loading,
+		});
 	},
 };
 </script>

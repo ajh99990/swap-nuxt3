@@ -7,6 +7,7 @@ export default defineStore("globalData", {
       presentChain: 'bsc',
       privateKey: false,
       ownerAddress: '',
+      allCoinList: [],
       
       test1: "1",
       test2: "2",
@@ -18,6 +19,6 @@ export default defineStore("globalData", {
   },
   /** 需要缓存的state的key值 */
   persistentState: (names) => {
-    return [names.test1]
+    return [names.test1, names.allCoinList]
   },
 })
