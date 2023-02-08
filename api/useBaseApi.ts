@@ -1,4 +1,4 @@
-import { defineService } from "./service"
+import { defineService } from "#service"
 export default defineService('baseApi', {
   api() {
     return {

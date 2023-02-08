@@ -5,6 +5,77 @@
     "experimentalDisableTemplateSupport":true
   },
   "compilerOptions": {
+    "paths":{
+      "#service":[
+        "./modules/axiosService"
+      ],
+      "~~": [
+        "."
+      ],
+      "~~/*": [
+        "./*"
+      ],
+      "@@": [
+        "."
+      ],
+      "@@/*": [
+        "./*"
+      ],
+      "~": [
+        "."
+      ],
+      "~/*": [
+        "./*"
+      ],
+      "@": [
+        "."
+      ],
+      "@/*": [
+        "./*"
+      ],
+      "assets": [
+        "assets"
+      ],
+      "assets/*": [
+        "assets/*"
+      ],
+      "public": [
+        "public"
+      ],
+      "public/*": [
+        "public/*"
+      ],
+      "#app": [
+        "node_modules/nuxt/dist/app"
+      ],
+      "#app/*": [
+        "node_modules/nuxt/dist/app/*"
+      ],
+      "vue-demi": [
+        "node_modules/nuxt/dist/app/compat/vue-demi"
+      ],
+      "pinia": [
+        "node_modules/pinia/dist/pinia"
+      ],
+      "#head": [
+        "node_modules/nuxt/dist/head/runtime"
+      ],
+      "#head/*": [
+        "node_modules/nuxt/dist/head/runtime/*"
+      ],
+      "#imports": [
+        ".nuxt/imports"
+      ],
+      "#build": [
+        ".nuxt"
+      ],
+      "#build/*": [
+        ".nuxt/*"
+      ],
+      "#components": [
+        ".nuxt/components"
+      ]
+    },
     "types": [
       "nuxt-windicss",
       "@vueuse/nuxt",
