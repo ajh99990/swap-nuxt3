@@ -7,7 +7,7 @@ export default defineNuxtPlugin((NuxtApp) => {
   const startApp = async ()=>{
     const globalData = useGlobalData()
 
-    let appChainsInfo = [], presentChain, privateKey
+    let appChainsInfo = {}, presentChain, privateKey
     if (judgePlatform('getChainsInfo')) {
       appChainsInfo = await postMessageAppCallback('getChainsInfo')
     } else {
@@ -15,10 +15,12 @@ export default defineNuxtPlugin((NuxtApp) => {
       const chainKeysArray = Object.keys(chainInfo)
       chainInfoArray.map((item:any,index )=>{
         // if(chainKeysArray[index] == 'bsc'){
-          appChainsInfo.push({ [chainKeysArray[index]]: item.rpc })
+          appChainsInfo[chainKeysArray[index]]  = {prc:item.rpc} 
         // }
       })
     }
+    console.log(appChainsInfo, 'appChainsInfo');
+    
     if(Object.keys(appChainsInfo).length>1){
       presentChain = 'bsc'
       privateKey = false
@@ -26,6 +28,7 @@ export default defineNuxtPlugin((NuxtApp) => {
       presentChain = Object.keys(appChainsInfo)[0]
       privateKey = true
     }
+    console.log(presentChain, 'presentChain');
     const ownerAddress = await getOwnerAddress(presentChain)
     //根据appChainsInfo 判断是否是同一个钱包不是的话清楚币种选择列表
     if (localStorage.appChainsInfo != appChainsInfo) {

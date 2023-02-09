@@ -20,6 +20,7 @@ export default defineService('baseApi', {
       getHistorySwap:"swaps/getHistorySwap",//首页最近交易记录
       delHistorySwap: "swaps/delHistorySwap",//清空首页的最近交易
       coinList: 'swaps/query/coinType/new',//获取币种列表
+      getCoinPrice: '/swaps/getCoinPrice', //获取用户对应币的余额
       // getChainList: "swaps/getChain",//获取当前项目支持的链
       // chainList: "chain/list",//链列表
       // tokens: "chain/{chainId}/tokens",//链上所有代币组成的列表

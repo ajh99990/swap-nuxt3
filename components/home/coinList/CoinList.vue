@@ -5,7 +5,7 @@
 			<div v-if="loading" class="flex justify-center items-center h-439px w-280px absolute left-0 top-0">
 				<LoadingJson />
 			</div>
-			<div class="h-439px overflow-y-auto vant-loading">
+			<div class="h-439px overflow-y-auto vant-loading hidder-scrollbar">
 				<!-- <van-list :finished="finished" :finished-text="coinList.length >= 7 ? $t('noData') : ''" @load="onLoad"> -->
 					<van-list v-model:loading="addLoading" loading-text="" :finished="finished" :finished-text="coinList.length >= 7 ? $t('noData') : ''" @load="onLoad" offset="50">
 					<div v-for=" item in coinList " :key="item.token" class="flex items-center mb-30px relative">
@@ -18,6 +18,10 @@
 							<span class="truncate text-minor text-size-11px leading-13px">{{
 									simplifyToken(item.token)
 							}}</span>
+						</p>
+						<p class="flex w-120px flex-col items-end absolute top-0.5px right-0">
+							<p class="truncate text-body font-500 text-size-15px leading-18px text-right mb-5px max-w-98px">{{ item.totalAmount }}</p>
+							<!-- <p v-if=" !isNaN(dataObj.coinDollar)" class="truncate text-minor text-size-11px leading-13px font-500 text-right max-w-98px">${{ dataObj.coinDollar == 0 ?'0.00': dataObj.coinDollar}}</p> -->
 						</p>
 					</div>
 				</van-list>
@@ -71,7 +75,7 @@ const getCoinList = async ()=> {
 	loading.value = coinList.value.length ? false : true;
 	const fetchData = await getInterFaceData()
 	totalRecords.value = fetchData.totalRecords;
-	coinSort(fetchData.list)
+	await coinSort(props.showChain.code, fetchData.list)
 	coinList.value = fetchData.list
 	loading.value = false
 	console.log('getCoinList done');
