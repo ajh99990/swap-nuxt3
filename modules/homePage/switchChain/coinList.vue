@@ -35,15 +35,14 @@ import useGlobalData from "~~/store/useGlobalData";
 import useBaseApi from "~~/api/useBaseApi";
 import { chainInfo } from "~~/helper/chainInfo";
 import { simplifyToken } from "~~/helper/common";
-import { coinSort } from "./orderByCoin"
-import { all } from "axios";
+import { coinSort } from "./orderByCoin";
 
 const baseApi = useBaseApi();
 const globalData = useGlobalData();
 
 const props = defineProps({
-	showChain: Object,
-	searchValue: String,
+  showChain: Object,
+  searchValue: String,
 });
 
 const coinList = ref([]);
@@ -54,108 +53,110 @@ const finished = ref(false);
 const totalRecords = ref(0);
 
 watch(
-	() => props.showChain,
-	() => {
-		getCoinList();
-	}
+  () => props.showChain,
+  () => {
+    getCoinList();
+  }
 );
 
 watch(
-	() => props.searchValue,
-	() => {
-			finished.value = false
-		addLoading.value = true
-		getSearchCoinList();
-	}
+  () => props.searchValue,
+  () => {
+    finished.value = false;
+    addLoading.value = true;
+    getSearchCoinList();
+  }
 );
 
-const getCoinList = async ()=> {
-	// console.log('start getCoinList');
-	finished.value = true
-	coinList.value = globalData.allCoinList?.[props.showChain.code] || [];
-	loading.value = coinList.value.length ? false : true;
-	const fetchData = await getInterFaceData()
-	totalRecords.value = fetchData.totalRecords;
-	coinList.value = await coinSort(props.showChain.code, fetchData.list)
-	loading.value = false
-	// console.log('getCoinList done');
-}
+const getCoinList = async () => {
+  // console.log('start getCoinList');
+  finished.value = true;
+  coinList.value = globalData.allCoinList?.[props.showChain.code] || [];
+  loading.value = coinList.value.length ? false : true;
+  const fetchData = await getInterFaceData();
+  totalRecords.value = fetchData.totalRecords;
+  coinList.value = await coinSort(props.showChain.code, fetchData.list);
+  loading.value = false;
+  // console.log('getCoinList done');
+};
 
-const getSearchCoinList = async ()=> {
-	// console.log('start getSearchCoinList');
-	if(!props.searchValue){
-		getCoinList()
-		return
-	}
-	let cacheData = globalData.searchCoinList?.[props.showChain.code]?.[props.searchValue] || {list:[],totalRecords:0,pageNum:1}
-	loading.value = coinList.value.length ? false : true;
-	if(cacheData.list.length){
-		coinList.value = cacheData.list;
-		totalRecords.value = cacheData.totalRecords
-		pageNum.value = cacheData.pageNum
-	} else {
-		const fetchData = await getInterFaceData()
-		if(fetchData != 'cancel'){
-			if(pageNum.value > 1){
-				coinList.value.push(...fetchData.list)
-				coinList.value = await coinSort(props.showChain.code, coinList.value)
-			} else {
-				coinList.value = await coinSort(props.showChain.code, fetchData.list)
-			}
-			totalRecords.value = fetchData.totalRecords
-		} else {
-			finished.value = true
-		}
-	}
-	loading.value = false
-	addLoading.value = false
-	upDatePina(props.showChain.code, coinList.value)
-}
+const getSearchCoinList = async () => {
+  // console.log('start getSearchCoinList');
+  if (!props.searchValue) {
+    getCoinList();
+    return;
+  }
+  let cacheData = globalData.searchCoinList?.[props.showChain.code]?.[
+    props.searchValue
+  ] || { list: [], totalRecords: 0, pageNum: 1 };
+  loading.value = coinList.value.length ? false : true;
+  if (cacheData.list.length) {
+    coinList.value = cacheData.list;
+    totalRecords.value = cacheData.totalRecords;
+    pageNum.value = cacheData.pageNum;
+  } else {
+    const fetchData = await getInterFaceData();
+    if (fetchData != "cancel") {
+      if (pageNum.value > 1) {
+        coinList.value.push(...fetchData.list);
+        coinList.value = await coinSort(props.showChain.code, coinList.value);
+      } else {
+        coinList.value = await coinSort(props.showChain.code, fetchData.list);
+      }
+      totalRecords.value = fetchData.totalRecords;
+    } else {
+      finished.value = true;
+    }
+  }
+  loading.value = false;
+  addLoading.value = false;
+  upDatePina(props.showChain.code, coinList.value);
+};
 
-const getInterFaceData = async ()=> {
-	const interfaceData = await baseApi.post(({ api }) => {
-		return {
-			api: api.coinList,
-			onlySend: true,
-			data: {
-				chain: props.showChain.chain,
-				pageNum: pageNum.value,
-				pageSize: 20,
-				queryType: props.showChain.queryType,
-				word: props.searchValue,
-			},
-		};
-	});
-	if(interfaceData.code == 901) return 'cancel'
-	return interfaceData
-}
+const getInterFaceData = async () => {
+  const interfaceData = await baseApi.post(({ api }) => {
+    return {
+      api: api.coinList,
+      onlySend: true,
+      data: {
+        chain: props.showChain.chain,
+        pageNum: pageNum.value,
+        pageSize: 20,
+        queryType: props.showChain.queryType,
+        word: props.searchValue,
+      },
+    };
+  });
+  if (interfaceData.code == 901) return "cancel";
+  return interfaceData;
+};
 
-const onLoad = ()=> {
-	if(coinList.value.length >= totalRecords.value){
-		finished.value = true
-		return
-	}
-	++pageNum.value
-	getSearchCoinList()
-}
+const onLoad = () => {
+  if (coinList.value.length >= totalRecords.value) {
+    finished.value = true;
+    return;
+  }
+  ++pageNum.value;
+  getSearchCoinList();
+};
 
-const upDatePina = (key, list)=> {
-	const allCoinList = globalData.allCoinList
-	allCoinList[key] = list
-	globalData.$patch({
-		allCoinList
-	})
-}
+const upDatePina = (key, list) => {
+  const allCoinList = globalData.allCoinList;
+  allCoinList[key] = list;
+  globalData.$patch({
+    allCoinList,
+  });
+};
 
 onMounted(() => {
-	getCoinList();
+  getCoinList();
 });
 </script>
 
 <style lang="scss" scoped>
 .vant-loading {
-	::v-deep .van-list__loading{
-		display: none;
-	}
+  ::v-deep .van-list__loading {
+    display: none;
+  }
 }
 </style>
