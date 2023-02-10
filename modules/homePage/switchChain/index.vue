@@ -17,7 +17,7 @@
 				</div>
 				<div v-for="item,index in coinTypeArray" :key="item.code">
 					<div v-if="index == chooseIndex">
-						<HomeCoinList :showChain="coinTypeArray[chooseIndex]" :searchValue="searchVal"></HomeCoinList>
+						<CoinList :showChain="coinTypeArray[chooseIndex]" :searchValue="searchVal"></CoinList>
 					</div>
 				</div>
 			</div>
@@ -26,6 +26,8 @@
 </template>
 
 <script setup>
+// import CoinList from "./coinList.vue";
+import CoinList from "./coinList.vue";
 import { chainList } from "~~/helper/chainInfo";
 import useGlobalData from "~~/store/useGlobalData";
 

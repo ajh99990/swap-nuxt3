@@ -3,7 +3,7 @@
 		<div class="relative">
 			<p class="text-body text-size-14px font-500 my-20px">{{ showChain.title }}</p>
 			<div v-if="loading" class="flex justify-center items-center h-439px w-280px absolute left-0 top-0">
-				<LoadingJson />
+				<Loading />
 			</div>
 			<div class="h-439px overflow-y-auto vant-loading hidder-scrollbar">
 				<!-- <van-list :finished="finished" :finished-text="coinList.length >= 7 ? $t('noData') : ''" @load="onLoad"> -->
@@ -21,7 +21,7 @@
 						</p>
 						<p class="flex w-120px flex-col items-end absolute top-0.5px right-0">
 							<p class="truncate text-body font-500 text-size-15px leading-18px text-right mb-5px max-w-98px">{{ item.totalAmount }}</p>
-							<!-- <p v-if=" !isNaN(dataObj.coinDollar)" class="truncate text-minor text-size-11px leading-13px font-500 text-right max-w-98px">${{ dataObj.coinDollar == 0 ?'0.00': dataObj.coinDollar}}</p> -->
+							<p class="truncate text-minor text-size-11px leading-13px font-500 text-right max-w-98px">${{ item.balance == 0 ?'0.00': item.balance}}</p>
 						</p>
 					</div>
 				</van-list>
@@ -34,8 +34,9 @@
 import useGlobalData from "~~/store/useGlobalData";
 import useBaseApi from "~~/api/useBaseApi";
 import { chainInfo } from "~~/helper/chainInfo";
-import { simplifyToken } from "~~/modules/common";
-import {coinSort} from "~~/modules/coinList/index"
+import { simplifyToken } from "~~/helper/common";
+import { coinSort } from "./orderByCoin"
+import { all } from "axios";
 
 const baseApi = useBaseApi();
 const globalData = useGlobalData();
@@ -69,20 +70,19 @@ watch(
 );
 
 const getCoinList = async ()=> {
-	console.log('start getCoinList');
+	// console.log('start getCoinList');
 	finished.value = true
 	coinList.value = globalData.allCoinList?.[props.showChain.code] || [];
 	loading.value = coinList.value.length ? false : true;
 	const fetchData = await getInterFaceData()
 	totalRecords.value = fetchData.totalRecords;
-	await coinSort(props.showChain.code, fetchData.list)
-	coinList.value = fetchData.list
+	coinList.value = await coinSort(props.showChain.code, fetchData.list)
 	loading.value = false
-	console.log('getCoinList done');
+	// console.log('getCoinList done');
 }
 
 const getSearchCoinList = async ()=> {
-	console.log('start getSearchCoinList');
+	// console.log('start getSearchCoinList');
 	if(!props.searchValue){
 		getCoinList()
 		return
@@ -98,17 +98,18 @@ const getSearchCoinList = async ()=> {
 		if(fetchData != 'cancel'){
 			if(pageNum.value > 1){
 				coinList.value.push(...fetchData.list)
+				coinList.value = await coinSort(props.showChain.code, coinList.value)
 			} else {
-				coinList.value = fetchData.list;
+				coinList.value = await coinSort(props.showChain.code, fetchData.list)
 			}
 			totalRecords.value = fetchData.totalRecords
 		} else {
 			finished.value = true
 		}
-		console.log('getSearchCoinList done');
 	}
 	loading.value = false
 	addLoading.value = false
+	upDatePina(props.showChain.code, coinList.value)
 }
 
 const getInterFaceData = async ()=> {
@@ -130,14 +131,20 @@ const getInterFaceData = async ()=> {
 }
 
 const onLoad = ()=> {
-	console.log('onLoad')
-	console.log(coinList.value.length, totalRecords.value);
 	if(coinList.value.length >= totalRecords.value){
 		finished.value = true
 		return
 	}
 	++pageNum.value
 	getSearchCoinList()
+}
+
+const upDatePina = (key, list)=> {
+	const allCoinList = globalData.allCoinList
+	allCoinList[key] = list
+	globalData.$patch({
+		allCoinList
+	})
 }
 
 onMounted(() => {

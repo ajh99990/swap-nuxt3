@@ -1,5 +1,5 @@
 import TronEntry from "./TronEntry.vue"
-import type { TransferStation, ProcessManager, Transferable } from "@/plugins/processManager/scheduler"
+import type { TransferStation, ProcessManager, Transferable } from "~~/plugins/processManager/scheduler"
 import { ProcessNames } from "~~/helper/enum"
 import useAccumulator from "./useAccumulator"
 

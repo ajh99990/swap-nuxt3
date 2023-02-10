@@ -1,4 +1,4 @@
-import type { ProcessManager } from "@/plugins/processManager/scheduler"
+import type { ProcessManager } from "~~/plugins/processManager/scheduler"
 import { ProcessNames } from "@/helper/enum"
 import useEth from "./useEth"
 import useTron from "./useTron"

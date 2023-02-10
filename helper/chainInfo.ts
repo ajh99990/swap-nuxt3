@@ -1,6 +1,31 @@
+interface ChainMap {
+  [x:string ]:ChainInfo,
+}
 
+export interface ChainInfo{
+  fullName: string,
+  chainId?: string,
+  defaultTrade:Coins[],
+  rpc: string,
+  lightIcon: string,
+  darkIcon: string,
+  coinUnit: string,
+  scanAddress: string
+}
 
-export const chainInfo:any = {
+interface Coins{
+  type: string,
+  chain: string,
+  symbol: string,
+  token: string,
+  decimals: number,
+  logo: string,
+  amount: string,
+  balance: string,
+  totalAmount: string,
+}
+
+export const chainInfo:ChainMap = {
   bsc:{
       fullName: 'BNB Chain',
       chainId: '56',
@@ -265,7 +290,10 @@ export const chainInfo:any = {
       scanAddress: 'https://www.oklink.com/en/okc/tx/'
   } 
 }
-export const platformsValue = {
+interface PlatformsValue {
+
+}
+export const platformsValue: PlatformsValue = {
     pancake: 'Pancakeswap',
     biswap: 'Biswap',
     mdex: "Mdex",
@@ -292,7 +320,17 @@ export const platformsValue = {
     luaswap: "LuaSwap",
     verseswap: 'VerseSwap'
 }
-export function chainList () {
+
+interface LeftCoin {
+  lightIcon: string,
+  darkIcon: string,
+  title: string,
+  code: string,
+  queryType: string,
+  chain: any
+}
+
+export function chainList ():LeftCoin[] {
     const { t } = useI18n()
     return [
         {
@@ -300,7 +338,6 @@ export function chainList () {
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/history.png",
           title: t("historical"),
           code: "history",
-          // leftCode: t("historys"),
           queryType: 'history',
           chain: null
         },
@@ -309,7 +346,6 @@ export function chainList () {
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/allCoin.png",
           title: t("allCoin"),
           code: "allChain",
-          // leftCode: t("allCoin"),
           queryType: 'allChain',
           chain: null
         },
@@ -318,7 +354,6 @@ export function chainList () {
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/bsc.png",
           title: 'BNB Chain',
           code: "bsc",
-          // leftCode: 'BNB Chain',
           queryType: 'chain',
           chain: 'bsc'
         },
@@ -327,7 +362,6 @@ export function chainList () {
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/eth.png",
           title: 'Ethereum',
           code: "eth",
-          // leftCode: 'Ethereum',
           queryType: 'chain',
           chain: 'eth'
         },
@@ -336,7 +370,6 @@ export function chainList () {
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/polygon.png",
           title: 'Polygon',
           code: "polygon",
-          // leftCode: 'Polygon',
           queryType: 'chain',
           chain: 'polygon'
         },
@@ -345,7 +378,6 @@ export function chainList () {
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/tron.png",
           title: "Tron",
           code: "tron",
-          // leftCode: "Tron",
           queryType: 'chain',
           chain: 'tron'
         },
@@ -354,7 +386,6 @@ export function chainList () {
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/arbitrum.png",
           title: "Arbitrum",
           code: "arbitrum",
-          // leftCode: "Arbitrum",
           queryType: 'chain',
           chain: 'arbitrum'
         },
@@ -363,7 +394,6 @@ export function chainList () {
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/optimistic.png",
           title: "Optimism",
           code: "optimistic",
-          // leftCode: "Optimism",
           queryType: 'chain',
           chain: 'optimistic'
         },
@@ -372,7 +402,6 @@ export function chainList () {
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/heco.png",
           title: "Heco",
           code: "heco",
-          // leftCode: "Heco",
           queryType: 'chain',
           chain: 'heco'
         },
@@ -381,10 +410,9 @@ export function chainList () {
           darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/okex.png",
           title: "OKX",
           code: "okex",
-          // leftCode: "OKX",
           queryType: 'chain',
           chain: 'okex'
         },
-  ]
+    ]
 }
     

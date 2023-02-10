@@ -1,6 +1,6 @@
 import nameMappingComposable from "@/processManagers"
 import { ProcessNames } from "@/helper/enum"
-import type { ProcessManager,Transferable } from "@/plugins/processManager/scheduler"
+import type { ProcessManager,Transferable } from "~~/plugins/processManager/scheduler"
 
 export function isTransfer(pm:unknown): pm is Transferable {
   return (<Transferable>pm).transferTo !== undefined && (<Transferable>pm).transferFrom !== undefined

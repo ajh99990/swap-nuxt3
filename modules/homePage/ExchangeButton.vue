@@ -1,5 +1,7 @@
 <template>
-	<van-button class="w-345px m-auto mt-16px" type="primary" @click="exchange">{{ errorText ? errorText : buttonText }}</van-button>
+	<div class="mt-16px">
+		<van-button class="w-345px m-auto" type="primary" @click="exchange">{{ errorText ? errorText : buttonText }}</van-button>
+	</div>
 </template>
 
 <script setup>

@@ -1,6 +1,6 @@
 import EthEntry from "./EthEntry.vue"
 import type { Ref} from "vue"
-import type { ProcessManager, TransferStation,Transferable } from "@/plugins/processManager/scheduler"
+import type { ProcessManager, TransferStation,Transferable } from "~~/plugins/processManager/scheduler"
 import { ProcessNames } from "~~/helper/enum"
 import useAccumulator from "./useAccumulator"
 

@@ -1,4 +1,4 @@
-import { defineService } from "~~/modules/service"
+import { defineService } from "~~/helper/service"
 import { judgePlatform, postMessageAppCallback } from "~~/helper/postMessage"
 
 let token:string
@@ -22,9 +22,6 @@ export default defineService('baseApi', {
       coinList: 'swaps/query/coinType/new',//获取币种列表
       getCoinPrice: '/swaps/getCoinPrice', //获取用户对应币的余额
       // getChainList: "swaps/getChain",//获取当前项目支持的链
-      // chainList: "chain/list",//链列表
-      // tokens: "chain/{chainId}/tokens",//链上所有代币组成的列表
-      // buy:"buy" //购买代币
     }
   },
   address: {
@@ -37,7 +34,7 @@ export default defineService('baseApi', {
   },
   setup(instance){
     instance.interceptors.request.use(function (config) {
-      console.log("打印日志",config.url)
+      // console.log("打印日志",config.url)
       return config;
     })
   }

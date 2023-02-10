@@ -2,21 +2,22 @@
 	<div>
 		<div class="h-336px relative">
 			<div id="windowUp">
-				<HomeWindowesWindow :class=" order ? '' : 'translate-y-170px' " class="transform duration-400" :coinData="tradingPair[0]" @showCoinList="showCoinList" />
+				<Window :class=" order ? '' : 'translate-y-170px' " class="transform duration-400" :coinData="tradingPair[0]" @showCoinList="showCoinList" />
 			</div>
 			<div id="windowDown">
-				<HomeWindowesWindow :class=" order ? '' : '-translate-y-170px' " class="transform duration-400 mt-4px" :coinData="tradingPair[1]" @showCoinList="showCoinList" />
+				<Window :class=" order ? '' : '-translate-y-170px' " class="transform duration-400 mt-4px" :coinData="tradingPair[1]" @showCoinList="showCoinList" />
 			</div>
-			<HomeWindowesSwitchWindowIcon @click="switchTrade" class="w-34px absolute top-0 z-10 left-0 right-0 bottom-0 m-auto" />
+			<SwitchIcon @click="switchTrade" class="w-34px absolute top-0 z-10 left-0 right-0 bottom-0 m-auto" />
 		</div>
-		<div class="mt-16px">
-			<HomeExchangeButton />
-		</div>
-		<HomeCoinListSwitchChain :popupState="popupState" />
+		<SwitchChain :popupState="popupState" />
 	</div>
 </template>
 
 <script setup>
+import Window from "./Window.vue";
+import SwitchIcon from "./SwitchIcon.vue";
+import SwitchChain from "../switchChain/index.vue";
+
 import { chainInfo } from "~~/helper/chainInfo";
 
 const tradingPair = chainInfo["bsc"].defaultTrade;

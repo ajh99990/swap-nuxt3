@@ -19,6 +19,7 @@ export default defineConfig({
       "./pages/**/*.vue",
       "./plugins/**/*.{js,ts}",
       "./app.vue",
+      "./modules/**/*.vue"
     ],
   },
   scan: true,
