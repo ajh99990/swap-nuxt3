@@ -9,7 +9,9 @@
 			</div>
 			<SwitchIcon @click="switchTrade" class="w-34px absolute top-0 z-10 left-0 right-0 bottom-0 m-auto" />
 		</div>
-		<SwitchChain :popupState="popupState" />
+		<PopUps propHeight="600px" popupTitle="选择币种" :showState="popupState" @closePropUp="closePropUp">
+			<SwitchChain ref="switchChain" :openChain="openChain" />
+		</PopUps>
 	</div>
 </template>
 
@@ -17,10 +19,11 @@
 import Window from "./Window.vue";
 import SwitchIcon from "./SwitchIcon.vue";
 import SwitchChain from "../switchChain/index.vue";
+import useGlobalData from "~~/store/useGlobalData";
 
 import { chainInfo } from "~~/helper/chainInfo";
-
-const tradingPair = chainInfo["bsc"].defaultTrade;
+const globalData = useGlobalData();
+const tradingPair = chainInfo[globalData.presentChain].defaultTrade;
 
 const order = ref(true);
 watch(
@@ -45,8 +48,14 @@ const cssAnimation = () => {
 };
 
 const popupState = ref(false);
-const showCoinList = () => {
+const openChain = ref(globalData.presentChain);
+const showCoinList = (chain) => {
 	popupState.value = true;
+	openChain.value = chain;
+};
+
+const closePropUp = () => {
+	popupState.value = false;
 };
 </script>
 

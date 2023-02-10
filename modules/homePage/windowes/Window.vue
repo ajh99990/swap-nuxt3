@@ -4,7 +4,7 @@
         ? 'rounded-t-12px pt-12px pb-20px'
         : 'rounded-b-12px pt-20px pb-12px'
     ">
-		<div @click="switchCoin" class="flex justify-between items-center w-319px h-46px bg-[#F7FAFF] px-8px rounded-8px">
+		<div @click="switchCoin(coinData.chain)" class="flex justify-between items-center w-319px h-46px bg-[#F7FAFF] px-8px rounded-8px">
 			<p class="text-size-14px text-[#191E35] leading-22px font-500">{{ coinData.type == "pay" ? $t("windowSell") : $t("windowBuy") }}</p>
 			<div class="relative flex">
 				<Images :logo="coinData.logo" logoWidth="30px" :specialStyle="true" :logoName="coinData.symbol.toLocaleUpperCase()" :smallCoin="false" class="mr-8px flex-shrink-0" />
@@ -47,8 +47,8 @@ const props = defineProps({
 });
 const emits = defineEmits(["showCoinList"]);
 
-const switchCoin = () => {
-	emits("showCoinList");
+const switchCoin = (chain) => {
+	emits("showCoinList", chain);
 };
 
 const allIn = () => {};
