@@ -10,7 +10,7 @@
 			<SwitchIcon @click="switchTrade" class="w-34px absolute top-0 z-10 left-0 right-0 bottom-0 m-auto" />
 		</div>
 		<PopUps propHeight="600px" popupTitle="选择币种" :showState="popupState" @closePropUp="closePropUp">
-			<SwitchChain ref="switchChain" :openChain="openChain" />
+			<SwitchChain :openChain="openChain" />
 		</PopUps>
 	</div>
 </template>

@@ -16,7 +16,7 @@
 			</div>
 			<div v-for="item,index in coinTypeArray" :key="item.code">
 				<div v-if="index == chooseIndex">
-					<CoinList :showChain="coinTypeArray[chooseIndex]" :searchValue="searchVal"></CoinList>
+					<CoinList :showChain="coinTypeArray[chooseIndex]" :searchValue="searchVal" />
 				</div>
 			</div>
 		</div>
