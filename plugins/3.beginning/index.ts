@@ -19,6 +19,8 @@ export default defineNuxtPlugin((NuxtApp) => {
       presentChain = Object.keys(appChainsInfo)[0]
       privateKey = true
     }
+
+    
     
     const ownerAddress = await useBeginETh(presentChain)
     const ownerTronAddress = await useBeginTron()

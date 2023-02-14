@@ -1,6 +1,6 @@
 import type { ComputedRef, Ref } from "vue"
 import type { Calculator } from "@/components/calculator/interface"
-import type { ManagerScheduler } from "~~/plugins/processManager/scheduler" 
+import type { ManagerScheduler } from "~~/plugins/2.processManager/scheduler" 
 
 declare module '#app' {
   interface NuxtApp {

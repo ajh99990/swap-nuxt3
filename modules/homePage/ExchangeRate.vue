@@ -10,7 +10,7 @@
 	</div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 const order = ref(true);
 const exchangePrice = () => {};
 const refreshPrice = (fun: String) => {};
