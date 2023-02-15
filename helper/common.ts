@@ -17,3 +17,4 @@ export const getStringNum = (number:number|string, decimals:number = 8) => {
     return numString
   }
 }
+

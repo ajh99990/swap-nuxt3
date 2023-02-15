@@ -45,12 +45,9 @@ const globalData = useGlobalData();
 const props = defineProps({
 	showChain: Object,
 	searchValue: String,
-  order: Boolean,
-  windowType: String
 });
 
 const tradingPair = computed(() => {
-	console.log(props.showChain);
 	return useNuxtApp().$managerScheduler.tradingPair.value;
 });
 
@@ -168,8 +165,10 @@ const upDatePina = (key, list) => {
 const { switchCoin } = useNuxtApp().$managerScheduler
 
 const emit = defineEmits(["closePropUp"]);
+const order = inject('order')
+const windowType = inject('windowType')
 const chooseItem = (item) => {
-  switchCoin(item, props.order, props.windowType)
+  switchCoin(item, order.value, windowType.value)
   emit('closePropUp')
 };
 

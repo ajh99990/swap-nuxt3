@@ -20,7 +20,7 @@ export interface Coins{
   token: string,
   decimals: number,
   logo: string,
-  amount: string,
+  amount: string|number,
 }
 
 export const chainInfo:ChainMap = {

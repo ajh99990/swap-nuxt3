@@ -16,7 +16,7 @@
 			</div>
 			<div v-for="item,index in coinTypeArray" :key="item.code">
 				<div v-if="index == chooseIndex">
-					<CoinList :showChain="coinTypeArray[chooseIndex]" :searchValue="searchVal" :order="props.order" :windowType="props.windowType" @closePropUp="closePropUp" />
+					<CoinList :showChain="coinTypeArray[chooseIndex]" :searchValue="searchVal" @closePropUp="closePropUp" />
 				</div>
 			</div>
 		</div>
@@ -32,8 +32,6 @@ const globalData = useGlobalData();
 
 const props = defineProps({
 	openChain: String,
-	order: Boolean,
-	windowType: String,
 });
 
 const searchVal = ref("");

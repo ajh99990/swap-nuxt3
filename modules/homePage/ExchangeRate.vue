@@ -13,7 +13,7 @@
 <script setup>
 const order = ref(true);
 const exchangePrice = () => {};
-const refreshPrice = (fun: String) => {};
+const refreshPrice = () => {};
 </script>
 
 <style scoped>

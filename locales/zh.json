@@ -1,7 +1,7 @@
 {
   "windowSell": "支付",
   "windowBuy": "接收",
-  "windowBalance": "余额:",
+  "windowBalance": "余额: ",
   "windowMax": "全部",
   "tradingBoxSwap": "兑换",
   "homeRecently": "最近兑换",
@@ -9,5 +9,7 @@
   "historys": "历史币种",
   "allCoin": "全部币种",
   "contractAddress": "请输入币种名称或合约地址",
-  "noData": "-我是有底线的-"
+  "noData": "-我是有底线的-",
+  "searching": "寻找最优通道...",
+  "switchCorresponding": "请切换至该链钱包"
 }

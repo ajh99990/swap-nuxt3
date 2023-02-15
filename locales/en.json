@@ -1,7 +1,7 @@
 {
   "windowSell": "Sell",
   "windowBuy": "Buy",
-  "windowBalance": "Balance:",
+  "windowBalance": "Balance: ",
   "windowMax": "Max",
   "tradingBoxSwap": "Swap",
   "homeRecently": "Exchange History",
@@ -9,5 +9,7 @@
   "historys": "History",
   "allCoin": "All",
   "contractAddress": "Please enter the token or contract address",
-  "noData": "-No data available-"
+  "noData": "-No data available-",
+  "searching": "Searching best channel...",
+  "switchCorresponding": "Switch to the corresponding address"
 }

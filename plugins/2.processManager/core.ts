@@ -1,4 +1,5 @@
 import { Coin } from "./scheduler";
+import { Coins, } from "~~/helper/chainInfo"
 import useGlobalData from "~~/store/useGlobalData"
 import { addChain } from "~~/helper/eth";
 
@@ -23,4 +24,8 @@ export function changeChain (chain:string) {
       presentChain: chain
     })
   }
+}
+
+export async function swapsQuery (payCoin:Coins,receiveCoin:Coins) {
+    
 }

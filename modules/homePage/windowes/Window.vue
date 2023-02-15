@@ -1,35 +1,35 @@
 <template>
-	<div v-if="windowData" class="w-343px h-166px bg-[#F2F5FE] px-12px window" :class="
-      windowData.type == 'pay'
+	<div v-if="coinData" class="w-343px h-166px bg-[#F2F5FE] px-12px window" :class="
+      coinData.type == 'pay'
         ? 'rounded-t-12px pt-12px pb-20px'
         : 'rounded-b-12px pt-20px pb-12px'
     ">
-		<div @click="switchCoin(windowData.chain, windowData.type)" class="flex justify-between items-center w-319px h-46px bg-[#F7FAFF] px-8px rounded-8px">
-			<p class="text-size-14px text-[#191E35] leading-22px font-500">{{ windowData.type == "pay" ? $t("windowSell") : $t("windowBuy") }}</p>
+		<div @click="switchCoin(coinData.chain, coinData.type)" class="flex justify-between items-center w-319px h-46px bg-[#F7FAFF] px-8px rounded-8px">
+			<p class="text-size-14px text-[#191E35] leading-22px font-500">{{ coinData.type == "pay" ? $t("windowSell") : $t("windowBuy") }}</p>
 			<div class="relative flex">
-				<Images :logo="windowData.logo" logoWidth="30px" :specialStyle="true" :logoName="windowData.symbol.toLocaleUpperCase()" :smallCoin="false" class="mr-8px flex-shrink-0" />
+				<Images :logo="coinData.logo" logoWidth="30px" :specialStyle="true" :logoName="coinData.symbol.toLocaleUpperCase()" :smallCoin="false" class="mr-8px flex-shrink-0" />
 				<span class="flex flex-col">
-					<span :class="windowData.symbol.length > 4 ? 'text-14px' : 'text-16px'" class="font-400 truncate max-w-120px overflow-hidden pr-30px">{{ windowData.symbol.toLocaleUpperCase() }}</span>
+					<span :class="coinData.symbol.length > 4 ? 'text-14px' : 'text-16px'" class="font-400 truncate max-w-120px overflow-hidden pr-30px">{{ coinData.symbol.toLocaleUpperCase() }}</span>
 					<span :class="
-              chainInfo[windowData.chain].fullName.length > 4
+              chainInfo[coinData.chain].fullName.length > 4
                 ? 'text-11px'
                 : 'text-14px'
-            " class="h-13px text-minor mt-3px truncate max-w-120px overflow-hidden">{{ chainInfo[windowData.chain].fullName }}</span>
+            " class="h-13px text-minor mt-3px truncate max-w-120px overflow-hidden">{{ chainInfo[coinData.chain].fullName }}</span>
 				</span>
 				<img src="@/assets/images/windowSelect.png" class="absolute top-6px right-5px w-10px h-6px" />
 			</div>
 		</div>
 		<div class="flex items-center justify-between w-303px h-48px pb-1px m-auto border-b-1px border-solid border-[#DBE0EE]">
-			<van-field :class="'fieldStyle' + windowData.type" class="fieldStyle" v-model="windowData.amount" clearable @clear="clearField" :formatter="formatter" @input="inputValue" type="number" />
+			<van-field :class="'fieldStyle' + coinData.type" class="fieldStyle" v-model="coinData.amount" clearable @clear="clearField" :formatter="formatter" @input="inputValue" type="number" />
 		</div>
 		<div class="relative top-8px flex justify-between">
 			<p class="text-size-14px flex text-[#909ab5] px-8px">
-				<span>${{ coinBalance }}</span>
+				<span>$ {{ coinBalance }}</span>
 			</p>
 			<p class="text-size-14px flex text-[#909ab5]">
 				<span class="text-minor font-400">{{ $t("windowBalance") }}</span>
 				<span class="text-minor font-400 pl-4px pr-8px">{{ totalAmount }}</span>
-				<span v-if="windowData.type == 'pay'" class="pr-8px text-primary font-500 text-[#597bf6]" @click="allIn">{{ $t("windowMax") }}</span>
+				<span v-if="coinData.type == 'pay'" class="pr-8px text-primary font-500 text-[#597bf6]" @click="allIn">{{ $t("windowMax") }}</span>
 			</p>
 		</div>
 	</div>
@@ -46,27 +46,10 @@ const props = defineProps({
 	coinData: Object,
 });
 
-const windowData = ref({});
-
-watch(
-	() => props.coinData,
-	(newVal) => {
-		windowData.value = newVal;
-	},
-	{ immediate: true }
-);
-
-// watch(
-// 	() => ,
-// 	async () => {
-//
-// 	}
-// );
-
 const coinBalance = ref("0.00");
 watchEffect(async () => {
-	if (Number(windowData.value.amount)) {
-		let Str = `${windowData.value.chain}_${windowData.value.token}`;
+	if (Number(props.coinData.amount)) {
+		let Str = `${props.coinData.chain}_${props.coinData.token}`;
 		const usdtReta = await baseApi.post(({ api }) => {
 			return {
 				api: api.getCoinPrice,
@@ -74,10 +57,11 @@ watchEffect(async () => {
 				data: [Str],
 			};
 		});
-		coinBalance.value = getStringNum(
-			Number(windowData.value.amount) * usdtReta[Str],
+		const number = getStringNum(
+			Number(props.coinData.amount) * usdtReta[Str],
 			2
 		);
+		coinBalance.value = number == "NaN" ? "--" : number;
 	} else {
 		coinBalance.value = "0.00";
 	}
@@ -90,21 +74,27 @@ watchEffect(async () => {
 	);
 });
 
-const emits = defineEmits(["showCoinList"]);
+const emits = defineEmits(["showCoinList", "getInputValue"]);
 const switchCoin = (chain, windowType) => {
 	emits("showCoinList", chain, windowType);
 };
 
 const allIn = () => {
-	windowData.value.amount = totalAmount.value;
+	// coinData.value.amount = totalAmount.value;
 };
 const formatter = (value) => {
-	const num = windowData.value.decimals > 8 ? 8 : windowData.value.decimals;
-	const reg = new RegExp("^(-)*(\\d+)\\.(\\d{1," + num + "}).*$");
-	return value.replace(reg, "$1$2.$3");
+	if (value) {
+		const num = props.coinData.decimals > 8 ? 8 : props.coinData.decimals;
+		const reg = new RegExp("^(-)*(\\d+)\\.(\\d{1," + num + "}).*$");
+		return value.replace(reg, "$1$2.$3");
+	} else {
+		return "";
+	}
 };
 const clearField = () => {};
-const inputValue = () => {};
+const inputValue = (e) => {
+	emits("getInputValue", props.coinData.type, e.target.value);
+};
 </script>
 
 <style lang="scss" scoped>

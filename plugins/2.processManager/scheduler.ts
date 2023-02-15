@@ -1,6 +1,6 @@
 import type { ComputedRef, Ref, DefineComponent } from "vue"
 import { chainInfo, Coins, } from "~~/helper/chainInfo"
-import { trimCoin, changeChain } from "./core"
+import { trimCoin, changeChain, swapsQuery } from "./core"
 
 export interface Coin {
   balance: string | number,
@@ -39,11 +39,31 @@ export default function () {
     }
   }
 
-
+   //更换交易对中代币的amount,并请求接口获取信息
+   const giveAmount = (order:boolean, windowType:string, amount:string|number) => {
+    if(windowType == 'pay'){
+      if(order){
+        tradingPair.value[0].amount = amount
+        swapsQuery(tradingPair.value[0],tradingPair.value[1])
+      } else {
+        tradingPair.value[1].amount = amount
+        swapsQuery(tradingPair.value[1],tradingPair.value[0])
+      }
+    } else {
+      if(order){
+        tradingPair.value[1].amount = amount
+        swapsQuery(tradingPair.value[0],tradingPair.value[1])
+      } else {
+        tradingPair.value[0].amount = amount
+        swapsQuery(tradingPair.value[1],tradingPair.value[0])
+      }
+    }
+  }
 
   return {
     getNowChain,
     switchCoin,
+    giveAmount,
 
     tradingPair
   }
