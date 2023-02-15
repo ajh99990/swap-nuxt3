@@ -1,0 +1,26 @@
+import { Coin } from "./scheduler";
+import useGlobalData from "~~/store/useGlobalData"
+import { addChain } from "~~/helper/eth";
+
+
+export function trimCoin (coin:Coin, windowType:string){
+  return {
+    type: windowType,
+    chain: coin.chain,
+    symbol: coin.coinName,
+    token: coin.token,
+    decimals: coin.decimals,
+    logo: coin.logo,
+    amount: "",
+  }
+}
+
+export function changeChain (chain:string) {
+  const globalData = useGlobalData()
+  if(chain != globalData.presentChain && chain != 'tron'){
+    addChain(chain)
+    globalData.$patch({
+      presentChain: chain
+    })
+  }
+}

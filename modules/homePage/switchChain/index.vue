@@ -16,7 +16,7 @@
 			</div>
 			<div v-for="item,index in coinTypeArray" :key="item.code">
 				<div v-if="index == chooseIndex">
-					<CoinList :showChain="coinTypeArray[chooseIndex]" :searchValue="searchVal" />
+					<CoinList :showChain="coinTypeArray[chooseIndex]" :searchValue="searchVal" :order="props.order" :windowType="props.windowType" @closePropUp="closePropUp" />
 				</div>
 			</div>
 		</div>
@@ -32,12 +32,12 @@ const globalData = useGlobalData();
 
 const props = defineProps({
 	openChain: String,
+	order: Boolean,
+	windowType: String,
 });
 
 const searchVal = ref("");
-const chooseIndex = computed(() => {
-	return chainList().findIndex((item) => item.code == props.openChain);
-});
+const chooseIndex = ref(2);
 const coinTypeArray = ref([]);
 
 const clearInput = () => {};
@@ -50,7 +50,15 @@ onMounted(() => {
 		globalData.appChainsInfo.length < 3
 			? chainList().filter((item, index) => index != 1)
 			: chainList();
+	chooseIndex.value = chainList().findIndex(
+		(item) => item.code == props.openChain
+	);
 });
+
+const emit = defineEmits(["closePropUp"]);
+const closePropUp = () => {
+	emit("closePropUp");
+};
 </script>
 
 <style lang="scss" scoped>

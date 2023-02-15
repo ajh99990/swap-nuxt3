@@ -13,7 +13,7 @@ export interface ChainInfo{
   scanAddress: string
 }
 
-interface Coins{
+export interface Coins{
   type: string,
   chain: string,
   symbol: string,

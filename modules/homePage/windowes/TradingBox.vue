@@ -10,7 +10,7 @@
 			<SwitchIcon @click="switchTrade" class="w-34px absolute top-0 z-10 left-0 right-0 bottom-0 m-auto" />
 		</div>
 		<PopUps propHeight="600px" popupTitle="选择币种" :showState="popupState" @closePropUp="closePropUp">
-			<SwitchChain :openChain="openChain" />
+			<SwitchChain :openChain="openChain" :order="order" :windowType="windowType" @closePropUp="closePropUp" />
 		</PopUps>
 	</div>
 </template>
@@ -20,21 +20,29 @@ import Window from "./Window.vue";
 import SwitchIcon from "./SwitchIcon.vue";
 import SwitchChain from "../switchChain/index.vue";
 import useGlobalData from "~~/store/useGlobalData";
+import { changeChain } from "~~/plugins/2.processManager/core";
 
-import { chainInfo } from "~~/helper/chainInfo";
 const globalData = useGlobalData();
-const tradingPair = chainInfo[globalData.presentChain].defaultTrade;
+
+const tradingPair = computed(() => {
+	return useNuxtApp().$managerScheduler.tradingPair.value;
+});
 
 const order = ref(true);
 watch(
 	() => order.value,
 	() => {
-		tradingPair[0].type = order.value ? "pay" : "receive";
-		tradingPair[1].type = order.value ? "receive" : "pay";
+		tradingPair.value[0].type = order.value ? "pay" : "receive";
+		tradingPair.value[1].type = order.value ? "receive" : "pay";
 	}
 );
 const switchTrade = () => {
 	order.value = !order.value;
+	if (order.value) {
+		changeChain(tradingPair.value[0].chain);
+	} else {
+		changeChain(tradingPair.value[1].chain);
+	}
 	cssAnimation();
 };
 const cssAnimation = () => {
@@ -47,11 +55,13 @@ const cssAnimation = () => {
 	}, 400);
 };
 
+const windowType = ref("");
 const popupState = ref(false);
 const openChain = ref(globalData.presentChain);
-const showCoinList = (chain) => {
+const showCoinList = (chain, type) => {
 	popupState.value = true;
 	openChain.value = chain;
+	windowType.value = type;
 };
 
 const closePropUp = () => {
