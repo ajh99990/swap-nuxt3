@@ -78,7 +78,7 @@ const closePropUp = () => {
 const { giveAmount } = useNuxtApp().$managerScheduler;
 const exchangeButton = ref();
 const getInputValue = (type, value) => {
-	giveAmount(order, type, value);
+	giveAmount(order.value, type, value);
 	exchangeButton.value.exchange(order.value, type, value);
 };
 

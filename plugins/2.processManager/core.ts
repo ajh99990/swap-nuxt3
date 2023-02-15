@@ -2,7 +2,7 @@ import { Coin } from "./scheduler";
 import { Coins, } from "~~/helper/chainInfo"
 import useGlobalData from "~~/store/useGlobalData"
 import { addChain } from "~~/helper/eth";
-
+import useBaseApi from "~~/api/useBaseApi";
 
 export function trimCoin (coin:Coin, windowType:string){
   return {
@@ -27,5 +27,7 @@ export function changeChain (chain:string) {
 }
 
 export async function swapsQuery (payCoin:Coins,receiveCoin:Coins) {
-    
+  const baseApi = useBaseApi()
+  console.log(payCoin, receiveCoin);
+  
 }

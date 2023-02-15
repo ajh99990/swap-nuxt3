@@ -42,6 +42,7 @@ export default function () {
    //更换交易对中代币的amount,并请求接口获取信息
    const giveAmount = (order:boolean, windowType:string, amount:string|number) => {
     if(windowType == 'pay'){
+      console.log('pay');
       if(order){
         tradingPair.value[0].amount = amount
         swapsQuery(tradingPair.value[0],tradingPair.value[1])
@@ -50,6 +51,7 @@ export default function () {
         swapsQuery(tradingPair.value[1],tradingPair.value[0])
       }
     } else {
+      console.log('receive');
       if(order){
         tradingPair.value[1].amount = amount
         swapsQuery(tradingPair.value[0],tradingPair.value[1])
