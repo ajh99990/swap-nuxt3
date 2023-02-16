@@ -162,13 +162,13 @@ const upDatePina = (key, list) => {
 	});
 };
 
-const { switchCoin } = useNuxtApp().$managerScheduler
+const { switchSingleCoin } = useNuxtApp().$managerScheduler
 
 const emit = defineEmits(["closePropUp"]);
 const order = inject('order')
 const windowType = inject('windowType')
 const chooseItem = (item) => {
-  switchCoin(item, order.value, windowType.value)
+  switchSingleCoin(item, order.value, windowType.value)
   emit('closePropUp')
 };
 

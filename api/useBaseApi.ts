@@ -21,6 +21,7 @@ export default defineService('baseApi', {
       delHistorySwap: "swaps/delHistorySwap",//清空首页的最近交易
       coinList: 'swaps/query/coinType/new',//获取币种列表
       getCoinPrice: '/swaps/getCoinPrice', //获取用户对应币的余额
+      queryRate: '/swaps/query/rate/v1', //获取输入框内值对应的金额
       // getChainList: "swaps/getChain",//获取当前项目支持的链
     }
   },

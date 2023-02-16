@@ -9,7 +9,7 @@
 
 <script setup>
 import useGlobalData from "~~/store/useGlobalData";
-import { checkChain, buildParams } from "./common";
+import { checkChain } from "./common";
 
 const globalData = useGlobalData();
 const { t } = useI18n();
@@ -27,12 +27,7 @@ watchEffect(() => {
 	}
 });
 
-const exchange = (order, type, number) => {
-	buildParams(order, type, number);
-};
-defineExpose({
-	exchange,
-});
+const exchange = (order, type, number) => {};
 </script>
 
 <style lang="scss" scoped>
