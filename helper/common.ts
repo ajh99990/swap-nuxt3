@@ -20,7 +20,7 @@ export const getStringNum = (number:number|string, decimals:number = 8) => {
 
 //科学计数转字符串
 export const  scientificString = (param:string|number) => {
-  let strParam = String(param)
+  let strParam:string = String(param)
   let flag = /e/.test(strParam)
   if (!flag) return param
 
@@ -29,8 +29,10 @@ export const  scientificString = (param:string|number) => {
   if (/e-/.test(strParam)) {
     sysbol = false
   }
+
   // 指数
   let index = Number(strParam.match(/\d+$/)[0])
+  
   // 基数
   let basis = strParam.match(/^[\d\.]+/)[0].replace(/\./, '')
 

@@ -105,7 +105,7 @@ export const chainInfo:ChainMap = {
             amount: "",
         },
       ],
-      rpc: 'https://polygon.llamarpc.com',
+      rpc: 'https://polygon-bor.publicnode.com',
       lightIcon: '@/assets/images/home_polygon_l.png',
       darkIcon: '@/assets/images/home_polygon_d.png',
       coinUnit: 'MATIC',
@@ -381,4 +381,7 @@ export function chainList ():LeftCoin[] {
         },
     ]
 }
+
+export const ETHChain:string[] = ['bsc', 'eth', 'polygon', "arbitrum", "optimistic", "heco", "okex"]
+export const TRONChain:string[] = ["tron"]
     

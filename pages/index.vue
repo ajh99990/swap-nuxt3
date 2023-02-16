@@ -3,7 +3,7 @@
 		<TradingBox />
 		<ExchangeRate />
 		<TradeDetails />
-		<History />
+		<!-- <History /> -->
 	</div>
 </template>
 

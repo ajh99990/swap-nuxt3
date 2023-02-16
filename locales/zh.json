@@ -11,5 +11,16 @@
   "contractAddress": "请输入币种名称或合约地址",
   "noData": "-我是有底线的-",
   "searching": "寻找最优通道...",
-  "switchCorresponding": "请切换至该链钱包"
+  "switchCorresponding": "请切换至该链钱包",
+  "bestChannel": "最优通道",
+  "selectChannel": "通道选择",
+  "GasFee": "Gas Fee",
+  "swapTime": "预计用时",
+  "Slippage": "滑点",
+  "youSave": "预计节省",
+  "PriceImpact": "价格影响",
+  "TX": {
+    "Fee": "手续费"
+  },
+  "ReceivingAddress": "收款地址"
 }

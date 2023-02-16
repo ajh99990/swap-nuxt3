@@ -11,5 +11,16 @@
   "contractAddress": "Please enter the token or contract address",
   "noData": "-No data available-",
   "searching": "Searching best channel...",
-  "switchCorresponding": "Switch to the corresponding address"
+  "switchCorresponding": "Switch to the corresponding address",
+  "bestChannel": "The Best Channel",
+  "selectChannel": "channel selection",
+  "GasFee": "Gas Fee",
+  "swapTime": "Act. Swap time",
+  "Slippage": "Slippage",
+  "youSave": "You Save",
+  "PriceImpact": "Price Impact",
+  "TX": {
+    "Fee": "TX fee"
+  },
+  "ReceivingAddress": "Receiving address"
 }
