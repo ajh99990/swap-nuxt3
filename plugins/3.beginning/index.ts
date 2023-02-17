@@ -21,14 +21,15 @@ export default defineNuxtPlugin((NuxtApp) => {
       privateKey = true
     }
 
-    //初始化默认的交易对
-    const { getNowChain } = useNuxtApp().$managerScheduler
-    getNowChain(presentChain)
     //初始化当时类以太的交易环境
     const ownerAddress = await useBeginETh(presentChain)
 
     //默认获取tron的用户地址，并支持tron的交易
     const ownerTronAddress = await useBeginTron()
+
+    //初始化默认的交易对
+    const { getNowChain } = useNuxtApp().$managerScheduler
+    getNowChain(presentChain)
 
     //根据appChainsInfo 判断是否是同一个钱包不是的话清楚币种选择列表
     if (localStorage.appChainsInfo != appChainsInfo) {

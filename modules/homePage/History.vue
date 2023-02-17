@@ -1,5 +1,5 @@
 <template>
-	<div v-if="historyList.length" class="w-343px fixed bottom-45px py-13px">
+	<div v-if="historyList.length && showHistory" class="w-343px fixed bottom-45px py-13px">
 		<div class="flex justify-between py-1">
 			<p class="flex items-center">
 				<span class="text-12px text-minor">{{ $t('homeRecently') }}</span>
@@ -38,6 +38,10 @@ import useGlobalData from "~~/store/useGlobalData"
 const baseApi = useBaseApi()
 const globalData = useGlobalData()
 const historyList = ref([])
+
+const showHistory = computed(()=>{
+	return useNuxtApp().$managerScheduler.showHistory.value
+})
 
 const getRecentList = ()=> {
 	baseApi.get(({ api }) => {

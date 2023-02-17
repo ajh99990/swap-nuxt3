@@ -11,7 +11,8 @@ export default async function (type:string, token:string|string[]) {
     if(token instanceof Array){
       return await getTokenBalanceByBatch(type, token, globalData.ownerAddress)
     } else {
-      return await getBalance(type, '0x000', true, globalData.ownerAddress)
+      const isMaster = token == '0x000'
+      return await getBalance(type, token, isMaster, globalData.ownerAddress)
     }
   }
   if(TRONChain.includes(type)){

@@ -2,10 +2,10 @@
 	<div>
 		<div class="h-336px relative">
 			<div id="windowUp">
-				<Window :class=" order ? '' : 'translate-y-170px' " class="transform duration-400" :coinData="tradingPair[0]" @showCoinList="showCoinList" @getInputValue="getInputValue" />
+				<Window :class=" order ? '' : 'translate-y-170px' " class="transform duration-400" :coinData="tradingPair[0]" :componentIndex="0" @showCoinList="showCoinList" @getInputValue="getInputValue" />
 			</div>
 			<div id="windowDown">
-				<Window :class=" order ? '' : '-translate-y-170px' " class="transform duration-400 mt-4px" :coinData="tradingPair[1]" @showCoinList="showCoinList" @getInputValue="getInputValue" />
+				<Window :class=" order ? '' : '-translate-y-170px' " class="transform duration-400 mt-4px" :coinData="tradingPair[1]" :componentIndex="1" @showCoinList="showCoinList" @getInputValue="getInputValue" />
 			</div>
 			<SwitchIcon @click="switchTrade" class="w-34px absolute top-0 z-10 left-0 right-0 bottom-0 m-auto" />
 		</div>
@@ -23,6 +23,7 @@ import SwitchChain from "../switchChain/index.vue";
 import useGlobalData from "~~/store/useGlobalData";
 import { changeChain } from "~~/plugins/2.processManager/core";
 import ExchangeButton from "./ExchangeButton.vue";
+import { getUseCoin } from "./common";
 
 const globalData = useGlobalData();
 
@@ -35,21 +36,22 @@ watch(
 	{ immediate: true }
 );
 
+const { initData } = useNuxtApp().$managerScheduler;
 const order = ref(true);
 watch(
 	() => order.value,
 	() => {
 		tradingPair.value[0].type = order.value ? "pay" : "receive";
 		tradingPair.value[1].type = order.value ? "receive" : "pay";
+		const payCoin = getUseCoin(tradingPair.value, "pay");
+		changeChain(payCoin.chain);
+		initData();
+		// const tradingPairIndex = order ? 0 : 1;
+		// if (payCoin.amount) getInputValue(tradingPairIndex, "pay", payCoin.amount);
 	}
 );
 const switchTrade = () => {
 	order.value = !order.value;
-	if (order.value) {
-		changeChain(tradingPair.value[0].chain);
-	} else {
-		changeChain(tradingPair.value[1].chain);
-	}
 	cssAnimation();
 };
 const cssAnimation = () => {
@@ -63,12 +65,14 @@ const cssAnimation = () => {
 };
 
 const windowType = ref("");
+const tradingPairIndex = ref("");
 const popupState = ref(false);
 const openChain = ref(globalData.presentChain);
-const showCoinList = (chain, type) => {
+const showCoinList = (chain, type, componentIndex) => {
 	popupState.value = true;
 	openChain.value = chain;
 	windowType.value = type;
+	tradingPairIndex.value = componentIndex;
 };
 
 const closePropUp = () => {
@@ -76,12 +80,12 @@ const closePropUp = () => {
 };
 
 const { giveAmount } = useNuxtApp().$managerScheduler;
-const getInputValue = (type, value) => {
-	giveAmount(order.value, type, value);
+const getInputValue = (tradingPairIndex, type, value) => {
+	giveAmount(tradingPairIndex, type, value);
 };
 
-provide("order", order);
 provide("windowType", windowType);
+provide("tradingPairIndex", tradingPairIndex);
 </script>
 
 <style lang="scss" scoped>

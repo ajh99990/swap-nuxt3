@@ -2,6 +2,7 @@ import type { ComputedRef, Ref, DefineComponent } from "vue"
 import { chainInfo, Coins, } from "~~/helper/chainInfo"
 import { trimCoin, changeChain, integrateParams, integrateDetails, defaultAddress, handleAmount } from "./core"
 import useBaseApi from "~~/api/useBaseApi";
+import { getUseCoin } from "~~/modules/homePage/windowes/common";
 
 export interface Coin {
   balance: string | number,
@@ -34,6 +35,7 @@ export default function () {
   const baseApi = useBaseApi()
 
   const tradingPair:Ref<Coins[]> = ref([])
+  const showHistory:Ref<boolean> = ref(true)
   const showDetail:Ref<boolean> = ref(false)
   const transactionDetails: Ref<Detail> = ref({})
   const slippage: Ref<number> = ref(0.01)
@@ -41,52 +43,41 @@ export default function () {
   const operateType: Ref<string> = ref('')
   const crossIndex: Ref<number> = ref(0)
 
+  const initData = () => {
+    stopQuery()
+    tradingPair.value[0].amount = '' 
+    tradingPair.value[1].amount = ''
+    showDetail.value = false
+    showHistory.value = true
+    transactionDetails.value = {}
+  }
+
   //获取当前默认的交易对
   const getNowChain = (appChainsInfo:string) => {
     tradingPair.value = chainInfo[appChainsInfo].defaultTrade
   } 
 
   //更换交易对中的代币
-  const switchSingleCoin = (coin:Coin , order:boolean, windowType:string) => {
+  const switchSingleCoin = (coin:Coin , tradingPairIndex:number, windowType:string) => {
+    stopQuery()
     const newCoin = trimCoin(coin, windowType)
-
+    tradingPair.value[tradingPairIndex] = newCoin
     if(windowType == 'pay'){
-      if(order){
-        tradingPair.value[0] = newCoin
-      } else {
-        tradingPair.value[1] = newCoin
-      }
-      changeChain(coin.chain)
-    } else {
-      if(order){
-        tradingPair.value[1] = newCoin
-      } else {
-        tradingPair.value[0] = newCoin
-      }
+      changeChain(getUseCoin(tradingPair.value, 'pay').chain)
     }
+    initData()
   }
 
    //更换交易对中代币的amount,并请求接口获取信息
-  const giveAmount = (order:boolean, windowType:string, amount:string|number) => {
+  const giveAmount = (tradingPairIndex:number, windowType:string, amount:string|number) => {
     stopQuery()
     operateType.value = windowType
-    receiveAddress.value = defaultAddress()
-    if(windowType == 'pay'){
-      if(order){
-        tradingPair.value[0].amount = amount
-      } else {
-        tradingPair.value[1].amount = amount
-      }
-    } else {
-      if(order){
-        tradingPair.value[1].amount = amount
-      } else {
-        tradingPair.value[0].amount = amount
-      }
-    }
-    console.log(tradingPair.value);
+    receiveAddress.value = receiveAddress.value ? receiveAddress.value : defaultAddress()
+    tradingPair.value[tradingPairIndex].amount = amount
     if(Number(amount)){
       swapQuery()
+    } else {
+      initData()
     }
   }
 
@@ -118,6 +109,7 @@ export default function () {
           transactionDetails.value = integrateDetails(data, slippage.value, receiveAddress.value)
           inputOtherFiled(data)
           showDetail.value = true
+          showHistory.value = false
           timer = setTimeout(() => {
             getQuery(params, timeout)
           }, timeout);
@@ -127,19 +119,10 @@ export default function () {
   }
 
   const inputOtherFiled = (data:any) => {
-    if(tradingPair.value[0].type == 'pay'){
-      if(operateType.value == 'pay'){
-        tradingPair.value[1].amount = handleAmount(data, operateType.value, tradingPair.value[1].decimals)
-      } else {
-        tradingPair.value[0].amount = handleAmount(data, operateType.value, tradingPair.value[0].decimals)
-      }
-    } else {
-      if(operateType.value == 'pay'){
-        tradingPair.value[0].amount = handleAmount(data, operateType.value, tradingPair.value[0].decimals)
-      } else {
-        tradingPair.value[1].amount = handleAmount(data, operateType.value, tradingPair.value[1].decimals)
-      }
-    }
+    const type = operateType.value == 'pay' ? 'receive' : 'pay'
+    const useCoin = getUseCoin(tradingPair.value, type)
+    const pairIndex = tradingPair.value.findIndex(item => item.type == useCoin.type)
+    tradingPair.value[pairIndex].amount = handleAmount(data, operateType.value, useCoin.decimals)
   }
 
   const stopQuery = () => {
@@ -165,8 +148,10 @@ export default function () {
     stopQuery,
     editSlippage,
     editReceiveAddress,
+    initData,
 
     tradingPair,
+    showHistory,
     showDetail,
     transactionDetails
   }

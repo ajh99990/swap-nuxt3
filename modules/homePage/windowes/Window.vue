@@ -29,7 +29,7 @@
 			<p class="text-size-14px flex text-[#909ab5]">
 				<span class="text-minor font-400">{{ $t("windowBalance") }}</span>
 				<span class="text-minor font-400 pl-4px pr-8px">{{ totalAmount }}</span>
-				<span v-if="coinData.type == 'pay'" class="pr-8px text-primary font-500 text-[#597bf6]" @click="allIn">{{ $t("windowMax") }}</span>
+				<span v-if="coinData.type == 'pay' && coinData.amount != totalAmount" class="pr-8px text-primary font-500 text-[#597bf6]" @click="allIn">{{ $t("windowMax") }}</span>
 			</p>
 		</div>
 	</div>
@@ -40,12 +40,16 @@ import { chainInfo } from "@/helper/chainInfo";
 import useJudgeFun from "../switchChain/judgeFun";
 import { getStringNum } from "~~/helper/common";
 import useBaseApi from "~~/api/useBaseApi";
+import { getDangerNum } from "./common";
 
 const baseApi = useBaseApi();
 const props = defineProps({
 	coinData: Object,
+	componentIndex: Number,
 });
+const emits = defineEmits(["showCoinList", "getInputValue"]);
 
+//更改输入框内对应的法币
 const coinBalance = ref("0.00");
 watchEffect(async () => {
 	if (Number(props.coinData.amount)) {
@@ -53,7 +57,7 @@ watchEffect(async () => {
 		const usdtReta = await baseApi.post(({ api }) => {
 			return {
 				api: api.getCoinPrice,
-				onlySend: true,
+				// onlySend: true,
 				data: [Str],
 			};
 		});
@@ -67,21 +71,32 @@ watchEffect(async () => {
 	}
 });
 
+//获取用户当前币种的余额
 const totalAmount = ref("0.00");
 watchEffect(async () => {
 	totalAmount.value = getStringNum(
 		await useJudgeFun(props.coinData.chain, props.coinData.token)
 	);
+	judgeHoneyPot();
 });
 
-const emits = defineEmits(["showCoinList", "getInputValue"]);
-const switchCoin = (chain, windowType) => {
-	emits("showCoinList", chain, windowType);
+const isDanger = ref(0);
+const judgeHoneyPot = () => {
+	isDanger.value = getDangerNum(props.coinData.chain, props.coinData.token);
+	document
+		.getElementsByClassName("fieldStyle" + props.coinData.type)[0]
+		.style.setProperty(
+			"--field-bg",
+			isDanger.value ? "#ffebf2" : "#f2f5fe"
+		);
 };
 
-const allIn = () => {
-	// coinData.value.amount = totalAmount.value;
+//展示币种选择列表
+const switchCoin = (chain, windowType) => {
+	emits("showCoinList", chain, windowType, props.componentIndex);
 };
+
+// 格式化输入框内的数据
 const formatter = (value) => {
 	if (value) {
 		const num = props.coinData.decimals > 8 ? 8 : props.coinData.decimals;
@@ -91,9 +106,27 @@ const formatter = (value) => {
 		return "";
 	}
 };
-const clearField = () => {};
+
+//输入框内输入金额
+const { initData } = useNuxtApp().$managerScheduler;
+const clearField = () => {
+	initData();
+};
+const allIn = () => {
+	emits(
+		"getInputValue",
+		props.componentIndex,
+		props.coinData.type,
+		totalAmount.value
+	);
+};
 const inputValue = (e) => {
-	emits("getInputValue", props.coinData.type, e.target.value);
+	emits(
+		"getInputValue",
+		props.componentIndex,
+		props.coinData.type,
+		e.target.value
+	);
 };
 </script>
 
@@ -114,6 +147,10 @@ const inputValue = (e) => {
 		padding-left: 0px !important;
 		padding-right: 5px !important;
 		padding-bottom: 0 !important;
+	}
+	$fieldBg: var(--field-bg, #f2f5fe);
+	.van-cell {
+		background: $fieldBg;
 	}
 }
 </style>

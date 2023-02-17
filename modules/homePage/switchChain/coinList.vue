@@ -165,10 +165,10 @@ const upDatePina = (key, list) => {
 const { switchSingleCoin } = useNuxtApp().$managerScheduler
 
 const emit = defineEmits(["closePropUp"]);
-const order = inject('order')
 const windowType = inject('windowType')
+const tradingPairIndex = inject('tradingPairIndex')
 const chooseItem = (item) => {
-  switchSingleCoin(item, order.value, windowType.value)
+  switchSingleCoin(item, tradingPairIndex.value, windowType.value)
   emit('closePropUp')
 };
 
