@@ -179,7 +179,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .vant-loading {
-	::v-deep .van-list__loading {
+	:deep(.van-list__loading) {
 		display: none;
 	}
 }

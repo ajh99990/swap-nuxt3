@@ -32,7 +32,7 @@ const exchange = (order, type, number) => {};
 
 <style lang="scss" scoped>
 .home_btn {
-	::v-deep .van-button__text {
+	:deep(.van-button__text) {
 		size: 20px !important;
 		font-weight: 800 !important;
 	}

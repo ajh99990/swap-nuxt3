@@ -150,7 +150,7 @@ const inputValue = (e) => {
 	}
 	$fieldBg: var(--field-bg, #f2f5fe);
 	.van-cell {
-		background: $fieldBg;
+		// background: $fieldBg;
 	}
 }
 </style>

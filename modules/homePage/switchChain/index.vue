@@ -65,10 +65,10 @@ const closePropUp = () => {
 	// input ::-webkit-input-placeholder {
 	// 	color: skyblue;
 	// }
-	::v-deep .van-search__content {
+	:deep(.van-search__content) {
 		border-radius: 8px;
 	}
-	::v-deep .van-field__control::-webkit-input-placeholder {
+	:deep(.van-field__control::-webkit-input-placeholder) {
 		color: #7e84a3;
 	}
 }
