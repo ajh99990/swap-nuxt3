@@ -23,6 +23,9 @@ export default function () {
         api: api.chainList,
         success: (res, config) => {
           chainList.value = res
+        },
+        fail:(err)=>{
+          window.alert(err.msg)
         }
       }
     })
