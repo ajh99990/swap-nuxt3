@@ -23,12 +23,21 @@ interface Params {
   token1: string,
   userSymbol0: string,
   userSymbol1: string,
-  slippage: number,
+  slippage: number|string,
   receiveAddress: string
 }
 
 interface Detail {
-
+  routeLogo?: string,
+  routeName?:string,
+  platform?: string,
+  GasFee?: string|number,
+  swapTime?: string|number,
+  slippage?: any,
+  youSave?: string|number,
+  priceImpact?: string|number,
+  TXFee?: string|number,
+  receiveAddress?: string,
 }
 
 export default function () {
@@ -37,11 +46,21 @@ export default function () {
   const tradingPair:Ref<Coins[]> = ref([])
   const showHistory:Ref<boolean> = ref(true)
   const showDetail:Ref<boolean> = ref(false)
-  const transactionDetails: Ref<Detail> = ref({})
-  const slippage: Ref<number> = ref(0.01)
-  const receiveAddress: Ref<string> = ref('')
+  const transactionDetails:Ref<Detail> = ref({})
+  const defaultSlippage: Ref<number> = ref(0)
+  const receiveAddress:Ref<string> = ref('')
+  const slippage:Ref<number> = ref(1)
+  const loading:Ref<boolean> = ref(false)
+
   const operateType: Ref<string> = ref('')
   const crossIndex: Ref<number> = ref(0)
+
+  //获取当前默认的交易对
+  const getNowChain = (appChainsInfo:string) => {
+    // console.log(window.location.hash);
+    // 可能需要根据isMarket判断是否需要从windows取值
+    tradingPair.value = chainInfo[appChainsInfo].defaultTrade
+  } 
 
   const initData = () => {
     stopQuery()
@@ -50,29 +69,24 @@ export default function () {
     showDetail.value = false
     showHistory.value = true
     transactionDetails.value = {}
+    receiveAddress.value = defaultAddress()
+    slippage.value = 1
   }
-
-  //获取当前默认的交易对
-  const getNowChain = (appChainsInfo:string) => {
-    tradingPair.value = chainInfo[appChainsInfo].defaultTrade
-  } 
 
   //更换交易对中的代币
   const switchSingleCoin = (coin:Coin , tradingPairIndex:number, windowType:string) => {
     stopQuery()
+    initData()
     const newCoin = trimCoin(coin, windowType)
     tradingPair.value[tradingPairIndex] = newCoin
     if(windowType == 'pay'){
       changeChain(getUseCoin(tradingPair.value, 'pay').chain)
     }
-    initData()
   }
 
    //更换交易对中代币的amount,并请求接口获取信息
   const giveAmount = (tradingPairIndex:number, windowType:string, amount:string|number) => {
-    stopQuery()
     operateType.value = windowType
-    receiveAddress.value = receiveAddress.value ? receiveAddress.value : defaultAddress()
     tradingPair.value[tradingPairIndex].amount = amount
     if(Number(amount)){
       swapQuery()
@@ -84,11 +98,14 @@ export default function () {
   //<---开始请求接口流程
   let timer: ReturnType<typeof setTimeout>
   const swapQuery = ()=> {
-    const timeout = tradingPair.value[0].chain == tradingPair.value[1].chain ? 10000 : 60000
+    loading.value = true
+    stopQuery()
+    const timeout = tradingPair.value[0].chain == tradingPair.value[1].chain ? 30000 : 60000
     const params = integrateParams(tradingPair.value, operateType.value)
-    params.slippage = slippage.value
+    receiveAddress.value = receiveAddress.value ? receiveAddress.value : defaultAddress()
+    // console.log(receiveAddress,'receiveAddress.value');
     params.receiveAddress = receiveAddress.value
-    params.fromAddress = defaultAddress()
+    params.slippage = slippage.value == defaultSlippage.value ? defaultSlippage.value/100 : slippage.value/100
     getQuery(params, timeout)
   }
 
@@ -100,16 +117,21 @@ export default function () {
         onlySend: true,
         success: (res) => {
           let data
+          //当前单链会返回对象，跨链返回路由的数组
           if(res instanceof Array){
+            //跨链每次返回取第一个
             data = res[0]
+            crossIndex.value = 0
           } else {
             data = res
           }
-          crossIndex.value = 0
-          transactionDetails.value = integrateDetails(data, slippage.value, receiveAddress.value)
+          transactionDetails.value = integrateDetails(data, params.receiveAddress)
+          slippage.value = transactionDetails.value.slippage != defaultSlippage.value ? transactionDetails.value.slippage : slippage.value
+          defaultSlippage.value = transactionDetails.value.slippage
           inputOtherFiled(data)
           showDetail.value = true
           showHistory.value = false
+          loading.value = false
           timer = setTimeout(() => {
             getQuery(params, timeout)
           }, timeout);
@@ -153,6 +175,10 @@ export default function () {
     tradingPair,
     showHistory,
     showDetail,
-    transactionDetails
+    transactionDetails,
+    defaultSlippage,
+    slippage,
+    receiveAddress,
+    loading
   }
 }

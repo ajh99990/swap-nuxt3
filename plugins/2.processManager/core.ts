@@ -24,14 +24,14 @@ export function changeChain (chain:string) {
   const globalData = useGlobalData()
   if(chain != globalData.presentChain && chain != 'tron'){
     addChain(chain)
-    globalData.$patch({
-      presentChain: chain
-    })
   }
+  globalData.$patch({
+    presentChain: chain
+  })
 }
 
 export function integrateParams (tradingPair:Coins[], windowType:string) {
-  console.log(tradingPair, windowType);
+  // console.log(tradingPair, windowType);
   const payCoin = tradingPair[0].type == 'pay' ? tradingPair[0] : tradingPair[1]
   const receiveCoin = tradingPair[0].type == 'receive' ? tradingPair[0] : tradingPair[1]
     const params = {
@@ -43,10 +43,10 @@ export function integrateParams (tradingPair:Coins[], windowType:string) {
       token1: receiveCoin.token,
       userSymbol0: payCoin.symbol,
       userSymbol1: receiveCoin.symbol,
+      fromAddress: defaultAddress(),
       slippage: 0,
-      receiveAddress: '',
-      fromAddress: ''
-    }  
+      receiveAddress: defaultAddress(),
+    }
     return params
 }
 
@@ -75,9 +75,10 @@ export function handleAmount (data:any, operateType:string, decimals:number ):nu
   return 0
 }
 
-export function integrateDetails (data:any, slippage:number, receiveAddress:string) {
-  let crossData
+export function integrateDetails (data:any, receiveAddress:string) {
+  let crossData, slippageVal
   if(data.bridgeMark){
+    slippageVal = 1
     if(data.bridgeMark == 'SOCKET'){
       crossData = handleSocketData(data)
     }
@@ -85,15 +86,17 @@ export function integrateDetails (data:any, slippage:number, receiveAddress:stri
       crossData = HandleLifiData(data)
     }
   }
+  const priceImpact = data.price < 0.0001 ? 0.01 : Number(getStringNum(data.price * 100, 2));
+  slippageVal = priceImpact > 0.8 ? getStringNum(priceImpact * 1.2, 2) : 1
   return {
     routeLogo: crossData?.routeLogo,
     routeName: crossData?.routeName,
     platform: data?.swapLogo,
     GasFee: crossData?.GasFee,
     swapTime: crossData?.swapTime,
-    slippage: slippage,
+    slippage: slippageVal && slippageVal > 100 ? 100 : slippageVal,
     youSave: data.save ? getStringNum(data.save, 2): "",
-    priceImpact: data?.price,
+    priceImpact: priceImpact,
     TXFee: '0.3%',
     receivingAddress: simplifyToken(receiveAddress),
   }

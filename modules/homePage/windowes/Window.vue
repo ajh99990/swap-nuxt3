@@ -1,8 +1,7 @@
 <template>
 	<div v-if="coinData" class="w-343px h-166px bg-[#F2F5FE] px-12px window" :class="
-      coinData.type == 'pay'
-        ? 'rounded-t-12px pt-12px pb-20px'
-        : 'rounded-b-12px pt-20px pb-12px'
+      coinData.type == 'pay' ? 'rounded-t-12px pt-12px pb-20px' : 'rounded-b-12px pt-20px pb-12px',
+			isHoneyPot ? 'border-1px border-solid border-[#ec585e] bg-[#ffebf2]' :''
     ">
 		<div @click="switchCoin(coinData.chain, coinData.type)" class="flex justify-between items-center w-319px h-46px bg-[#F7FAFF] px-8px rounded-8px">
 			<p class="text-size-14px text-[#191E35] leading-22px font-500">{{ coinData.type == "pay" ? $t("windowSell") : $t("windowBuy") }}</p>
@@ -19,8 +18,8 @@
 				<img src="@/assets/images/windowSelect.png" class="absolute top-6px right-5px w-10px h-6px" />
 			</div>
 		</div>
-		<div class="flex items-center justify-between w-303px h-48px pb-1px m-auto border-b-1px border-solid border-[#DBE0EE]">
-			<van-field :class="'fieldStyle' + coinData.type" class="fieldStyle" v-model="coinData.amount" clearable @clear="clearField" :formatter="formatter" @input="inputValue" type="number" />
+		<div :class="isHoneyPot ? 'fieldStyleError' : 'fieldStyleNormal'" class="flex items-center justify-between w-303px h-48px pb-1px m-auto border-b-1px border-solid border-[#DBE0EE]">
+			<van-field class="fieldStyle" v-model="coinData.amount" clearable @clear="clearField" :disabled="isCross && coinData.type == 'receive'" :formatter="formatter" @input="inputValue" type="number" :placeholder="isCross && coinData.type == 'receive' ? '-' : '0.00' " />
 		</div>
 		<div class="relative top-8px flex justify-between">
 			<p class="text-size-14px flex text-[#909ab5] px-8px">
@@ -46,6 +45,7 @@ const baseApi = useBaseApi();
 const props = defineProps({
 	coinData: Object,
 	componentIndex: Number,
+	isCross: Boolean,
 });
 const emits = defineEmits(["showCoinList", "getInputValue"]);
 
@@ -77,18 +77,15 @@ watchEffect(async () => {
 	totalAmount.value = getStringNum(
 		await useJudgeFun(props.coinData.chain, props.coinData.token)
 	);
-	judgeHoneyPot();
+	// judgeHoneyPot();
 });
 
-const isDanger = ref(0);
-const judgeHoneyPot = () => {
-	isDanger.value = getDangerNum(props.coinData.chain, props.coinData.token);
-	document
-		.getElementsByClassName("fieldStyle" + props.coinData.type)[0]
-		.style.setProperty(
-			"--field-bg",
-			isDanger.value ? "#ffebf2" : "#f2f5fe"
-		);
+const isHoneyPot = ref(0);
+const judgeHoneyPot = async () => {
+	isHoneyPot.value = await getDangerNum(
+		props.coinData.chain,
+		props.coinData.token
+	);
 };
 
 //展示币种选择列表
@@ -139,18 +136,25 @@ const inputValue = (e) => {
 		font-weight: 500;
 		--van-field-input-disabled-text-color: rgba(25, 30, 53, 0.3);
 	}
-	.van-cell {
-		background-color: #f2f5fe !important;
-	}
 	.fieldStyle {
 		padding-top: 8px !important;
 		padding-left: 0px !important;
 		padding-right: 5px !important;
 		padding-bottom: 0 !important;
 	}
-	$fieldBg: var(--field-bg, #f2f5fe);
-	.van-cell {
-		// background: $fieldBg;
+	.fieldStyleNormal {
+		:deep(.van-cell) {
+			background-color: #f2f5fe !important;
+		}
 	}
+	.fieldStyleError {
+		.van-cell {
+			background-color: #ffebf2 !important;
+		}
+	}
+	// $fieldBg: var(--field-bg, #f2f5fe);
+	// .van-cell {
+	// background: $fieldBg;
+	// }
 }
 </style>

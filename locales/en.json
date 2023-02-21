@@ -22,5 +22,27 @@
   "TX": {
     "Fee": "TX fee"
   },
-  "ReceivingAddress": "Receiving address"
+  "ReceivingAddress": "Receiving address",
+  "WhatIsSlippage": "What is slippage?",
+  "slippageContent": "You can set the slippage to determine the final transaction price, but a super low slippage may result in transaction failure which will charge you gas fee as well.",
+  "youSaveTitle": "What is you save?",
+  "youSaveContent": "Aswap will display the amount you save by comparing to other routing channels.",
+  "priceImpaceTitle": "What is price impact ?",
+  "priceImpaceContent": "The difference between the market price and estimated price due to trade size.",
+  "swapTimeTitle": "What is Act.Swap time？",
+  "swapTimeContent": "Estimated time to bridge via the seleted route，please refer to the actual arrival time.",
+  "TXFeeTitle": "What is service fee ?",
+  "TXFeeContent": "For each transaction, Aswap charges 0.3% service fee, except channel transaction fees and gas fee.",
+  "receiveAddressTitle": "What is receiving address ?",
+  "receiveAddressContent": "In default, your receiving address should be the address you sent. Or, you can also set up other receiving addresses on the same chain to make withdrawals.",
+  "receiveAddressWarnText": "Tip: Please check the address you filled in carefully, if you filled in the wrong address, you will lose your transferred assets forever.",
+  "GasFeeTitle": "What is Gas Fee？",
+  "GasFeeContent": "Gas fees vary based on network traffic and transaction complexity.",
+  "auto": "Auto",
+  "slippageRecommended": "It is recommended that you use automatic slippage to help with the transaction",
+  "inputnumber0-100": "请输入0～100之间的数值",
+  "confirm": "Confirm",
+  "inputAddress": "Input receiving address",
+  "checkToAddress": "The address you entered is not on the correct chain, please check it carefully!",
+  "Pasted": "Paste"
 }

@@ -2,10 +2,10 @@
 	<div>
 		<div class="h-336px relative">
 			<div id="windowUp">
-				<Window :class=" order ? '' : 'translate-y-170px' " class="transform duration-400" :coinData="tradingPair[0]" :componentIndex="0" @showCoinList="showCoinList" @getInputValue="getInputValue" />
+				<Window :class=" order ? '' : 'translate-y-170px' " class="transform duration-400" :coinData="tradingPair[0]" :componentIndex="0" :isCross="isCross" @showCoinList="showCoinList" @getInputValue="getInputValue" />
 			</div>
 			<div id="windowDown">
-				<Window :class=" order ? '' : '-translate-y-170px' " class="transform duration-400 mt-4px" :coinData="tradingPair[1]" :componentIndex="1" @showCoinList="showCoinList" @getInputValue="getInputValue" />
+				<Window :class=" order ? '' : '-translate-y-170px' " class="transform duration-400 mt-4px" :coinData="tradingPair[1]" :componentIndex="1" :isCross="isCross" @showCoinList="showCoinList" @getInputValue="getInputValue" />
 			</div>
 			<SwitchIcon @click="switchTrade" class="w-34px absolute top-0 z-10 left-0 right-0 bottom-0 m-auto" />
 		</div>
@@ -28,10 +28,13 @@ import { getUseCoin } from "./common";
 const globalData = useGlobalData();
 
 const tradingPair = ref("");
+const isCross = ref(false);
 watch(
 	useNuxtApp().$managerScheduler.tradingPair.value,
 	(newVal) => {
 		tradingPair.value = newVal;
+		isCross.value =
+			tradingPair.value[0].chain != tradingPair.value[1].chain;
 	},
 	{ immediate: true }
 );

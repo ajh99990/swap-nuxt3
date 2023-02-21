@@ -2,30 +2,40 @@
 	<div class="w-303px max-h-497px pl-12px pr-15px">
 		<div class="relative">
 			<p class="text-body text-size-14px font-500 my-20px">{{ showChain.title }}</p>
-			<div v-if="loading" class="flex justify-center items-center h-439px w-280px absolute left-0 top-0">
+			<div v-if="loading" class="flex justify-center items-center h-439px w-280px absolute left-0 top-0 z-30">
 				<Loading />
 			</div>
+			<div v-if=" !pageList.length && !loading " class="flex justify-center items-center h-439px w-280px absolute left-0 top-0">
+				<Empty :empty-type=" !searchCoinList.length ? 'search' : 'coin' " />
+			</div>
 			<div class="h-439px overflow-y-auto vant-loading hidder-scrollbar">
-				<van-list v-model:loading="addLoading" loading-text :finished="finished" :finished-text="coinList.length >= 7 ? $t('noData') : ''" @load="onLoad" offset="50">
-					<div v-for=" item in coinList " :key="item.token" class="mb-30px relative">
-						<div class="flex items-center" @click="chooseItem(item)">
-              <Images :logo="item.logo" logoWidth="34px" :logoName="item.coinName " :smallCoin="true" class="mr-10px" />
-              <p class="flex max-w-160px flex-col">
-                <p class="flex">
-                  <span class="truncate text-body font-500 text-size-15px leading-18px mb-5px max-w-85px inline-block">{{ item.coinName }}</span>
-                  <span v-if=" showChain.code == 'history' || showChain.code == 'allChain' " class="text-12px text-[#7E84A3] inline-block ml-5px">({{ chainInfo[item.chain].fullName }})</span>
-                </p>
-                <span class="truncate text-minor text-size-11px leading-13px">{{
-                    simplifyToken(item.token)
-                }}</span>
-              </p>
-              <p class="flex w-120px flex-col items-end absolute top-0.5px right-0">
-                <p class="truncate text-body font-500 text-size-15px leading-18px text-right mb-5px max-w-98px">{{ item.totalAmount }}</p>
-                <p class="truncate text-minor text-size-11px leading-13px font-500 text-right max-w-98px">${{ item.balance == 0 ?'0.00': item.balance}}</p>
-              </p>
+				<van-list v-model:loading="addLoading" loading-text :finished="finished"
+					:finished-text="pageList.length >= 7 ? $t('noData') : ''" @load="onLoad" offset="50">
+						<div v-for=" item in pageList " :key="item.token" class="mb-30px relative">
+							<div class="flex items-center" @click="chooseItem(item)">
+								<Images :logo="item.logo" logoWidth="34px" :logoName="item.coinName" :smallCoin="true" class="mr-10px" />
+								<p class="flex max-w-160px flex-col">
+								<p class="flex">
+									<span class="truncate text-body font-500 text-size-15px leading-18px mb-5px max-w-85px inline-block">{{
+										item.coinName }}</span>
+									<span v-if="showChain.code == 'history' || showChain.code == 'allChain'"
+										class="text-12px text-[#7E84A3] inline-block ml-5px">({{ chainInfo[item.chain].fullName }})</span>
+								</p>
+								<span class="truncate text-minor text-size-11px leading-13px">{{
+									simplifyToken(item.token)
+								}}</span>
+								</p>
+								<p class="flex w-120px flex-col items-end absolute top-0.5px right-0">
+								<p class="truncate text-body font-500 text-size-15px leading-18px text-right mb-5px max-w-98px">{{
+									item.totalAmount }}</p>
+								<p class="truncate text-minor text-size-11px leading-13px font-500 text-right max-w-98px">${{ item.balance
+									== 0 ? '0.00' : item.balance }}</p>
+								</p>
+							</div>
+							<div
+								v-if="(item.chain == tradingPair[0].chain && item.token == tradingPair[0].token) || (item.chain == tradingPair[1].chain && item.token == tradingPair[1].token)"
+								class="absolute top-0 left-0 w-276px h-36px bg-[#fff] bg-opacity-50"></div>
 						</div>
-						<div v-if="(item.chain == tradingPair[0].chain && item.token == tradingPair[0].token) || (item.chain == tradingPair[1].chain && item.token == tradingPair[1].token)" class="absolute top-0 left-0 w-276px h-36px bg-[#fff] bg-opacity-50"></div>
-					</div>
 				</van-list>
 			</div>
 		</div>
@@ -52,6 +62,12 @@ const tradingPair = computed(() => {
 });
 
 const coinList = ref([]);
+const searchCoinList = ref([])
+const pageList = computed(()=>{
+	return props.searchValue ? searchCoinList.value : coinList.value
+})
+
+
 const loading = ref(false);
 const addLoading = ref(true);
 const pageNum = ref(1);
@@ -95,22 +111,22 @@ const getSearchCoinList = async () => {
 	let cacheData = globalData.searchCoinList?.[props.showChain.code]?.[
 		props.searchValue
 	] || { list: [], totalRecords: 0, pageNum: 1 };
-	loading.value = coinList.value.length ? false : true;
 	if (cacheData.list.length) {
-		coinList.value = cacheData.list;
+		searchCoinList.value = cacheData.list;
 		totalRecords.value = cacheData.totalRecords;
 		pageNum.value = cacheData.pageNum;
 	} else {
+		loading.value = true;
 		const fetchData = await getInterFaceData();
 		if (fetchData != "cancel") {
 			if (pageNum.value > 1) {
-				coinList.value.push(...fetchData.list);
-				coinList.value = await coinSort(
+				searchCoinList.value.push(...fetchData.list);
+				searchCoinList.value = await coinSort(
 					props.showChain.code,
-					coinList.value
+					searchCoinList.value
 				);
 			} else {
-				coinList.value = await coinSort(
+				searchCoinList.value = await coinSort(
 					props.showChain.code,
 					fetchData.list
 				);
@@ -122,7 +138,7 @@ const getSearchCoinList = async () => {
 	}
 	loading.value = false;
 	addLoading.value = false;
-	upDatePina(props.showChain.code, coinList.value);
+	upDatePina(props.showChain.code, searchCoinList.value);
 };
 
 const getInterFaceData = async () => {
@@ -145,7 +161,7 @@ const getInterFaceData = async () => {
 
 //加载更多
 const onLoad = () => {
-	if (coinList.value.length >= totalRecords.value) {
+	if (searchCoinList.value.length >= totalRecords.value) {
 		finished.value = true;
 		return;
 	}
@@ -168,8 +184,8 @@ const emit = defineEmits(["closePropUp"]);
 const windowType = inject('windowType')
 const tradingPairIndex = inject('tradingPairIndex')
 const chooseItem = (item) => {
-  switchSingleCoin(item, tradingPairIndex.value, windowType.value)
-  emit('closePropUp')
+	switchSingleCoin(item, tradingPairIndex.value, windowType.value)
+	emit('closePropUp')
 };
 
 onMounted(() => {

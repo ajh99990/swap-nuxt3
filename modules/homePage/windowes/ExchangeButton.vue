@@ -15,7 +15,9 @@ const globalData = useGlobalData();
 const { t } = useI18n();
 
 const disabled = ref(false);
-const loading = ref(false);
+const loading = computed(() => {
+	return useNuxtApp().$managerScheduler.loading.value;
+});
 const buttonText = ref(t("tradingBoxSwap"));
 const errorText = ref("");
 
@@ -27,7 +29,14 @@ watchEffect(() => {
 	}
 });
 
-const exchange = (order, type, number) => {};
+const showDetail = computed(() => {
+	return useNuxtApp().$managerScheduler.showDetail.value;
+});
+const exchange = (order, type, number) => {
+	if (showDetail.value) {
+		alert("开始交易");
+	}
+};
 </script>
 
 <style lang="scss" scoped>

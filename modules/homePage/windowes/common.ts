@@ -14,7 +14,7 @@ export function getUseCoin (tradingPair:Coins[], type:string) {
 
 async function showErrorStyle (chain:string, token:string) {
     const goplusApi = useGoplusApi()
-    console.log(await goplusApi.get(({ api }) => {
+    const data = await goplusApi.get(({ api }) => {
         return {
           api: api.tokenSecurity,
           params:{
@@ -24,21 +24,16 @@ async function showErrorStyle (chain:string, token:string) {
             chainId: chainInfo[chain].chainId
           }
         }
-      })) 
+      }) 
+      console.log('data', data);
 }
   
 //获取合约检测危险数量
 const dangerProp = ["is_honeypot"];
 const whiteList = ["0xdac17f958d2ee523a2206206994597c13d831ec7"]
 export const getDangerNum = async (chain:string, token:string,) => {
-  if (whiteList.includes(token) || token == '0x000'){
-    return 0
-  } else {
-    return 1
-  }
     if (whiteList.includes(token) || token == '0x000') return 0
     const data:any = await showErrorStyle(chain, token)
-    console.log('data', data);
     let danger = dangerProp, score = 0
     danger.forEach((item) => {
         if (item.includes("_reverse")) {

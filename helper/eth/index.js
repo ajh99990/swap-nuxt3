@@ -106,8 +106,10 @@ export const approve = (chain, swapContractAddress, tokenContractAddress) => {
     return tokenContract.methods.approve(swapContractAddress, totalSupply)
 }
 //校验用户输入的地址
-export const checkAddress = async (address) => {
+export const checkAddress = (address) => {
+    console.log(address);
     web3 = new Web3(window.ethereum)
+    console.log(web3.utils.isAddress(address), '------------');
     const state = web3.utils.isAddress(address)
     return state
 }
