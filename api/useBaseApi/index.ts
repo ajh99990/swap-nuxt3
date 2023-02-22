@@ -16,7 +16,7 @@ export const getToken = async () => {
   }
 }
 
-export default defineService('baseApi', {
+export default await defineService('baseApi', {
   api() {
     return {
       getHistorySwap:"swaps/getHistorySwap",//首页最近交易记录
@@ -32,10 +32,10 @@ export default defineService('baseApi', {
     production: "https://swap.assure.pro/api",
     mock: "https://mock.apifox.cn/m1/607677-0-default"
   },
-  axiosStatic: () => {
-    // const token = await getToken()
+  axiosStatic: async () => {
+    const token = await getToken()
     return {
-      headers:{'token': 'e6f8008c-a954-4d12-ae09-8254618f5888' }
+      headers:{'token': token }
     }
   },
   isErrorResponse(res): res is ErrorEntity {

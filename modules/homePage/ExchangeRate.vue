@@ -14,6 +14,7 @@
 import useBaseApi from "~~/api/useBaseApi";
 import { getStringNum } from "~~/helper/common";
 
+let timer = null;
 const baseApi = useBaseApi();
 const order = ref(true);
 const exchangePrice = () => {
@@ -25,15 +26,15 @@ const tradingPair = computed(() => {
 	return useNuxtApp().$managerScheduler.tradingPair.value;
 });
 watch(
-	() => tradingPair,
+	() => [tradingPair.value[0].symbol, tradingPair.value[1].symbol],
 	() => {
-		console.log("geting");
 		order.value = true;
 		getReta();
 	}
 );
 
 const getReta = async () => {
+	clearTimeout(timer);
 	try {
 		const payCoin = tradingPair.value.filter(
 			(item) => item.type == "pay"
@@ -75,11 +76,19 @@ const getReta = async () => {
 			),
 		};
 	} catch (error) {
-		console.log(error);
+		preface.value = [];
+		Backwards.value = [];
 	}
+	timer = setTimeout(() => {
+		getReta();
+	}, 60000);
 };
 onMounted(() => {
 	getReta();
+});
+
+onUnmounted(() => {
+	clearTimeout(timer);
 });
 </script>
 

@@ -1,5 +1,5 @@
 import useGlobalData from "~~/store/useGlobalData"
-import useBaseApi from "~~/api/useBaseApi"
+import useBaseApi from "~~/api/useBaseApi/index"
 import BigNumber from "bignumber.js"
 import { chainInfo } from "~~/helper/chainInfo"
 import useJudgeFun from "./judgeFun"

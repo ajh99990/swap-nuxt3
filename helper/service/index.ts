@@ -63,7 +63,7 @@ export interface IsErrorResponse {
 export interface DefineServiceOption<A> {
   api: () => A,
   address: ServiceAddress,
-  axiosStatic?: CreateAxiosDefaults | (() => CreateAxiosDefaults),
+  axiosStatic?: CreateAxiosDefaults | (() => CreateAxiosDefaults) | (() => Promise<CreateAxiosDefaults>),
   setup?: (instance: Service<A>) => void,
   isErrorResponse?: IsErrorResponse
 }
@@ -88,7 +88,10 @@ function materialProviderBuilder<A extends Api>(options: DefineServiceOption<A>)
   return materialProvider
 }
 
-export function defineService<Id extends string, A extends Api>(id: Id, options: DefineServiceOption<A>) {
+export async function defineService<Id extends string, A extends Api>(id: Id, options: DefineServiceOption<A>) {
+  const axiosStatic = options?.axiosStatic || {}
+  const axiosStaticObj = isFunction(axiosStatic) ? await axiosStatic() : axiosStatic
+
   return function (nuxtApp?: any): Service<A> {
     //将实例挂载到nuxt上。避免重复创建实例
     const _nuxtApp = nuxtApp || useNuxtApp();
@@ -97,11 +100,7 @@ export function defineService<Id extends string, A extends Api>(id: Id, options:
       return service
     }
     service = {} as Service<A>;
-    let axiosStatic = options?.axiosStatic || {}
-    if (isFunction(axiosStatic)) {
-      axiosStatic = axiosStatic()
-    }
-    const instance = axios.create(axiosStatic) //todo 这个构建过程应该接受一些axios的实例化参数
+    const instance = axios.create(axiosStaticObj) //todo 这个构建过程应该接受一些axios的实例化参数
     const methods: Array<method> = ["get", "post", "delete", "put", "patch"];
     const env = (useRuntimeConfig().public.nodeEnv || ServerMode.Development) as ServerMode
     const serviceAddress = options.address

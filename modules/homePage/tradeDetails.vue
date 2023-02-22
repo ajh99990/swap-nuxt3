@@ -25,7 +25,10 @@
 				<span class="pr-19px text-[#509F7F]">$ {{ detailInfo.youSave }}</span>
 			</Line>
 			<Line v-if="detailInfo.priceImpact" :label="$t('PriceImpact')" codeTypes="priceImpace" class="mb-10px">
-				<span :class="detailInfo.priceImpact < 0.08 ? '' : 'text-[#EC585E]'" class="pr-19px">{{(detailInfo.priceImpact < 0.8 ? '<' : '>') + detailInfo.priceImpact }}%</span>
+				<p :class="detailInfo.priceImpact < 0.8 ? '' : 'text-[#EC585E]'" class="pr-19px">
+					<span>{{ detailInfo.priceImpact < 0.8 ? '<' : '>' }}</span>
+					<span>{{ detailInfo.priceImpact }}%</span>
+				</p>
 			</Line>
 		</div>
 		<Line :label="$t('TX.Fee')" codeTypes="TXFee" class="mb-10px">
