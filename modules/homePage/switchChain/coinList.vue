@@ -5,7 +5,7 @@
 			<div v-if="loading" class="flex justify-center items-center h-439px w-280px absolute left-0 top-0 z-30">
 				<Loading />
 			</div>
-			<div v-if=" !pageList.length && !loading " class="flex justify-center items-center h-439px w-280px absolute left-0 top-0">
+			<div v-if=" showEmpty && !loading " class="flex justify-center items-center h-439px w-280px absolute left-0 top-0">
 				<Empty :empty-type=" !searchCoinList.length ? 'search' : 'coin' " />
 			</div>
 			<div class="h-439px overflow-y-auto vant-loading hidder-scrollbar">
@@ -48,6 +48,7 @@ import useBaseApi from "~~/api/useBaseApi";
 import { chainInfo } from "~~/helper/chainInfo";
 import { simplifyToken } from "~~/helper/common";
 import { coinSort } from "./orderByCoin";
+import { isEmpty } from "lodash";
 
 const baseApi = useBaseApi();
 const globalData = useGlobalData();
@@ -73,6 +74,7 @@ const addLoading = ref(true);
 const pageNum = ref(1);
 const finished = ref(false);
 const totalRecords = ref(0);
+const showEmpty = ref(false)
 
 watch(
 	() => props.showChain,
@@ -96,15 +98,20 @@ const getCoinList = async () => {
 	coinList.value = globalData.allCoinList?.[props.showChain.code] || [];
 	loading.value = coinList.value.length ? false : true;
 	const fetchData = await getInterFaceData();
-	totalRecords.value = fetchData.totalRecords;
-	coinList.value = await coinSort(props.showChain.code, fetchData.list);
-	loading.value = false;
+	if(fetchData.list.length){
+		showEmpty.value = false
+		totalRecords.value = fetchData.totalRecords;
+		coinList.value = await coinSort(props.showChain.code, fetchData.list);
+		upDatePina(props.showChain.code, coinList.value);
+		loading.value = false;
+	}
 	// console.log('getCoinList done');
 };
 
 const getSearchCoinList = async () => {
 	// console.log('start getSearchCoinList');
 	if (!props.searchValue) {
+		showEmpty.value = false
 		getCoinList();
 		return;
 	}
@@ -116,9 +123,12 @@ const getSearchCoinList = async () => {
 		totalRecords.value = cacheData.totalRecords;
 		pageNum.value = cacheData.pageNum;
 	} else {
+		console.log('start search');
 		loading.value = true;
 		const fetchData = await getInterFaceData();
 		if (fetchData != "cancel") {
+			if(fetchData.list.length){
+				showEmpty.value = false
 			if (pageNum.value > 1) {
 				searchCoinList.value.push(...fetchData.list);
 				searchCoinList.value = await coinSort(
@@ -132,13 +142,19 @@ const getSearchCoinList = async () => {
 				);
 			}
 			totalRecords.value = fetchData.totalRecords;
+			loading.value = false;
+			addLoading.value = false;
+			// upDatePina(props.showChain.code, searchCoinList.value);
+			} else {
+				searchCoinList.value = []
+				showEmpty.value = true
+				loading.value = false
+			}
+			
 		} else {
 			finished.value = true;
 		}
 	}
-	loading.value = false;
-	addLoading.value = false;
-	upDatePina(props.showChain.code, searchCoinList.value);
 };
 
 const getInterFaceData = async () => {
@@ -155,7 +171,10 @@ const getInterFaceData = async () => {
 			},
 		};
 	});
-	if (interfaceData.code == 901) return "cancel";
+	if (interfaceData.code == 901){
+		return 'cancel'
+	};
+	console.log('search success');
 	return interfaceData;
 };
 

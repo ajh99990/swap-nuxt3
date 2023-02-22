@@ -44,5 +44,6 @@
   "confirm": "Confirm",
   "inputAddress": "Input receiving address",
   "checkToAddress": "The address you entered is not on the correct chain, please check it carefully!",
-  "Pasted": "Paste"
+  "Pasted": "Paste",
+  "notSupported": "This pool is not supported"
 }

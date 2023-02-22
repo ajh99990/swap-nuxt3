@@ -51,6 +51,8 @@ export default function () {
   const receiveAddress:Ref<string> = ref('')
   const slippage:Ref<number> = ref(1)
   const loading:Ref<boolean> = ref(false)
+  const isError:Ref<boolean> = ref(false)
+  const isNotClear:Ref<boolean> = ref(true)
 
   const operateType: Ref<string> = ref('')
   const crossIndex: Ref<number> = ref(0)
@@ -64,6 +66,9 @@ export default function () {
 
   const initData = () => {
     stopQuery()
+    isError.value = false
+    isNotClear.value = false
+    loading.value = false
     tradingPair.value[0].amount = '' 
     tradingPair.value[1].amount = ''
     showDetail.value = false
@@ -86,6 +91,7 @@ export default function () {
 
    //更换交易对中代币的amount,并请求接口获取信息
   const giveAmount = (tradingPairIndex:number, windowType:string, amount:string|number) => {
+    isNotClear.value = true
     operateType.value = windowType
     tradingPair.value[tradingPairIndex].amount = amount
     if(Number(amount)){
@@ -116,6 +122,8 @@ export default function () {
         data:params,
         onlySend: true,
         success: (res) => {
+          if(isNotClear.value){
+            isError.value = false
           let data
           //当前单链会返回对象，跨链返回路由的数组
           if(res instanceof Array){
@@ -135,6 +143,13 @@ export default function () {
           timer = setTimeout(() => {
             getQuery(params, timeout)
           }, timeout);
+          }
+        },
+        fail:(err)=>{
+          if(err.code === '301'){
+            loading.value = false
+            isError.value = true
+          }
         }
       }
     })
@@ -179,6 +194,7 @@ export default function () {
     defaultSlippage,
     slippage,
     receiveAddress,
-    loading
+    loading,
+    isError
   }
 }

@@ -17,15 +17,15 @@
 			</Line>
 		</div>
 		<Line :label="$t('Slippage')" codeTypes="slippage" class="mb-10px">
-			<span :class="detailInfo.priceImpact < 0.8 ? 'text-body' : 'text-[#EC585E]'" class="mr-4px">{{ slippage }} %</span>
+			<span :class="detailInfo.priceImpact > 0.8 ? 'text-[#EC585E]' : ' text-body'" class="mr-4px">{{ slippage }} %</span>
 			<img @click="showSlippage" src="~~/assets/images/setSlippage.png" class="w-15px h-15px" />
 		</Line>
 		<div v-if=" !detailInfo.routeName">
 			<Line v-if="Number(detailInfo.youSave)>0" :label="$t('youSave')" codeTypes="youSave" class="mb-10px">
-				<span class="pr-19px">$ {{ detailInfo.youSave }}</span>
+				<span class="pr-19px text-[#509F7F]">$ {{ detailInfo.youSave }}</span>
 			</Line>
 			<Line v-if="detailInfo.priceImpact" :label="$t('PriceImpact')" codeTypes="priceImpace" class="mb-10px">
-				<span :class="detailInfo.priceImpact < 0.08 ? 'text-[#509F7F]' : 'text-[#EC585E]'" class="pr-19px">{{(detailInfo.priceImpact < 0.8 ? '<' : '>') + detailInfo.priceImpact }}%</span>
+				<span :class="detailInfo.priceImpact < 0.08 ? '' : 'text-[#EC585E]'" class="pr-19px">{{(detailInfo.priceImpact < 0.8 ? '<' : '>') + detailInfo.priceImpact }}%</span>
 			</Line>
 		</div>
 		<Line :label="$t('TX.Fee')" codeTypes="TXFee" class="mb-10px">

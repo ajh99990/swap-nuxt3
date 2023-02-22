@@ -11,7 +11,7 @@
 			<div class="w-72px h-497px overflow-y-auto hidder-scrollbar bg-[#f5f6fa]">
 				<div v-for=" ( item , index ) in coinTypeArray " :key="index" @click="changeIndex(index,item.code)" :class="chooseIndex == index ? 'bg-[#FFF] font-500' : '' " class="py-12.5px flex items-center justify-center flex-col">
 					<img :src=" chooseIndex == index ? item.lightIcon : item.darkIcon" class="w-27px rounded-full mb-5px" />
-					<span :class="chooseIndex == index ? 'text-[#191e35]' : 'text-[#7e84a3]'" class="text-10px">{{ item.leftCode }}</span>
+					<p :class="chooseIndex == index ? 'text-[#191e35]' : 'text-[#7e84a3]'" class="text-10px">{{ item.title }}</p>
 				</div>
 			</div>
 			<div v-for="item,index in coinTypeArray" :key="item.code">
@@ -48,6 +48,8 @@ onMounted(() => {
 		globalData.appChainsInfo.length < 3
 			? chainList().filter((item, index) => index != 1)
 			: chainList();
+
+	console.log(coinTypeArray.value);
 	chooseIndex.value = chainList().findIndex(
 		(item) => item.code == props.openChain
 	);

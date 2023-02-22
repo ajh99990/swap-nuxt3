@@ -3,7 +3,7 @@
 		<!-- <van-button
 				:disabled="errorText || !utils.checkChain($store.state.payChain) ? true : false || !(payData.token&&receiveData.token)"
 		>{{ !utils.checkChain($store.state.payChain) ? $t('home.Switchtheaddress') : ( errorText ? errorText : buttonText) }}</van-button>-->
-		<van-button class="w-345px h-44px ripple-btn" :disabled="disabled" round color="#597BF6" :loading="loading" :loading-text="$t('searching')" @click="exchange">{{ errorText ? errorText : buttonText }}</van-button>
+		<van-button class="w-345px h-44px ripple-btn" :disabled="disabled || notChain" round color="#597BF6" :loading="loading" :loading-text="$t('searching')" @click="exchange">{{ notSupport ? notSupport : buttonText }}</van-button>
 	</div>
 </template>
 
@@ -15,17 +15,33 @@ const globalData = useGlobalData();
 const { t } = useI18n();
 
 const disabled = ref(false);
+const notChain = ref(false);
 const loading = computed(() => {
 	return useNuxtApp().$managerScheduler.loading.value;
 });
+
 const buttonText = ref(t("tradingBoxSwap"));
-const errorText = ref("");
+
+watch(
+	() => useNuxtApp().$managerScheduler.isError.value,
+	(newVal) => {
+		if (newVal) {
+			disabled.value = true;
+			buttonText.value = t("notSupported");
+		} else {
+			disabled.value = false;
+			buttonText.value = t("tradingBoxSwap");
+		}
+	},
+	{ immediate: true }
+);
 
 //不支持链的错误提示
+const notSupport = ref("");
 watchEffect(() => {
-	disabled.value = checkChain(globalData.presentChain);
-	if (disabled.value) {
-		errorText.value = t("switchCorresponding");
+	notChain.value = checkChain(globalData.presentChain);
+	if (notChain.value) {
+		notSupport.value = t("switchCorresponding");
 	}
 });
 

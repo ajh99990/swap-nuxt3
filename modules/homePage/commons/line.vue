@@ -10,9 +10,9 @@
 		<van-popup v-model:show="showBox" round>
 			<div class="w-305px rounded-18px px-25px py-20px flex justify-center flex-col">
 				<p class="text-center text-[#191e35] font-500 text-18px leading-25px mb-20px">{{showText.title}}</p>
-				<div class="text-[#191e35] text-14px leading-22px">{{ showText.content }}</div>
-				<p v-if="showText.warnText" class="mb-20px text-[#EC585E] text-size-14px font-500 mt-10px leading-22px">{{ showText.warnText }}</p>
-				<van-button type="primary" round @click="closeBox" class="mt-20px">好的</van-button>
+				<div class="text-[#191e35] text-14px leading-22px mb-20px">{{ showText.content }}</div>
+				<p v-if="showText.warnText" class="text-[#EC585E] text-size-14px font-500 leading-22px mb-20px">{{ showText.warnText }}</p>
+				<van-button type="primary" round @click="closeBox">好的</van-button>
 			</div>
 		</van-popup>
 	</div>
