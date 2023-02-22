@@ -33,17 +33,17 @@ export enum ErrorCode {
 }
 
 export interface ErrorEntity {
-  code: ErrorCode,
+  code: ErrorCode | number,
   msg?: string,
   enMsg?: string
 }
 
 export enum SuccessCode {
-  Success = "0",
+  Success = 0,
 }
 
 export interface SuccessEntity {
-  code: SuccessCode,
+  code: SuccessCode | number,
   data: any,
   [key: string]: any
 }
@@ -60,6 +60,5 @@ export interface RouteParams { [x: string]: any }
 export interface Api {
   [x: string]: string
 }
-
 
 

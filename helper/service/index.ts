@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig, AxiosResponse, CreateAxiosDefaults, AxiosInstance } from "axios"
 import axios from "axios"
 import _ from 'lodash'
-import { ServerMode, RouteParams, Api, SuccessEntity, ErrorEntity, ApiRes } from "./shared"
+import { ServerMode, RouteParams, Api, SuccessEntity, ErrorEntity, ApiRes, isFunction } from "./shared"
 import { addPadding, removePadding } from "./repeated"
 import { removeInvalidValue, handleGeneric, createQueryUrl, captureNetworkException } from "./pureFunc";
 //const JSONbig = require("json-bigint")({ storeAsString: true });
@@ -55,11 +55,17 @@ export interface ServiceAddress {
   production: string,
   mock: string
 }
+
+export interface IsErrorResponse {
+  (response: ApiRes): response is ErrorEntity;
+}
+
 export interface DefineServiceOption<A> {
   api: () => A,
   address: ServiceAddress,
-  axiosStatic?: CreateAxiosDefaults,
+  axiosStatic?: CreateAxiosDefaults | (() => CreateAxiosDefaults),
   setup?: (instance: Service<A>) => void,
+  isErrorResponse?: IsErrorResponse
 }
 
 export type method = "get" | "post" | "delete" | "put" | "patch"
@@ -83,7 +89,7 @@ function materialProviderBuilder<A extends Api>(options: DefineServiceOption<A>)
 }
 
 export function defineService<Id extends string, A extends Api>(id: Id, options: DefineServiceOption<A>) {
-  return function (nuxtApp?:any): Service<A> {
+  return function (nuxtApp?: any): Service<A> {
     //将实例挂载到nuxt上。避免重复创建实例
     const _nuxtApp = nuxtApp || useNuxtApp();
     let service = _nuxtApp[`$${id}`] as Service<A>;
@@ -91,7 +97,10 @@ export function defineService<Id extends string, A extends Api>(id: Id, options:
       return service
     }
     service = {} as Service<A>;
-    const axiosStatic = options?.axiosStatic || {}
+    let axiosStatic = options?.axiosStatic || {}
+    if (isFunction(axiosStatic)) {
+      axiosStatic = axiosStatic()
+    }
     const instance = axios.create(axiosStatic) //todo 这个构建过程应该接受一些axios的实例化参数
     const methods: Array<method> = ["get", "post", "delete", "put", "patch"];
     const env = (useRuntimeConfig().public.nodeEnv || ServerMode.Development) as ServerMode
@@ -100,6 +109,7 @@ export function defineService<Id extends string, A extends Api>(id: Id, options:
     const apiCollector = options.api();//这里返回了一个api对象 
     //执行configBulder，并将api、枚举等数据传递过去
     const materialProvider = materialProviderBuilder(options)
+    const isErrorResponse = options.isErrorResponse
 
     methods.forEach((method) => {
       service[method] = async (optionSetup: OptionSetup<A>) => {
@@ -126,7 +136,7 @@ export function defineService<Id extends string, A extends Api>(id: Id, options:
           .request(requestConfig)
           .then((res: AxiosResponse<SuccessEntity>) => (res.data))
           .catch(captureNetworkException)
-          .then((res) => handleGeneric({ res, config: requestConfig, fail, success }))
+          .then((res) => handleGeneric({ res, config: requestConfig, fail, success, isErrorResponse }))
           .then((res) => complete ? complete(res, requestConfig) : res);
         return res;
       }
@@ -134,7 +144,7 @@ export function defineService<Id extends string, A extends Api>(id: Id, options:
 
     const completeService = { ...instance, ...service }
 
-    if(options.setup){
+    if (options.setup) {
       options.setup(completeService)
     }
     _nuxtApp.provide(id, completeService)

@@ -1,7 +1,7 @@
 import { ErrorCode, SuccessCode, ServerMode, RouteParams, isObject, Api, ApiRes, ErrorEntity } from "./shared"
 import consola from "consola"
 import { createRequestError } from "./customError"
-import type { OnRequestFail, OnRequestSuccess } from "./index"
+import type { OnRequestFail, OnRequestSuccess, IsErrorResponse } from "./index"
 import type { AxiosRequestConfig } from "axios"
 import _ from "lodash";
 /**
@@ -17,11 +17,13 @@ interface HandleGeneric {
   fail?: OnRequestFail,
   success?: OnRequestSuccess,
   res: ApiRes,
+  isErrorResponse?: IsErrorResponse
 }
 
 /** 统一处理网络异常和业务异常 */
-export function handleGeneric({ res, config, fail, success }: HandleGeneric) {
-  if (isErrorEntity(res)) {
+export function handleGeneric({ res, config, fail, success, isErrorResponse }: HandleGeneric) {
+  const isError = isErrorResponse || isErrorEntity
+  if (isError(res)) {
     const error = res
     return fail ? fail(error, config) : defaultFailHandler(error)
   } else {
@@ -82,9 +84,9 @@ interface CreateQueryUrl<A> {
 /** 将baseUrl与apiPath拼接。
  * 主要用于处理连接符"/"的问题
  */
-function joinUrl(baseUrl:string,api:string):string{
-  if(!_.endsWith(baseUrl, "/")){
-    api=`/${api}`
+function joinUrl(baseUrl: string, api: string): string {
+  if (!_.endsWith(baseUrl, "/")) {
+    api = `/${api}`
   }
   return `${baseUrl}${api}`
 }
@@ -95,7 +97,7 @@ export function createQueryUrl<A extends Api>({ apis, api, routeParams, baseUrl 
     throw new Error("api地址不存在，请检查api参数填写是否正确");
   }
   const apiPath = parseUrl(url, routeParams)
-  const queryUrl = joinUrl(baseUrl,apiPath);
+  const queryUrl = joinUrl(baseUrl, apiPath);
   return queryUrl
 }
 

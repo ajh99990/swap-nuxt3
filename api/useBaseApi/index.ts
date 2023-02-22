@@ -1,5 +1,7 @@
 import { defineService } from "~~/helper/service"
 import { judgePlatform, postMessageAppCallback } from "~~/helper/postMessage"
+import { ErrorEntity } from "~~/helper/service/shared"
+import BusinessCode from "./businessCode"
 
 let token:string
 
@@ -30,8 +32,14 @@ export default defineService('baseApi', {
     production: "https://swap.assure.pro/api",
     mock: "https://mock.apifox.cn/m1/607677-0-default"
   },
-  axiosStatic:{
-    headers:{'token': await getToken()}
+  axiosStatic: () => {
+    // const token = await getToken()
+    return {
+      headers:{'token': 'e6f8008c-a954-4d12-ae09-8254618f5888' }
+    }
+  },
+  isErrorResponse(res): res is ErrorEntity {
+    return res.code != BusinessCode.Success
   },
   setup(instance){
     instance.interceptors.request.use(function (config) {

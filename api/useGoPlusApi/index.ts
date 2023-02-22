@@ -1,4 +1,7 @@
 import { defineService } from "~~/helper/service"
+import { ErrorEntity } from "~~/helper/service/shared"
+import BusinessCode from "./businessCode"
+
 
 export default defineService('goplusApi', {
   api() {
@@ -10,6 +13,9 @@ export default defineService('goplusApi', {
     development: "https://api.gopluslabs.io/api",
     production: "https://api.gopluslabs.io/api",
     mock: "https://mock.apifox.cn/m1/607677-0-default"
+  },
+  isErrorResponse(res): res is ErrorEntity {
+    return res.code != BusinessCode.Success
   },
   setup(instance){
     instance.interceptors.request.use(function (config) {
