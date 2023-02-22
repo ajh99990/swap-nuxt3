@@ -34,6 +34,6 @@ export default defineStore<string,GlobalDataState>("globalData", {
   },
   /** 需要缓存的state的key值 */
   persistentState: (names) => {
-    return [names.allCoinList]
+    return [names.allCoinList, names.presentChain]
   },
 })
