@@ -8,10 +8,11 @@ export const simplifyToken = (token:string) => {
 };
 
 export const getStringNum = (number:number|string, decimals:number = 8) => {
-  const numString = number.toString()
+  const numString = scientificString(number).toString()
   if(numString.includes(".")){
     const stringArray = numString.split('.')
     const lastNumber = stringArray[1].length < decimals ? stringArray[1] : stringArray[1].substring(0,decimals)
+    if(Number(stringArray[0] + '.' + lastNumber) == 0) return 0
     return stringArray[0] + '.' + lastNumber
   } else {
     return numString
