@@ -1,7 +1,15 @@
 import { defineService } from "@/modules/axiosService"
 import { ErrorEntity } from "@/modules/axiosService/shared"
 import BusinessCode from "./businessCode"
-export default defineService('baseApi', {
+
+/** 模拟异步操作 */
+function wait(time: number) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, time);
+  });
+}
+
+export default await defineService('baseApi', {
   api() {
     return {
       chainList: "chain/list",//链列表
@@ -14,7 +22,8 @@ export default defineService('baseApi', {
     production: "https://mock.apifox.cn/m1/607677-0-default/",
     mock: "https://mock.apifox.cn/m1/607677-0-default/"
   },
-  axiosStatic: () => {
+  axiosStatic: async () => {
+    await wait(100)
     return {
       headers: { 'X-Custom-Header': 'foobar' }
     }
