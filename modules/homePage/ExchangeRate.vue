@@ -5,7 +5,7 @@
 			<span class="mr-3px inline-block font-500">=</span>
 			<span class="mr-3px font-500 max-w-120px overflow-hidden truncate">{{ order ? preface[1].value + preface[1].symbol : Backwards[1].value + Backwards[1].symbol }}</span>
 		</p>
-		<img @click="getReta()" id="refresh-price" src="@/assets/images/homeRefresh.png" class="ml-8px w-14px h-14px" />
+		<img @click="getReta()" id="refresh-price" src="@/assets/images/homeRefresh.png" :class="loading ? 'animate-spin': ''" class="ml-8px w-14px h-14px" />
 		<!-- <img @click="refreshPrice('click')" id="refresh-price" src="@/assets/images/home/home_refresh.png" class="ml-8px w-14px h-14px" /> -->
 	</div>
 </template>
@@ -20,6 +20,7 @@ const order = ref(true);
 const exchangePrice = () => {
 	order.value = !order.value;
 };
+const loading = ref(false);
 const preface = ref([]);
 const Backwards = ref([]);
 const tradingPair = computed(() => {
@@ -35,6 +36,7 @@ watch(
 
 const getReta = async () => {
 	clearTimeout(timer);
+	loading.value = true;
 	try {
 		const payCoin = tradingPair.value.filter(
 			(item) => item.type == "pay"
@@ -75,6 +77,7 @@ const getReta = async () => {
 				8
 			),
 		};
+		loading.value = false;
 	} catch (error) {
 		preface.value = [];
 		Backwards.value = [];
