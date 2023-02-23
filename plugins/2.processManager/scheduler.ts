@@ -64,6 +64,13 @@ export default function () {
     tradingPair.value = chainInfo[appChainsInfo].defaultTrade
   } 
 
+  //使用获取到的交易对
+  const replaceTradingPair = (newTradingPair:Coins[])=>{
+    tradingPair.value = newTradingPair
+    console.log(tradingPair.value, 'tradingPair.value');
+  }
+
+  //将界面初始化
   const initData = () => {
     stopQuery()
     isError.value = false
@@ -180,6 +187,7 @@ export default function () {
 
   return {
     getNowChain,
+    replaceTradingPair,
     switchSingleCoin,
     giveAmount,
     stopQuery,

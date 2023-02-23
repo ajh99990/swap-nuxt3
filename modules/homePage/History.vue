@@ -35,6 +35,10 @@ import { chainInfo } from "~~/helper/chainInfo";
 import useBaseApi from "@/api/useBaseApi"
 import useGlobalData from "~~/store/useGlobalData"
 
+const props = defineProps({
+	order: Boolean,
+})
+
 const baseApi = useBaseApi()
 const globalData = useGlobalData()
 const historyList = ref([])
@@ -73,8 +77,37 @@ const deleteHistory = () => {
     }) 
   }
 
+const {replaceTradingPair} = useNuxtApp().$managerScheduler;
 const newTransaction = (trade) => {
-	console.log(trade);
+	let tradingPair = [
+		{
+			type: 'pay',
+			chain: trade.token0_chain,
+			symbol: trade.symbol0,
+			token: trade.token0,
+			decimals : trade.decimals0,
+			logo: trade.token0_logo,
+			amount: "",
+		},
+		{
+			type: 'receive',
+			chain: trade.token1_chain,
+			symbol: trade.symbol1,
+			token: trade.token1,
+			decimals : trade.decimals1,
+			logo: trade.token1_logo,
+			amount: "",
+		}
+	]
+	tradingPair = props.order ? tradingPair : tradingPair.reverse()
+	replaceTradingPair(tradingPair)
+	// type: windowType,
+  //   chain: coin.chain,
+  //   symbol: coin.coinName,
+  //   token: coin.token,
+  //   decimals: coin.decimals,
+  //   logo: coin.logo,
+  //   amount: "",
 };
 
 onMounted(()=>{

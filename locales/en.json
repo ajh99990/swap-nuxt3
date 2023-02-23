@@ -45,5 +45,6 @@
   "inputAddress": "Input receiving address",
   "checkToAddress": "The address you entered is not on the correct chain, please check it carefully!",
   "Pasted": "Paste",
-  "notSupported": "This pool is not supported"
+  "notSupported": "This pool is not supported",
+  "riskyToken": "Risky token"
 }

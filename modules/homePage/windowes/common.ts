@@ -25,7 +25,7 @@ async function showErrorStyle (chain:string, token:string) {
           }
         }
       }) 
-      console.log('data', data);
+      return data[token]
 }
   
 //获取合约检测危险数量
@@ -34,8 +34,6 @@ const whiteList = ["0xdac17f958d2ee523a2206206994597c13d831ec7"]
 export const getDangerNum = async (chain:string, token:string,) => {
     if (whiteList.includes(token) || token == '0x000') return 0
     const data:any = await showErrorStyle(chain, token)
-    console.log(data);
-    
     let danger = dangerProp, score = 0
     danger.forEach((item) => {
         if (item.includes("_reverse")) {

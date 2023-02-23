@@ -3,7 +3,7 @@
       coinData.type == 'pay' ? 'rounded-t-12px pt-12px pb-20px' : 'rounded-b-12px pt-20px pb-12px',
 			isHoneyPot ? 'border-1px border-solid border-[#ec585e] bg-[#ffebf2]' :''
     ">
-		<div @click="switchCoin(coinData.chain, coinData.type)" class="flex justify-between items-center w-319px h-46px bg-[#F7FAFF] px-8px rounded-8px">
+		<div @click="switchCoin(coinData.chain, coinData.type)" class="flex justify-between items-center w-319px h-46px px-8px rounded-8px" :class="isHoneyPot ? 'bg-[#fff9fb]' :'bg-[#F7FAFF]'">
 			<p class="text-size-14px text-[#191E35] leading-22px font-500">{{ coinData.type == "pay" ? $t("windowSell") : $t("windowBuy") }}</p>
 			<div class="relative flex">
 				<Images :logo="coinData.logo" logoWidth="30px" :specialStyle="true" :logoName="coinData.symbol.toLocaleUpperCase()" :smallCoin="false" class="mr-8px flex-shrink-0" />
@@ -18,8 +18,11 @@
 				<img src="@/assets/images/windowSelect.png" class="absolute top-6px right-5px w-10px h-6px" />
 			</div>
 		</div>
-		<div :class="isHoneyPot ? 'fieldStyleError' : 'fieldStyleNormal'" class="flex items-center justify-between w-303px h-48px pb-1px m-auto border-b-1px border-solid border-[#DBE0EE]">
-			<van-field class="fieldStyle" v-model="coinData.amount" clearable @clear="clearField" :disabled="isCross && coinData.type == 'receive'" :formatter="formatter" @input="inputValue" type="number" :placeholder="isCross && coinData.type == 'receive' ? '-' : '0.00' " />
+		<div class="flex items-center">
+			<div :class="isHoneyPot ? 'fieldStyleError w-230px' : 'fieldStyleNormal w-303px'" class="flex items-center justify-between w-303px h-48px pb-1px border-b-1px border-solid border-[#DBE0EE]">
+				<van-field class="fieldStyle" v-model="coinData.amount" clearable @clear="clearField" :disabled="isCross && coinData.type == 'receive'" :formatter="formatter" @input="inputValue" type="number" :placeholder="isCross && coinData.type == 'receive' ? '-' : '0.00' " />
+			</div>
+			<p v-if="isHoneyPot" class="text-[#ec585e] text-12px font-500 leading-17px mr-5px mt-20px ml-20px">{{ $t('riskyToken') }}</p>
 		</div>
 		<div class="relative top-8px flex justify-between">
 			<p class="text-size-14px flex text-[#909ab5] px-8px">
@@ -27,7 +30,7 @@
 			</p>
 			<p class="text-size-14px flex text-[#909ab5]">
 				<span class="text-minor font-400">{{ $t("windowBalance") }}</span>
-				<span class="text-minor font-400 pl-4px pr-8px">{{ totalAmount }}</span>
+				<span class="text-minor font-400 pl-4px pr-8px">{{ totalAmount == 0 ? '0.00' : totalAmount }}</span>
 				<span v-if="coinData.type == 'pay' && coinData.amount != totalAmount" class="pr-8px text-primary font-500 text-[#597bf6]" @click="allIn">{{ $t("windowMax") }}</span>
 			</p>
 		</div>
@@ -77,7 +80,7 @@ watchEffect(async () => {
 	totalAmount.value = getStringNum(
 		await useJudgeFun(props.coinData.chain, props.coinData.token)
 	);
-	// judgeHoneyPot();
+	judgeHoneyPot();
 });
 
 const isHoneyPot = ref(0);
@@ -138,7 +141,7 @@ const inputValue = (e) => {
 	}
 	.fieldStyle {
 		padding-top: 8px !important;
-		padding-left: 0px !important;
+		padding-left: 5px !important;
 		padding-right: 5px !important;
 		padding-bottom: 0 !important;
 	}

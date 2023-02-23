@@ -10,6 +10,7 @@
 			<SwitchIcon @click="switchTrade" class="w-34px absolute top-0 z-10 left-0 right-0 bottom-0 m-auto" />
 		</div>
 		<ExchangeButton ref="exchangeButton" />
+		<History :order="order" />
 		<PopUps propHeight="600px" popupTitle="选择币种" :showState="popupState" @closePropUp="closePropUp">
 			<SwitchChain :openChain="openChain" @closePropUp="closePropUp" />
 		</PopUps>
@@ -24,20 +25,28 @@ import useGlobalData from "~~/store/useGlobalData";
 import { changeChain } from "~~/plugins/2.processManager/core";
 import ExchangeButton from "./ExchangeButton.vue";
 import { getUseCoin } from "./common";
+import History from "~~/modules/homePage/History.vue";
 
 const globalData = useGlobalData();
 
 const tradingPair = ref("");
 const isCross = ref(false);
-watch(
-	useNuxtApp().$managerScheduler.tradingPair.value,
-	(newVal) => {
-		tradingPair.value = newVal;
-		isCross.value =
-			tradingPair.value[0].chain != tradingPair.value[1].chain;
-	},
-	{ immediate: true }
-);
+
+watchEffect(() => {
+	tradingPair.value = useNuxtApp().$managerScheduler.tradingPair.value;
+	isCross.value = tradingPair.value[0].chain != tradingPair.value[1].chain;
+});
+
+// watch(
+// 	useNuxtApp().$managerScheduler.tradingPair[0].token,
+// 	(newVal) => {
+// 		console.log(newVal, "newVal");
+// 		tradingPair.value = newVal;
+// 		isCross.value =
+// 			tradingPair.value[0].chain != tradingPair.value[1].chain;
+// 	},
+// 	{ immediate: true, deep: true }
+// );
 
 const { initData } = useNuxtApp().$managerScheduler;
 const order = ref(true);

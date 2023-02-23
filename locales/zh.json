@@ -45,5 +45,6 @@
   "inputAddress": "请输入收款地址",
   "checkToAddress": "您输入的地址不是该币种接收链地址，请核对！",
   "Pasted": "粘贴",
-  "notSupported": "无法找到资金池，请切换币"
+  "notSupported": "无法找到资金池，请切换币",
+  "riskyToken": "风险币种"
 }

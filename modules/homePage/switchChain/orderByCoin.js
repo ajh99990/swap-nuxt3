@@ -19,7 +19,7 @@ const toUSDTArray = async (coinList) => {
     return await baseApi.post(({ api }) => {
       return {
         api: api.getCoinPrice,
-        onlySend: true,
+        // onlySend: true,
         data: params,
       };
     });
