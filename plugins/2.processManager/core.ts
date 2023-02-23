@@ -113,12 +113,21 @@ function handleSocketData (data:any) {
 }
 
 function HandleLifiData (data:any) {
+  console.log(data);
   return {
-    routeLogo: '',
-    routeName: '',
-    GasFee: '',
-    swapTime: '',
+    routeLogo: `https://swap-jp.s3-accelerate.amazonaws.com/file/${data.bridgeMark}/${data.steps[0].toolDetails.key}.png`,
+    routeName: data.steps[0].toolDetails.name,
+    GasFee: data.gasCostUSD,
+    swapTime: getLifiTime(data.steps),
   }
+}
+
+function getLifiTime(array:any[]) {
+  let time = 0
+  array.map(item=>{
+    time = time + item.estimate.executionDuration
+  })
+  return Math.ceil(time / 60) + 'mins'
 }
 
 // export async function getQuery (payCoin:Coins,receiveCoin:Coins) {

@@ -6,9 +6,7 @@ import useAppChainInfo from './appChainsInfo'
 import useBeginETh from './beginEth'
 import useBeginTron from './beginTron'
 
-export default defineNuxtPlugin((NuxtApp) => {
-  const startApp = async ()=>{
-    const globalData = useGlobalData()
+export default defineNuxtPlugin(async (NuxtApp) => {
     const appChainsInfo = await useAppChainInfo()
 
     //拿到当前所处的链的环境，并判断是私钥还是助记词
@@ -39,7 +37,7 @@ export default defineNuxtPlugin((NuxtApp) => {
       //   });
       // })
     }
-    
+    const globalData = useGlobalData()
     globalData.$patch({
       appChainsInfo,
       presentChain,
@@ -47,7 +45,4 @@ export default defineNuxtPlugin((NuxtApp) => {
       ownerAddress,
       ownerTronAddress
     })
-
-  }
-  startApp()
 })

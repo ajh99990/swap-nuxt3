@@ -46,5 +46,8 @@
   "checkToAddress": "The address you entered is not on the correct chain, please check it carefully!",
   "Pasted": "Paste",
   "notSupported": "This pool is not supported",
-  "riskyToken": "Risky token"
+  "riskyToken": "Risky token",
+  "swapConfirm": "Swap Confirm",
+  "inputAmount": "Please enter the amount",
+  "noMoney": "Insufficient Balance"
 }

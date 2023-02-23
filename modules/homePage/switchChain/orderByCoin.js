@@ -6,7 +6,6 @@ import useJudgeFun from "./judgeFun"
 import { getStringNum } from "../../../helper/common"
 import { getTokenBalanceByBatch } from "../../../helper/eth/getMulticallInfo"
 
-const globalData = useGlobalData()
 const baseApi = useBaseApi()
 const allChain = Object.keys(chainInfo)
 
@@ -27,6 +26,7 @@ const toUSDTArray = async (coinList) => {
 }
 
 const filterCoins = (type, coinList) => {
+  const globalData = useGlobalData()
   const privateChain = Object.keys(globalData.appChainsInfo)
   const allChainObj = {}
   if (type == 'history') {

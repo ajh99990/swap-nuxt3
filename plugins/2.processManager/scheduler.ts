@@ -3,6 +3,8 @@ import { chainInfo, Coins, } from "~~/helper/chainInfo"
 import { trimCoin, changeChain, integrateParams, integrateDetails, defaultAddress, handleAmount } from "./core"
 import useBaseApi from "~~/api/useBaseApi";
 import { getUseCoin } from "~~/modules/homePage/windowes/common";
+import { getStringNum } from "~~/helper/common";
+import useJudgeFun from "~~/modules/homePage/switchChain/judgeFun";
 
 export interface Coin {
   balance: string | number,
@@ -43,19 +45,25 @@ interface Detail {
 export default function () {
   const baseApi = useBaseApi()
 
+
+//输入框内相关的数据
   const tradingPair:Ref<Coins[]> = ref([])
-  const showHistory:Ref<boolean> = ref(true)
+  const operateType: Ref<string> = ref('')
+//底部展示相关的数据
   const showDetail:Ref<boolean> = ref(false)
   const transactionDetails:Ref<Detail> = ref({})
   const defaultSlippage: Ref<number> = ref(0)
-  const receiveAddress:Ref<string> = ref('')
   const slippage:Ref<number> = ref(1)
-  const loading:Ref<boolean> = ref(false)
-  const isError:Ref<boolean> = ref(false)
+  const receiveAddress:Ref<string> = ref('')
   const isNotClear:Ref<boolean> = ref(true)
-
-  const operateType: Ref<string> = ref('')
+//交易按钮相关的数据
+  const loading:Ref<boolean> = ref(false)
+  const isStatus:Ref<string> = ref('empty')
+//历史记录展示情况
+  const showHistory:Ref<boolean> = ref(true)
+//跨链情况当前所选的路由
   const crossIndex: Ref<number> = ref(0)
+
 
   //获取当前默认的交易对
   const getNowChain = (appChainsInfo:string) => {
@@ -73,9 +81,9 @@ export default function () {
   //将界面初始化
   const initData = () => {
     stopQuery()
-    isError.value = false
-    isNotClear.value = false
     loading.value = false
+    isStatus.value = 'empty'
+    isNotClear.value = false
     tradingPair.value[0].amount = '' 
     tradingPair.value[1].amount = ''
     showDetail.value = false
@@ -130,7 +138,6 @@ export default function () {
         onlySend: true,
         success: (res) => {
           if(isNotClear.value){
-            isError.value = false
           let data
           //当前单链会返回对象，跨链返回路由的数组
           if(res instanceof Array){
@@ -146,27 +153,37 @@ export default function () {
           inputOtherFiled(data)
           showDetail.value = true
           showHistory.value = false
-          loading.value = false
           timer = setTimeout(() => {
             getQuery(params, timeout)
           }, timeout);
           }
         },
         fail:(err)=>{
-          if(err.code === '301'){
+          if(err.code.toString() === '301'){
             loading.value = false
-            isError.value = true
+            isStatus.value = 'error'
+            showDetail.value = false
           }
         }
       }
     })
   }
 
-  const inputOtherFiled = (data:any) => {
+  const inputOtherFiled = async (data:any) => {
     const type = operateType.value == 'pay' ? 'receive' : 'pay'
     const useCoin = getUseCoin(tradingPair.value, type)
     const pairIndex = tradingPair.value.findIndex(item => item.type == useCoin.type)
     tradingPair.value[pairIndex].amount = handleAmount(data, operateType.value, useCoin.decimals)
+    const payCoin = tradingPair.value.filter( item => item.type == 'pay')[0]
+    const payTotalAmount = getStringNum(
+      await useJudgeFun(payCoin.chain, payCoin.token)
+    );
+    if(Number(payCoin.amount) < Number(payTotalAmount)){
+      isStatus.value = 'normal'
+    } else {
+      isStatus.value = 'noMoney'
+    }
+    loading.value = false
   }
 
   const stopQuery = () => {
@@ -203,6 +220,6 @@ export default function () {
     slippage,
     receiveAddress,
     loading,
-    isError
+    isStatus
   }
 }

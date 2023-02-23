@@ -4,9 +4,9 @@ import { getTronCoinBalance } from "~~/helper/tron/index"
 import useGlobalData from "~~/store/useGlobalData";
 import { ETHChain, TRONChain } from "~~/helper/chainInfo";
 
-const globalData = useGlobalData()
 
 export default async function (type:string, token:string|string[]) {
+const globalData = useGlobalData()
   if(ETHChain.includes(type)){
     if(token instanceof Array){
       return await getTokenBalanceByBatch(type, token, globalData.ownerAddress)

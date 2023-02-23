@@ -46,5 +46,8 @@
   "checkToAddress": "您输入的地址不是该币种接收链地址，请核对！",
   "Pasted": "粘贴",
   "notSupported": "无法找到资金池，请切换币",
-  "riskyToken": "风险币种"
+  "riskyToken": "风险币种",
+  "swapConfirm": "确认兑换",
+  "inputAmount": "请输入兑换数量",
+  "noMoney": "余额不足"
 }

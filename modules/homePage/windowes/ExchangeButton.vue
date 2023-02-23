@@ -9,35 +9,47 @@
 
 <script setup>
 import useGlobalData from "~~/store/useGlobalData";
+import { getStringNum } from "~~/helper/common";
+import useJudgeFun from "../switchChain/judgeFun";
 import { checkChain } from "./common";
 
 const globalData = useGlobalData();
 const { t } = useI18n();
 
+//按钮的状态值
+const buttonText = ref(t("tradingBoxSwap"));
 const disabled = ref(false);
-const notChain = ref(false);
 const loading = computed(() => {
 	return useNuxtApp().$managerScheduler.loading.value;
 });
+// const showDetail = computed(() => {
+// 	return useNuxtApp().$managerScheduler.showDetail.value;
+// });
 
-const buttonText = ref(t("tradingBoxSwap"));
-
-watch(
-	() => useNuxtApp().$managerScheduler.isError.value,
-	(newVal) => {
-		if (newVal) {
-			disabled.value = true;
-			buttonText.value = t("notSupported");
-		} else {
-			disabled.value = false;
-			buttonText.value = t("tradingBoxSwap");
-		}
-	},
-	{ immediate: true }
-);
+watchEffect(async () => {
+	console.log("enter button");
+	const statusString = useNuxtApp().$managerScheduler.isStatus.value;
+	if (statusString == "error") {
+		disabled.value = true;
+		buttonText.value = t("notSupported");
+	}
+	if (statusString == "normal") {
+		disabled.value = false;
+		buttonText.value = t("swapConfirm");
+	}
+	if (statusString == "empty") {
+		disabled.value = false;
+		buttonText.value = t("tradingBoxSwap");
+	}
+	if (statusString == "noMoney") {
+		disabled.value = true;
+		buttonText.value = t("noMoney");
+	}
+});
 
 //不支持链的错误提示
 const notSupport = ref("");
+const notChain = ref(false);
 watchEffect(() => {
 	notChain.value = checkChain(globalData.presentChain);
 	if (notChain.value) {
@@ -45,13 +57,19 @@ watchEffect(() => {
 	}
 });
 
-const showDetail = computed(() => {
-	return useNuxtApp().$managerScheduler.showDetail.value;
+//点击确认交易按钮
+const payCoin = computed(() => {
+	const tradingPair = useNuxtApp().$managerScheduler.tradingPair.value;
+	const payCoin = tradingPair.filter((item) => item.type == "pay")[0];
+	return payCoin;
 });
-const exchange = (order, type, number) => {
-	if (showDetail.value) {
-		alert("开始交易");
+const exchange = async () => {
+	if (!payCoin.value.amount) {
+		disabled.value = true;
+		buttonText.value = t("inputAmount");
+		return;
 	}
+	alert("开始交易");
 };
 </script>
 
