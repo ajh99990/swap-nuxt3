@@ -1,5 +1,5 @@
 <template>
-	<div v-if="coinData" class="w-343px h-166px bg-[#F2F5FE] px-12px window" :class="
+	<div v-if="coinData" class="w-343px h-156px bg-[#F2F5FE] px-12px window" :class="
       coinData.type == 'pay' ? 'rounded-t-12px pt-12px pb-20px' : 'rounded-b-12px pt-20px pb-12px',
 			isHoneyPot ? 'border-1px border-solid border-[#ec585e] bg-[#ffebf2]' :''
     ">
