@@ -48,8 +48,6 @@ onMounted(() => {
 		globalData.appChainsInfo.length < 3
 			? chainList().filter((item, index) => index != 1)
 			: chainList();
-
-	console.log(coinTypeArray.value);
 	chooseIndex.value = chainList().findIndex(
 		(item) => item.code == props.openChain
 	);

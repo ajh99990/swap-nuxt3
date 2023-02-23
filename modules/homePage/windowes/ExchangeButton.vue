@@ -27,7 +27,6 @@ const loading = computed(() => {
 // });
 
 watchEffect(async () => {
-	console.log("enter button");
 	const statusString = useNuxtApp().$managerScheduler.isStatus.value;
 	if (statusString == "error") {
 		disabled.value = true;

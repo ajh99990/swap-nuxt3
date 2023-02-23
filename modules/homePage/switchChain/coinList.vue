@@ -123,7 +123,7 @@ const getSearchCoinList = async () => {
 		totalRecords.value = cacheData.totalRecords;
 		pageNum.value = cacheData.pageNum;
 	} else {
-		console.log('start search');
+		// console.log('start search');
 		loading.value = true;
 		const fetchData = await getInterFaceData();
 		if (fetchData != "cancel") {
@@ -174,7 +174,7 @@ const getInterFaceData = async () => {
 	if (interfaceData.code == 901){
 		return 'cancel'
 	};
-	console.log('search success');
+	// console.log('search success');
 	return interfaceData;
 };
 

@@ -113,7 +113,6 @@ function handleSocketData (data:any) {
 }
 
 function HandleLifiData (data:any) {
-  console.log(data);
   return {
     routeLogo: `https://swap-jp.s3-accelerate.amazonaws.com/file/${data.bridgeMark}/${data.steps[0].toolDetails.key}.png`,
     routeName: data.steps[0].toolDetails.name,

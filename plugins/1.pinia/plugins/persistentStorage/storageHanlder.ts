@@ -48,7 +48,6 @@ export function storageHanlder({ prefix, performer }: StorageHanlder) {
   }
 
   function removeItem(name: string) {
-    console.log(formatItemName(name))
     return _performer.removeItem(formatItemName(name))
   }
 
