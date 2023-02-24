@@ -43,17 +43,18 @@ export function integrateParams (tradingPair:Coins[], windowType:string) {
       token1: receiveCoin.token,
       userSymbol0: payCoin.symbol,
       userSymbol1: receiveCoin.symbol,
-      fromAddress: defaultAddress(),
+      fromAddress: defaultAddress(tradingPair, 'pay'),
       slippage: 0,
-      receiveAddress: defaultAddress(),
+      receiveAddress: defaultAddress(tradingPair, 'receive'),
     }
     return params
 }
 
-export function defaultAddress ():string {
+export function defaultAddress (tradingPair:Coins[], type:string):string {
   const globalData = useGlobalData()
-  if(ETHChain.includes(globalData.presentChain)) return globalData.ownerAddress
-  if(TRONChain.includes(globalData.presentChain)) return globalData.ownerTronAddress
+  const receiveCoin = tradingPair.filter(item => item.type == type)[0]
+  if(ETHChain.includes(receiveCoin.chain)) return globalData.ownerAddress
+  if(TRONChain.includes(receiveCoin.chain)) return globalData.ownerTronAddress
   return ''
 }
 
@@ -117,7 +118,6 @@ function handleSocketData (data:any) {
     swapTime: (data.serviceTime/60) + 'mins',
   }
 }
-
 function HandleLifiData (data:any) {
   return {
     routeLogo: `https://swap-jp.s3-accelerate.amazonaws.com/file/${data.bridgeMark}/${data.steps[0].toolDetails.key}.png`,
@@ -134,13 +134,16 @@ function HandleSwftData (data:any) {
     swapTime: data.estimatedTime * 3 + ' min',
   }
 }
-
 function getLifiTime(array:any[]) {
   let time = 0
   array.map(item=>{
     time = time + item.estimate.executionDuration
   })
   return Math.ceil(time / 60) + 'mins'
+}
+
+export function assembRouteList(array:any[]){
+  return array
 }
 
 // export async function getQuery (payCoin:Coins,receiveCoin:Coins) {

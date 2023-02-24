@@ -101,13 +101,6 @@ const newTransaction = (trade) => {
 	]
 	tradingPair = props.order ? tradingPair : tradingPair.reverse()
 	replaceTradingPair(tradingPair)
-	// type: windowType,
-  //   chain: coin.chain,
-  //   symbol: coin.coinName,
-  //   token: coin.token,
-  //   decimals: coin.decimals,
-  //   logo: coin.logo,
-  //   amount: "",
 };
 
 onMounted(()=>{

@@ -1,6 +1,6 @@
 import type { ComputedRef, Ref, DefineComponent } from "vue"
 import { chainInfo, Coins, } from "~~/helper/chainInfo"
-import { trimCoin, changeChain, integrateParams, integrateDetails, defaultAddress, handleAmount } from "./core"
+import { trimCoin, changeChain, integrateParams, integrateDetails, defaultAddress, handleAmount, assembRouteList } from "./core"
 import useBaseApi from "~~/api/useBaseApi";
 import { getUseCoin } from "~~/modules/homePage/windowes/common";
 import { getStringNum } from "~~/helper/common";
@@ -63,7 +63,10 @@ export default function () {
   const showHistory:Ref<boolean> = ref(true)
 //跨链情况当前所选的路由
   const crossIndex: Ref<number> = ref(0)
-
+//路由列表展示用的数组
+  const showRouteArray: Ref<any[]> = ref([])
+//从API获取的的数组 用于交易
+  const tradeRouteArray: Ref<any[]> = ref([])
 
   //获取当前默认的交易对
   const getNowChain = (appChainsInfo:string) => {
@@ -75,7 +78,7 @@ export default function () {
   //使用获取到的交易对
   const replaceTradingPair = (newTradingPair:Coins[])=>{
     tradingPair.value = newTradingPair
-    // console.log(tradingPair.value, 'tradingPair.value');
+    initData()
   }
 
   //将界面初始化
@@ -89,19 +92,19 @@ export default function () {
     showDetail.value = false
     showHistory.value = true
     transactionDetails.value = {}
-    receiveAddress.value = defaultAddress()
+    receiveAddress.value = defaultAddress(tradingPair.value, 'receive')
     slippage.value = 1
   }
 
   //更换交易对中的代币
   const switchSingleCoin = (coin:Coin , tradingPairIndex:number, windowType:string) => {
     stopQuery()
-    initData()
     const newCoin = trimCoin(coin, windowType)
     tradingPair.value[tradingPairIndex] = newCoin
     if(windowType == 'pay'){
       changeChain(getUseCoin(tradingPair.value, 'pay').chain)
     }
+    initData()
   }
 
    //更换交易对中代币的amount,并请求接口获取信息
@@ -123,8 +126,7 @@ export default function () {
     stopQuery()
     const timeout = tradingPair.value[0].chain == tradingPair.value[1].chain ? 30000 : 60000
     const params = integrateParams(tradingPair.value, operateType.value)
-    receiveAddress.value = receiveAddress.value ? receiveAddress.value : defaultAddress()
-    // console.log(receiveAddress,'receiveAddress.value');
+    receiveAddress.value = receiveAddress.value ? receiveAddress.value : defaultAddress(tradingPair.value, 'receive')
     params.receiveAddress = receiveAddress.value
     params.slippage = slippage.value == defaultSlippage.value ? defaultSlippage.value/100 : slippage.value/100
     getQuery(params, timeout)
@@ -141,6 +143,8 @@ export default function () {
           let data
           //当前单链会返回对象，跨链返回路由的数组
           if(res instanceof Array){
+            showRouteArray.value = assembRouteList(res)
+            tradeRouteArray.value = res
             //跨链每次返回取第一个
             data = res[0]
             crossIndex.value = 0
@@ -168,7 +172,7 @@ export default function () {
       }
     })
   }
-
+  //根据不同的方式需要判断获取的方法
   const inputOtherFiled = async (data:any) => {
     const type = operateType.value == 'pay' ? 'receive' : 'pay'
     const useCoin = getUseCoin(tradingPair.value, type)

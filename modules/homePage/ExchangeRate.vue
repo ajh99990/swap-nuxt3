@@ -26,12 +26,14 @@ const Backwards = ref([]);
 const tradingPair = computed(() => {
 	return useNuxtApp().$managerScheduler.tradingPair.value;
 });
+
 watch(
-	() => [tradingPair.value[0].symbol, tradingPair.value[1].symbol],
+	() => tradingPair,
 	() => {
 		order.value = true;
 		getReta();
-	}
+	},
+	{ deep: true }
 );
 
 const getReta = async () => {

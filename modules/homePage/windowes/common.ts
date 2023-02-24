@@ -1,6 +1,7 @@
 import { Coins, chainInfo } from "~~/helper/chainInfo";
 import useGlobalData from "~~/store/useGlobalData";
 import useGoplusApi from "~~/api/useGoPlusApi";
+import { ETHChain } from "~~/helper/chainInfo";
 
 export function checkChain(chain:string): boolean {
     const globalData = useGlobalData()
@@ -14,6 +15,7 @@ export function getUseCoin (tradingPair:Coins[], type:string) {
 
 async function showErrorStyle (chain:string, token:string) {
     const goplusApi = useGoplusApi()
+    const chainId = ETHChain.includes(chain) ? chainInfo[chain].chainId : chain
     const data = await goplusApi.get(({ api }) => {
         return {
           api: api.tokenSecurity,
@@ -21,11 +23,11 @@ async function showErrorStyle (chain:string, token:string) {
             contract_addresses: token,
           },
           routeParams:{
-            chainId: chainInfo[chain].chainId
+            chainId: chainId
           }
         }
       }) 
-      return data[token]
+    return data[token]
 }
   
 //获取合约检测危险数量
