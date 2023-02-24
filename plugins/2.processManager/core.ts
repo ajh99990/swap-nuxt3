@@ -65,6 +65,9 @@ export function handleAmount (data:any, operateType:string, decimals:number ):nu
     if(data.bridgeMark == 'LIFI'){
       return BigNumber(data.amountOut).shiftedBy(-decimals).toNumber()
     }
+    if(data.bridgeMark == 'SWFT'){
+      return data.toTokenAmount
+    }
   } else {
     if(operateType == 'pay'){
       return BigNumber(data.amountOut).shiftedBy(-decimals).toNumber()
@@ -84,6 +87,9 @@ export function integrateDetails (data:any, receiveAddress:string) {
     }
     if(data.bridgeMark == 'LIFI'){
       crossData = HandleLifiData(data)
+    }
+    if(data.bridgeMark == 'SWFT'){
+      crossData = HandleSwftData(data)
     }
   }
   const priceImpact = data.price < 0.0001 ? 0.01 : Number(getStringNum(data.price * 100, 2));
@@ -118,6 +124,14 @@ function HandleLifiData (data:any) {
     routeName: data.steps[0].toolDetails.name,
     GasFee: data.gasCostUSD,
     swapTime: getLifiTime(data.steps),
+  }
+}
+function HandleSwftData (data:any) {
+  return {
+    routeLogo: data.logoUrl,
+    routeName: data.dex,
+    GasFee: data.chainFee,
+    swapTime: data.estimatedTime * 3 + ' min',
   }
 }
 
