@@ -28,7 +28,12 @@ const tradingPair = computed(() => {
 });
 
 watch(
-	() => tradingPair,
+	() => [
+		tradingPair.value[0].chain,
+		tradingPair.value[0].chain,
+		tradingPair.value[1].token,
+		tradingPair.value[1].token,
+	],
 	() => {
 		order.value = true;
 		getReta();
@@ -89,6 +94,7 @@ const getReta = async () => {
 	}, 60000);
 };
 onMounted(() => {
+	console.log();
 	getReta();
 });
 

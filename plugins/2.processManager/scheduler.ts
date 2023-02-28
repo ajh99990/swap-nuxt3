@@ -112,8 +112,8 @@ export default function () {
     isNotClear.value = true
     operateType.value = windowType
     tradingPair.value[tradingPairIndex].amount = amount
-    if(Number(amount)){
-      swapQuery()
+    if(amount){
+      if(Number(amount)) swapQuery()
     } else {
       initData()
     }
