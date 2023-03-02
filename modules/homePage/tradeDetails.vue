@@ -48,7 +48,7 @@
 					</van-field>
 				</div>
 				<div class="h-36px mt-15px rounded-full bg-[#fff] border-[#e6eaf5] border-1px border-solid flex justify-around items-center">
-					<span @click="changeSlippageVal(item.value)" v-for="(item, index) in slippageData.lists" :key="index" :class="slippageIndex == index ? 'bg-[#E6EAF5] text-[#597BF6]' : 'bg-[#fff] text-[#7e84a3]'" class="font-500 text-size-14px w-86.25px text-center py-10px rounded-full">{{ item.label}}</span>
+					<span @click="changeSlippageVal(item.value)" v-for="(item, index) in slippageData" :key="index" :class="slippageIndex == index ? 'bg-[#E6EAF5] text-[#597BF6]' : 'bg-[#fff] text-[#7e84a3]'" class="font-500 text-size-14px w-86.25px text-center py-10px rounded-full">{{ item.label}}</span>
 				</div>
 				<p class="text-12px mt-10px text-[#E69F5E] leading-16px flex items-center justify-center">
 					<img src="~~/assets/images/tips.png" class="w-14px inline-block relative -top-1px" />
@@ -99,9 +99,9 @@ const slippage = computed(() => {
 const receiveAddress = computed(() => {
 	return useNuxtApp().$managerScheduler.receiveAddress.value;
 });
-//提供几个滑点快捷选项
-const slippageData = {
-	lists: [
+//获取默认的滑点
+const slippageData = computed(() => {
+	return [
 		{
 			label: t("auto"),
 			value: useNuxtApp().$managerScheduler.defaultSlippage.value,
@@ -109,8 +109,8 @@ const slippageData = {
 		{ label: "0.5%", value: "0.5" },
 		{ label: "1%", value: "1" },
 		{ label: "2%", value: "2" },
-	],
-};
+	];
+});
 //对于滑点的一些操作
 const pageSlippage = ref("");
 watch(
@@ -122,10 +122,10 @@ watch(
 );
 const showSlippageBox = ref(false);
 const slippageIndex = computed(() => {
-	if (pageSlippage.value == slippageData.lists[0].value) {
+	if (pageSlippage.value == slippageData.value[0].value) {
 		return 0;
 	} else {
-		return slippageData.lists.findIndex(
+		return slippageData.value.findIndex(
 			(item) => item.value == pageSlippage.value
 		);
 	}

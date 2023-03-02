@@ -52,7 +52,7 @@ export default function () {
 //底部展示相关的数据
   const showDetail:Ref<boolean> = ref(false)
   const transactionDetails:Ref<Detail> = ref({})
-  const defaultSlippage: Ref<number> = ref(0)
+  const defaultSlippage: Ref<number> = ref(1)
   const slippage:Ref<number> = ref(1)
   const receiveAddress:Ref<string> = ref('')
   const isNotClear:Ref<boolean> = ref(true)
@@ -153,7 +153,12 @@ export default function () {
           }
           transactionDetails.value = integrateDetails(data, params.receiveAddress)
           slippage.value = transactionDetails.value.slippage != defaultSlippage.value ? transactionDetails.value.slippage : slippage.value
-          defaultSlippage.value = transactionDetails.value.slippage
+          if(transactionDetails.value.slippage != defaultSlippage.value){
+            console.log('enter');
+            defaultSlippage.value = transactionDetails.value.slippage
+            console.log(defaultSlippage.value);
+            
+          }
           inputOtherFiled(data)
           showDetail.value = true
           showHistory.value = false
