@@ -45,12 +45,7 @@ export const addChain = async (chain) => {
         ]
     })
 }
-//获取币种的精度
-export const getDecimals = async (token) => {
-    const tokenContract = new web3.eth.Contract(erc20Abi, token)
-    const decimals = await tokenContract.methods.decimals().call()
-    return decimals
-}
+
 //获取币种的余额
 export const getBalance = async (chain, token, isMasterCoin, ownerAddress) => {
     const web3 = new Web3(chainInfo[chain].rpc)
@@ -64,8 +59,16 @@ export const getBalance = async (chain, token, isMasterCoin, ownerAddress) => {
         return BigNumber(balance).shiftedBy(-decimals)
     }
 }
+
+//校验用户输入的地址
+export const checkAddress = (address) => {
+    web3 = new Web3(window.ethereum)
+    const state = web3.utils.isAddress(address)
+    return state
+}
+
 //买入框输入金额
-export const swapExactTokensForTokens = (chain, contract, coin0, coin1, coin2, coin3, route0, route1, route2, amountIn, amountMinOut, to, deadline, peeList, V3) => {
+export const swapExactTokensForTokens = (contract, coin0, coin1, coin2, coin3, route0, route1, route2, amountIn, amountMinOut, to, deadline, peeList, V3) => {
     if (V3) {
         const swapContract = new web3.eth.Contract(swapV3Abi, contract)
         return swapContract.methods.swapExactTokensForTokens(coin0, peeList[0].fee, coin1, peeList[1].fee, coin2, peeList[2].fee, coin3, route0, amountIn, amountMinOut, to, deadline)
@@ -74,8 +77,9 @@ export const swapExactTokensForTokens = (chain, contract, coin0, coin1, coin2, c
         return swapContract.methods.swapExactTokensForTokens(coin0, coin1, coin2, coin3, route0, route1, route2, amountIn, amountMinOut, to, deadline)
     }
 }
+
 //接收框输入金额
-export const swapTokensForExactTokens = (chain, contract, coin0, coin1, coin2, coin3, route0, route1, route2, amountInMax, amountOut, to, deadline, peeList, V3) => {
+export const swapTokensForExactTokens = (contract, coin0, coin1, coin2, coin3, route0, route1, route2, amountInMax, amountOut, to, deadline, peeList, V3) => {
     if (V3) {
         const swapContract = new web3.eth.Contract(swapV3Abi, contract)
         return swapContract.methods.swapTokensForExactTokens(coin0, peeList[0].fee, coin1, peeList[1].fee, coin2, peeList[2].fee, coin3, route0, amountInMax, amountOut, to, deadline)
@@ -84,8 +88,9 @@ export const swapTokensForExactTokens = (chain, contract, coin0, coin1, coin2, c
         return swapContract.methods.swapTokensForExactTokens(coin0, coin1, coin2, coin3, route0, route1, route2, amountInMax, amountOut, to, deadline)
     }
 }
+
 // 目前币种已授权的额度
-export const allowance = async (chain, swapContractAddress, tokenContractAddress, ownerAddress) => {
+export const allowance = async (swapContractAddress, tokenContractAddress, ownerAddress) => {
     const tokenContract = new web3.eth.Contract(erc20Abi, tokenContractAddress)
     try {
         const result = await tokenContract.methods.allowance(ownerAddress, swapContractAddress).call()
@@ -94,20 +99,33 @@ export const allowance = async (chain, swapContractAddress, tokenContractAddress
         console.error({ title: 'allowance error' })
     }
 }
+
+//对币种额度进行授权
+export const approve = (swapContractAddress, tokenContractAddress) => {
+    console.log('enter', swapContractAddress, tokenContractAddress);
+    const tokenContract = new web3.eth.Contract(erc20Abi, tokenContractAddress)
+    const totalSupply = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+    return tokenContract.methods.approve(swapContractAddress, totalSupply)
+}
+
 //获取gasPrice
 export const getGasPrice = async () => {
     const data = await web3.eth.getGasPrice()
     return data
 }
-//对币种额度进行授权
-export const approve = (chain, swapContractAddress, tokenContractAddress) => {
-    const tokenContract = new web3.eth.Contract(erc20Abi, tokenContractAddress)
-    const totalSupply = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
-    return tokenContract.methods.approve(swapContractAddress, totalSupply)
-}
-//校验用户输入的地址
-export const checkAddress = (address) => {
-    web3 = new Web3(window.ethereum)
-    const state = web3.utils.isAddress(address)
-    return state
-}
+
+
+//获取币种的精度
+// export const getDecimals = async (token) => {
+//     const tokenContract = new web3.eth.Contract(erc20Abi, token)
+//     const decimals = await tokenContract.methods.decimals().call()
+//     return decimals
+// }
+
+
+
+
+
+
+
+

@@ -38,7 +38,7 @@ export default defineNuxtConfig({
       { code: 'zh', file: 'zh.json' }
     ],
     langDir:'./locales/',
-    defaultLocale: 'zh',
+    defaultLocale: 'en',
     vueI18n: {
       fallbackLocale: 'zh',
     }

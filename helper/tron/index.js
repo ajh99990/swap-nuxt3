@@ -31,11 +31,6 @@ export const getTronAddress = async () => {
     return ownerTronAddress
 }
 
-//判断确认tron地址是否正确
-export const checkTronAddress = async (address) => {
-    return Tron.isAddress(address)
-}
-
 //获取tron币种余额
 export const getTronCoinBalance = async (token) => {
     const hexAddress = Tron.address.toHex(ownerTronAddress).slice(2)
@@ -70,6 +65,7 @@ export const getTronCoinBalance = async (token) => {
         })
         const priceRes = await axios.post("https://api.trongrid.io/jsonrpc", priceParams)
         const decimalsRes = await axios.post("https://api.trongrid.io/jsonrpc", decimalsParams)
+
         const numberArray = priceRes.data.map((item, index) => {
             return BigNumber(BigNumber(item.result)).shiftedBy(-BigNumber(decimalsRes.data[index].result)).toString()
         })
@@ -85,8 +81,8 @@ export const getTronCoinBalance = async (token) => {
                 method: "eth_call",
                 params: [
                     {
-                        data: `0x70a08231000000000000000000000000${hexAddress}`, //拼接用户地址去掉41开头
-                        to: Tron.address.toHex(token), //usdt
+                        data: `0x70a08231000000000000000000000000${hexAddress}`,
+                        to: Tron.address.toHex(token),
                     },
                     "latest",
                 ],
@@ -97,8 +93,8 @@ export const getTronCoinBalance = async (token) => {
                 method: "eth_call",
                 params: [
                     {
-                        data: `0x313ce567`, //拼接用户地址去掉41开头
-                        to: Tron.address.toHex(token), //usdt
+                        data: `0x313ce567`,
+                        to: Tron.address.toHex(token),
                     },
                     "latest",
                 ],
@@ -111,3 +107,15 @@ export const getTronCoinBalance = async (token) => {
         }
     }
 }
+
+//判断确认tron地址是否正确
+export const checkTronAddress = async (address) => {
+    return Tron.isAddress(address)
+}
+
+//获取交易gasprice
+export const getTronGasPrice = async () => {
+    const gasPrice = await axios.post("https://api.trongrid.io/jsonrpc", { "jsonrpc": "2.0", "id": 1, "method": "eth_gasPrice", "params": [] })
+    return BigNumber(gasPrice.data.result).toNumber()
+}
+

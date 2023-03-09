@@ -1,3 +1,7 @@
+import useBaseApi from "~~/api/useBaseApi";
+
+
+//格式化展示的token
 export const simplifyToken = (token:string) => {
   if(token == '0x000') return ''
   if(token.length>8){
@@ -7,6 +11,7 @@ export const simplifyToken = (token:string) => {
   }
 };
 
+//获取指定精度数据
 export const getStringNum = (number:number|string, decimals:number = 8) => {
   const numString = scientificString(number).toString()
   if(numString.includes(".")){
@@ -19,7 +24,7 @@ export const getStringNum = (number:number|string, decimals:number = 8) => {
   }
 }
 
-//科学计数转字符串
+//科学计数转字符串 ---- 爆红了整改下
 export const  scientificString = (param:string|number) => {
   let strParam:string = String(param)
   let flag = /e/.test(strParam)
@@ -42,5 +47,17 @@ export const  scientificString = (param:string|number) => {
   } else {
     return basis.padStart(index + basis.length, 0).replace(/^0/, '0.')
   }
+}
+
+//获取币种对应的法币
+export const getAmountToUsdt = async (chain:string, token:string) => {
+  const baseApi = useBaseApi()
+  const dollar = await baseApi.post(({ api }) => {
+    return {
+      api: api.getCoinPrice,
+      data: [`${chain}_${token}`],
+    };
+  });
+  return dollar[`${chain}_${token}`]
 }
 

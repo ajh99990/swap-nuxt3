@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import Window from "./Window.vue";
+import Window from "./components/Window.vue";
 import SwitchIcon from "./SwitchIcon.vue";
 import SwitchChain from "../switchChain/index.vue";
 import useGlobalData from "~~/store/useGlobalData";

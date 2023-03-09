@@ -39,10 +39,15 @@
 
 <script setup>
 import { chainInfo } from "@/helper/chainInfo";
-import useJudgeFun from "../switchChain/judgeFun";
+import useJudgeFun from "~~/modules/homePage/switchChain/judgeFun";
 import { getStringNum } from "~~/helper/common";
 import useBaseApi from "~~/api/useBaseApi";
-import { getDangerNum } from "./common";
+import { getDangerNum } from "../common";
+import { ETHChain } from "@/helper/chainInfo";
+import useGlobalData from "~~/store/useGlobalData";
+import BigNumber from "bignumber.js";
+import { getEstimateGas } from "~~/modules/homePage/windowes/common";
+import { getGasPrice } from "~~/helper/eth";
 
 const baseApi = useBaseApi();
 const props = defineProps({
@@ -51,6 +56,87 @@ const props = defineProps({
 	isCross: Boolean,
 });
 const emits = defineEmits(["showCoinList", "getInputValue"]);
+const {
+	initData,
+	designatedStatus,
+	getAvailableMainAmount,
+	designatedLoading,
+} = useNuxtApp().$managerScheduler;
+
+const payCoin = computed(() => {
+	const tradingPair = useNuxtApp().$managerScheduler.tradingPair.value;
+	return tradingPair.filter((item) => item.type == "pay")[0];
+});
+const receiveCoin = computed(() => {
+	const tradingPair = useNuxtApp().$managerScheduler.tradingPair.value;
+	return tradingPair.filter((item) => item.type == "receive")[0];
+});
+
+const availableMainAmount = ref(undefined);
+watch(
+	() => [payCoin.value.token, payCoin.value.chain],
+	async () => {
+		if (
+			payCoin.value.chain == receiveCoin.value.chain &&
+			props.coinData.token == "0x000" &&
+			props.coinData.type == "pay"
+		) {
+			availableMainAmount.value = undefined;
+			getAvailableMainAmount(availableMainAmount.value);
+			const globalData = useGlobalData();
+			let address, gasPrice;
+			if (ETHChain.includes(props.coinData.chain)) {
+				address = globalData.ownerAddress;
+				gasPrice = await getGasPrice();
+			} else {
+				address = globalData.ownerTronAddress;
+				gasPrice = 1;
+			}
+			const params = {
+				amount0In: BigNumber(totalAmount.value).shiftedBy(
+					props.coinData.decimals
+				),
+				amount1Out: "",
+				chain_token0: props.coinData.chain,
+				chain_token1: props.coinData.chain,
+				fromAddress: address,
+				receiveAddress: address,
+				slippage: 0.01,
+				token0: "0x000",
+				token1: receiveCoin.value.token,
+				userSymbol0: props.coinData.symbol,
+				userSymbol1: receiveCoin.value.symbol,
+			};
+			baseApi.post(({ api }) => {
+				return {
+					api: api.queryRate,
+					data: params,
+					success: async (res) => {
+						const estimateGas = await getEstimateGas(
+							props.coinData.chain,
+							res,
+							"0x000"
+						);
+						availableMainAmount.value =
+							totalAmount.value -
+							BigNumber(estimateGas * gasPrice * 2)
+								.shiftedBy(-18)
+								.toNumber();
+						console.log(
+							"主币可交易最大额度",
+							availableMainAmount.value
+						);
+						getAvailableMainAmount(availableMainAmount.value);
+					},
+				};
+			});
+		}
+	},
+	{
+		immediate: true,
+		deep: true,
+	}
+);
 
 //更改输入框内对应的法币
 const coinBalance = ref("0.00");
@@ -60,7 +146,6 @@ watchEffect(async () => {
 		const usdtReta = await baseApi.post(({ api }) => {
 			return {
 				api: api.getCoinPrice,
-				// onlySend: true,
 				data: [Str],
 			};
 		});
@@ -108,17 +193,49 @@ const formatter = (value) => {
 };
 
 //输入框内输入金额
-const { initData } = useNuxtApp().$managerScheduler;
 const clearField = () => {
 	initData();
 };
+
+let timer = null;
+const isMainCost = () => {
+	if (availableMainAmount.value > 0) {
+		console.log("have");
+		clearTimeout(timer);
+		emits(
+			"getInputValue",
+			props.componentIndex,
+			props.coinData.type,
+			availableMainAmount.value
+		);
+	} else if (availableMainAmount.value <= 0) {
+		console.log("error");
+		designatedStatus();
+	} else {
+		timer = setTimeout(() => {
+			isMainCost();
+		}, 800);
+	}
+};
+
 const allIn = () => {
-	emits(
-		"getInputValue",
-		props.componentIndex,
-		props.coinData.type,
-		totalAmount.value
-	);
+	if (
+		props.coinData.token == "0x000" &&
+		props.coinData.chain == receiveCoin.value.chain
+	) {
+		if (timer || props.coinData.amount == availableMainAmount.value) {
+		} else {
+			designatedLoading();
+			isMainCost();
+		}
+	} else {
+		emits(
+			"getInputValue",
+			props.componentIndex,
+			props.coinData.type,
+			totalAmount.value
+		);
+	}
 };
 const inputValue = (e) => {
 	emits(

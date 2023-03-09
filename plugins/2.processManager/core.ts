@@ -3,7 +3,7 @@ import { Coins, } from "~~/helper/chainInfo"
 import useGlobalData from "~~/store/useGlobalData"
 import { addChain } from "~~/helper/eth";
 import BigNumber from "bignumber.js";
-import { scientificString } from "~~/helper/common";
+import { scientificString, getAmountToUsdt } from "~~/helper/common";
 import { ETHChain, TRONChain } from "~~/helper/chainInfo";
 import { simplifyToken, getStringNum } from "~~/helper/common";
 // import useBaseApi from "~~/api/useBaseApi";
@@ -31,23 +31,22 @@ export function changeChain (chain:string) {
 }
 
 export function integrateParams (tradingPair:Coins[], windowType:string) {
-  // console.log(tradingPair, windowType);
   const payCoin = tradingPair[0].type == 'pay' ? tradingPair[0] : tradingPair[1]
   const receiveCoin = tradingPair[0].type == 'receive' ? tradingPair[0] : tradingPair[1]
-    const params = {
-      amount0In: windowType == 'pay' ? scientificString(BigNumber(payCoin.amount).shiftedBy(payCoin.decimals).toNumber()) : "", 
-      amount1Out: windowType == 'receive' ? scientificString(BigNumber(receiveCoin.amount).shiftedBy(receiveCoin.decimals).toNumber()) : "",
-      chain_token0: payCoin.chain,
-      chain_token1: receiveCoin.chain,
-      token0: payCoin.token,
-      token1: receiveCoin.token,
-      userSymbol0: payCoin.symbol,
-      userSymbol1: receiveCoin.symbol,
-      fromAddress: defaultAddress(tradingPair, 'pay'),
-      slippage: 0,
-      receiveAddress: defaultAddress(tradingPair, 'receive'),
-    }
-    return params
+  const params = {
+    amount0In: windowType == 'pay' ? scientificString(BigNumber(payCoin.amount).shiftedBy(payCoin.decimals).toNumber()) : "", 
+    amount1Out: windowType == 'receive' ? scientificString(BigNumber(receiveCoin.amount).shiftedBy(receiveCoin.decimals).toNumber()) : "",
+    chain_token0: payCoin.chain,
+    chain_token1: receiveCoin.chain,
+    token0: payCoin.token,
+    token1: receiveCoin.token,
+    userSymbol0: payCoin.symbol,
+    userSymbol1: receiveCoin.symbol,
+    fromAddress: defaultAddress(tradingPair, 'pay'),
+    slippage: 0,
+    receiveAddress: defaultAddress(tradingPair, 'receive'),
+  }
+  return params
 }
 
 export function defaultAddress (tradingPair:Coins[], type:string):string {
@@ -64,7 +63,7 @@ export function handleAmount (data:any, operateType:string, decimals:number ):nu
       return BigNumber(data.toAmount).shiftedBy(-decimals).toNumber()
     }
     if(data.bridgeMark == 'LIFI'){
-      return BigNumber(data.amountOut).shiftedBy(-decimals).toNumber()
+      return BigNumber(data.toAmount).shiftedBy(-decimals).toNumber()
     }
     if(data.bridgeMark == 'SWFT'){
       return data.toTokenAmount
@@ -118,6 +117,7 @@ function handleSocketData (data:any) {
     swapTime: (data.serviceTime/60) + 'mins',
   }
 }
+
 function HandleLifiData (data:any) {
   return {
     routeLogo: `https://swap-jp.s3-accelerate.amazonaws.com/file/${data.bridgeMark}/${data.steps[0].toolDetails.key}.png`,
@@ -126,6 +126,7 @@ function HandleLifiData (data:any) {
     swapTime: getLifiTime(data.steps),
   }
 }
+
 function HandleSwftData (data:any) {
   return {
     routeLogo: data.logoUrl,
@@ -134,6 +135,7 @@ function HandleSwftData (data:any) {
     swapTime: data.estimatedTime * 3 + ' min',
   }
 }
+
 function getLifiTime(array:any[]) {
   let time = 0
   array.map(item=>{
@@ -142,12 +144,89 @@ function getLifiTime(array:any[]) {
   return Math.ceil(time / 60) + 'mins'
 }
 
-export function assembRouteList(array:any[]){
-  return array
+export async function assembRouteList(array:any[], tradingPair:Coins[]){
+  const payCoin:Coins = tradingPair.filter(item => item.type == 'pay')[0]
+  const receiveCoin:Coins = tradingPair.filter(item => item.type == 'receive')[0]
+  let receiveToUsdt = await getAmountToUsdt(receiveCoin.chain, receiveCoin.token)
+  let routeArray:any[] = []
+  array.map((item, index) => {
+    if(item.bridgeMark == 'LIFI'){
+      routeArray.push({
+        payLogo: payCoin.logo,
+        paySymbol: payCoin.symbol,
+        payChain: payCoin.chain,
+        receiveLogo: receiveCoin.logo,
+        receiveSymbol: receiveCoin.symbol,
+        receiveChain: receiveCoin.chain,
+
+        bridgeMark: item.bridgeMark,
+        routeName: item.steps[0].toolDetails.name,
+        routeKey: item.steps[0].toolDetails.key,
+        GasFee: item.gasCostUSD,
+        useTime: getLifiUseTime(item.steps),
+        toAmount: getStringNum(BigNumber(item.toAmount).shiftedBy(-receiveCoin.decimals).toString(), receiveCoin.decimals > 8 ? 8 : receiveCoin.decimals),
+        toAmountUSD: item.toAmountUSD,
+        bridgeOne: item.steps[0].includedSteps.length == 1 ? '' : item.steps[0].includedSteps[0].type == 'cross' ? item.steps[0].includedSteps[1].toolDetails.name : item.steps[0].includedSteps[0].toolDetails.name,
+        bridgeTwo: item.steps[1]?.includedSteps[0].toolDetails.name || '',
+        showChannel: false
+      })
+    }
+    if(item.bridgeMark == 'SOCKET'){
+      let receiveAmount = getStringNum(BigNumber(item.toAmount).shiftedBy(-receiveCoin.decimals).toString(), receiveCoin.decimals > 8 ? 8 : receiveCoin.decimals)
+      routeArray.push({
+        payLogo: payCoin.logo,
+        paySymbol: payCoin.symbol,
+        payChain: payCoin.chain,
+        receiveLogo: receiveCoin.logo,
+        receiveSymbol: receiveCoin.symbol,
+        receiveChain: receiveCoin.chain,
+
+        bridgeMark: item.bridgeMark,
+        routeName: item.userTxs[0].steps[0].type == 'bridge' ? item.userTxs[0].steps[0].protocol.displayName : item.userTxs[0].steps[1].protocol.displayName,
+        routeKey: item.userTxs[0].steps[0].type == 'bridge' ? item.userTxs[0].steps[0].protocol.name : item.userTxs[0].steps[1].protocol.name,
+        GasFee: getStringNum(item.totalGasFeesInUsd, 2),
+        useTime: item.serviceTime/60,
+        toAmount: receiveAmount,
+        toAmountUSD: getStringNum( Number(receiveAmount) * receiveToUsdt, 2),
+        bridgeOne: item.userTxs[0].steps[0].type == 'bridge' ? "" : item.userTxs[0].steps[0].protocol.displayName,
+        bridgeTwo: item.userTxs[1] ? item.userTxs[1].protocol.displayName : '',
+        showChannel: false
+      })
+    }
+    if(item.bridgeMark == 'SWFT' && index == 0){
+      routeArray.push({
+        payLogo: payCoin.logo,
+        paySymbol: payCoin.symbol,
+        payChain: payCoin.chain,
+        receiveLogo: receiveCoin.logo,
+        receiveSymbol: receiveCoin.symbol,
+        receiveChain: receiveCoin.chain,
+
+        bridgeMark: item.bridgeMark,
+        routeName: 'SWFT',
+        routeKey: 'swft',
+        GasFee: getStringNum( Number(item.chainFee) * receiveToUsdt, 2),
+        useTime: item.estimatedTime * 3,
+        toAmount: item.toTokenAmount,
+        toAmountUSD: getStringNum( Number(item.toTokenAmount) * receiveToUsdt, 2),
+        bridgeOne: '',
+        bridgeTwo: '',
+        showChannel: false
+      })
+    }
+  })
+  return routeArray
+}
+
+function getLifiUseTime(steps:any[]){
+  let time = 0
+  steps.map(item=>{
+    time += item.estimate.executionDuration
+  })
+  return Math.ceil(time / 60)
 }
 
 // export async function getQuery (payCoin:Coins,receiveCoin:Coins) {
 //   const baseApi = useBaseApi()
 //   console.log('getQuery', payCoin, receiveCoin);
-  
 // }

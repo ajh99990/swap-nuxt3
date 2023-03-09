@@ -3,7 +3,7 @@
 		<Line v-if="detailInfo.routeName" :label="$t('routeName')" :showIcon="false" class="mb-10px">
 			<img :src="detailInfo.routeLogo" class="mr-6px h-22px rounded-full" />
 			<span class="mr-4px">{{ detailInfo.routeName }}</span>
-			<img src="~~/assets/images/rightArrow.png" class="w-15px h-15px" />
+			<img src="~~/assets/images/rightArrow.png" @click="showRouteList" class="w-15px h-15px" />
 		</Line>
 		<Line v-else :label="$t('bestChannel')" :showIcon="false" class="mb-10px">
 			<img :src="detailInfo.platform" class="h-22px mr-19px" />
@@ -70,12 +70,82 @@
 				</div>
 			</div>
 		</PopUps>
+		<PopUps propHeight="600px" popupTitle="选择通道" :showState="showRouteBox" @closePropUp="closeRouteBox">
+			<div class="h-552px overflow-y-auto px-15px bg-[#f7f9fe] pt-12px pb-15px">
+				<div @click="chooseRoute(index)" v-for="item,index in showRouteArray" :key="index" :class="crossIndex == index ? 'border-1.5px border-solid border-[#597bf6] bg-[#ecf0ff]' : 'bg-[#ffffff]'" class="w-345px mb-12px pt-26px rounded-12px px-12px pb-19px">
+					<div class="flex justify-between mb-12px">
+						<p class="flex">
+							<img :src="`https://swap-jp.s3-accelerate.amazonaws.com/file/${item.bridgeMark}/${item.routeKey}.png`" class="w-20px h-20px mr-6px rounded-full" />
+							<span class="text-14px font-500 leading-20px">{{ item.routeName }}</span>
+						</p>
+						<p @click.stop="emptyClick" class="flex">
+							<van-popover v-model:show="showGasFeeFlag[index]" placement="bottom" theme="dark">
+								<p class="text-size-12px text-[#fff] px-8px py-6px leading-18px">Gas fee：${{ item.GasFee }}</p>
+								<template #reference>
+									<p class="flex items-center mr-16px">
+										<img src="~~/assets/images/GasFeeIcon.png" class="w-20px h-20px" />
+										<span class="font-12px leading-14px">${{ item.GasFee }}</span>
+									</p>
+								</template>
+							</van-popover>
+							<van-popover v-model:show="showUseTimeFlag[index]" placement="bottom-end" theme="dark">
+								<p class="text-size-12px text-[#fff] px-8px py-6px leading-18px">预计用时: {{ item.useTime }} min</p>
+								<template #reference>
+									<p class="flex items-center">
+										<img src="~~/assets/images/timeIcon.png" class="w-20px h-20px" />
+										<span class="font-12px leading-14px">{{ item.useTime }} min</span>
+									</p>
+								</template>
+							</van-popover>
+						</p>
+					</div>
+					<div class="h-0.5px w-321px bg-[#d8dff9] mb-20.5px"></div>
+					<div class="flex justify-between">
+						<div class="flex">
+							<div class="mr-14px w-36px h-36px relative">
+								<Images :logo="item.receiveLogo" logoWidth="34px" :logoName="item.receiveSymbol" :smallCoin="false" class="mr-10px" />
+								<Images :logo="`https://swap-jp.s3-accelerate.amazonaws.com/chain/${item.receiveChain}.png`" logoWidth="15px" :logoName="item.receiveChain" :smallCoin="true" class="w-15px h-15px absolute -right-25px bottom-15px border-1px border-solid border-[#ffffff] rounded-full" />
+							</div>
+							<div>
+								<p class="text-18px font-500 leading-21px mb-2px">{{ item.toAmount }}</p>
+								<p class="text-11px text-[#9399b1] leading-13px">$ {{ item.toAmountUSD }}</p>
+							</div>
+						</div>
+						<p @click.stop="showMoreChannel(index)" class="w-60px h-30px absolute right-25px flex justify-end items-center">
+							<img src="~~/assets/images/showMore_route.png" :class=" !item.showChannel ? '' : '-rotate-180'" class="w-18px h-18px flex-shrink-0 mr-12px transform duration-300" />
+						</p>
+					</div>
+					<div v-if="item.showChannel" class="w-321px pt-16px pb-19px px-14px rounded-8px bg-[#f7f9fe] mt-20px flex justify-between relative" :class=" item.bridgeOne || item.bridgeTwo ? 'h-105px' : ''">
+						<div class="w-24px h-24px relative">
+							<Images :logo="item.payLogo" logoWidth="24px" :logoName="item.paySymbol" :smallCoin="false" class="mr-10px" />
+							<Images :logo="`https://swap-jp.s3-accelerate.amazonaws.com/chain/${item.payChain}.png`" logoWidth="15px" :logoName="item.payChain" :smallCoin="false" class="w-15px h-15px absolute -right-18px bottom-15px border-1px border-solid border-[#ffffff] rounded-full" />
+						</div>
+						<div class="h-24px bg-[#e8efff] rounded-14px flex justify-center items-center px-15px py-2px z-10">
+							<img :src="`https://swap-jp.s3-accelerate.amazonaws.com/file/${item.bridgeMark}/${item.routeKey}.png`" class="w-16px h-16px mr-6px rounded-full" />
+							<span class="text-12px font-500 leading-20px">{{ item.routeName }}</span>
+						</div>
+						<div class="w-24px h-24px relative">
+							<Images :logo="item.receiveLogo" logoWidth="24px" :logoName="item.receiveSymbol" :smallCoin="false" class="mr-10px" />
+							<Images :logo="`https://swap-jp.s3-accelerate.amazonaws.com/chain/${item.receiveChain}.png`" logoWidth="15px" :logoName="item.receiveChain" :smallCoin="false" class="w-15px h-15px absolute -right-18px bottom-15px border-1px border-solid border-[#ffffff] rounded-full" />
+						</div>
+						<div v-if="item.bridgeOne" class="w-137.5px absolute left-23px top-73px h-14px z-10 text-center">
+							<span class="z-10 bg-[#f7f9fe] text-12px text-[#7e84a3] leading-14px">{{ item.bridgeOne }}</span>
+						</div>
+						<div v-if="item.bridgeTwo" class="w-137.5px absolute right-23px top-73px h-14px bg-[#000]">
+							<span class="z-10 bg-[#f7f9fe] text-12px text-[#7e84a3] leading-14px">{{ item.bridgeTwo }}</span>
+						</div>
+						<img v-if="item.bridgeOne || item.bridgeTwo" src="~~/assets/images/manyRoute.png" class="absolute w-275px left-23px top-47px" />
+						<img v-else src="~~/assets/images/singleRoute.png" class="absolute w-225px left-50px top-25px z-1" />
+					</div>
+				</div>
+			</div>
+		</PopUps>
 	</div>
 </template>
 
 <script setup>
 import { simplifyToken } from "~~/helper/common";
-import Line from "./commons/line.vue";
+import Line from "./components/line.vue";
 import { postMessageAppCallback } from "~~/helper/postMessage";
 import { ETHChain, TRONChain } from "~~/helper/chainInfo";
 import { checkTronAddress } from "~~/helper/tron/index";
@@ -190,6 +260,43 @@ const checkToAddress = async () => {
 
 const resetJudge = () => {
 	showAddressError.value = false;
+};
+
+const showRouteArray = ref([]);
+
+watch(
+	() => useNuxtApp().$managerScheduler.showRouteArray.value,
+	(newVal) => {
+		showRouteArray.value = newVal;
+	},
+	{
+		deep: true,
+		immediate: true,
+	}
+);
+
+const crossIndex = computed(() => {
+	return useNuxtApp().$managerScheduler.crossIndex.value;
+});
+const showGasFeeFlag = ref([]);
+const showUseTimeFlag = ref([]);
+const showRouteBox = ref(false);
+const showRouteList = () => {
+	showRouteBox.value = true;
+};
+const closeRouteBox = () => {
+	showRouteBox.value = false;
+};
+const emptyClick = () => {};
+const showMoreChannel = (index) => {
+	showRouteArray.value[index].showChannel =
+		!showRouteArray.value[index].showChannel;
+};
+
+const { changeRoute } = useNuxtApp().$managerScheduler;
+const chooseRoute = (index) => {
+	changeRoute(index);
+	closeRouteBox();
 };
 </script>
 

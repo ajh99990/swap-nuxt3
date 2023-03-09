@@ -48,7 +48,8 @@ export default function () {
 
 //输入框内相关的数据
   const tradingPair:Ref<Coins[]> = ref([])
-  const operateType: Ref<string> = ref('')
+  const operateType: Ref<string> = ref('pay')
+  const availableMainAmount: Ref<number> = ref(0)
 //底部展示相关的数据
   const showDetail:Ref<boolean> = ref(false)
   const transactionDetails:Ref<Detail> = ref({})
@@ -67,6 +68,8 @@ export default function () {
   const showRouteArray: Ref<any[]> = ref([])
 //从API获取的的数组 用于交易
   const tradeRouteArray: Ref<any[]> = ref([])
+//当前选中要使用的路由
+  const originalData: Ref<any> = ref({})
 
   //获取当前默认的交易对
   const getNowChain = (appChainsInfo:string) => {
@@ -138,33 +141,31 @@ export default function () {
         api: api.queryRate,
         data:params,
         onlySend: true,
-        success: (res) => {
+        success: async (res) => {
           if(isNotClear.value){
-          let data
-          //当前单链会返回对象，跨链返回路由的数组
-          if(res instanceof Array){
-            showRouteArray.value = assembRouteList(res)
-            tradeRouteArray.value = res
-            //跨链每次返回取第一个
-            data = res[0]
-            crossIndex.value = 0
-          } else {
-            data = res
-          }
-          transactionDetails.value = integrateDetails(data, params.receiveAddress)
-          slippage.value = transactionDetails.value.slippage != defaultSlippage.value ? transactionDetails.value.slippage : slippage.value
-          if(transactionDetails.value.slippage != defaultSlippage.value){
-            console.log('enter');
-            defaultSlippage.value = transactionDetails.value.slippage
-            console.log(defaultSlippage.value);
-            
-          }
-          inputOtherFiled(data)
-          showDetail.value = true
-          showHistory.value = false
-          timer = setTimeout(() => {
-            getQuery(params, timeout)
-          }, timeout);
+            //当前单链会返回对象，跨链返回路由的数组
+            if(res instanceof Array){
+              //组装需要在路由列表展示的数据
+              showRouteArray.value = await assembRouteList(res, tradingPair.value)
+              //所有原始的路由
+              tradeRouteArray.value = res
+              //跨链每次返回取第一个
+              originalData.value = res[0]
+              crossIndex.value = 0
+            } else {
+              originalData.value = res
+            }
+            transactionDetails.value = integrateDetails(originalData.value, params.receiveAddress)
+            slippage.value = transactionDetails.value.slippage != defaultSlippage.value ? transactionDetails.value.slippage : slippage.value
+            if(transactionDetails.value.slippage != defaultSlippage.value){
+              defaultSlippage.value = transactionDetails.value.slippage
+            }
+            inputOtherFiled(originalData.value)
+            showDetail.value = true
+            showHistory.value = false
+            timer = setTimeout(() => {
+              getQuery(params, timeout)
+            }, timeout);
           }
         },
         fail:(err)=>{
@@ -172,6 +173,13 @@ export default function () {
             loading.value = false
             isStatus.value = 'error'
             showDetail.value = false
+            showHistory.value = true
+          } else if(err.code.toString() === '500' || err.code.toString() === '502') {
+            console.log(err.code,'^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+            loading.value = false
+            isStatus.value = 'empty'
+            showDetail.value = false
+            showHistory.value = true
           }
         }
       }
@@ -184,21 +192,46 @@ export default function () {
     const pairIndex = tradingPair.value.findIndex(item => item.type == useCoin.type)
     tradingPair.value[pairIndex].amount = handleAmount(data, operateType.value, useCoin.decimals)
     const payCoin = tradingPair.value.filter( item => item.type == 'pay')[0]
+    const receiveCoin = tradingPair.value.filter( item => item.type == 'receive')[0]
     const payTotalAmount = getStringNum(
       await useJudgeFun(payCoin.chain, payCoin.token)
     );
-    if(Number(payCoin.amount) < Number(payTotalAmount)){
-      isStatus.value = 'normal'
+
+    if(payCoin.token == '0x000' && payCoin.chain == receiveCoin.chain){
+      judegMinMainCost(payCoin.amount)
     } else {
-      isStatus.value = 'noMoney'
+      const judgeBoolem = Number(payCoin.amount) <= Number(payTotalAmount)
+      isStatus.value  = judgeBoolem ? 'normal' : 'noMoney'
+      loading.value = false
     }
-    loading.value = false
+  }
+
+  const judegMinMainCost = (payAmount:number|string)=>{
+    if(availableMainAmount.value){
+      const judgeBoolem = Number(payAmount) <= availableMainAmount.value
+      isStatus.value  = judgeBoolem ? 'normal' : 'noMoney'
+      loading.value = false
+    } else {
+      setTimeout(() => {
+        judegMinMainCost(payAmount)
+      }, 800);
+    }
   }
 
   const stopQuery = () => {
     clearTimeout(timer)
   }
   //结束请求接口流程--->
+
+  const designatedStatus = ()=>{
+    isStatus.value = 'noMoney'
+  }
+  const designatedLoading = () => {
+    loading.value = true
+  }
+  const getAvailableMainAmount = (val:number)=>{
+    availableMainAmount.value = val
+  }
 
   const editSlippage = (editSlippage:number) => {
     slippage.value = editSlippage
@@ -209,6 +242,14 @@ export default function () {
     swapQuery()
   }
 
+  const changeRoute = (index:number) => {
+    let receiveAddress = tradingPair.value.filter(item => item.type == 'receive')[0].token
+    crossIndex.value = index
+    originalData.value = tradeRouteArray.value[crossIndex.value]
+    transactionDetails.value = integrateDetails(originalData.value, receiveAddress)
+    inputOtherFiled(originalData.value)
+  }
+
 
 
   return {
@@ -216,10 +257,15 @@ export default function () {
     replaceTradingPair,
     switchSingleCoin,
     giveAmount,
+    swapQuery,
     stopQuery,
     editSlippage,
     editReceiveAddress,
     initData,
+    changeRoute,
+    designatedStatus,
+    getAvailableMainAmount,
+    designatedLoading,
 
     tradingPair,
     showHistory,
@@ -229,6 +275,10 @@ export default function () {
     slippage,
     receiveAddress,
     loading,
-    isStatus
+    isStatus,
+    showRouteArray,
+    crossIndex,
+    originalData,
+    operateType
   }
 }
