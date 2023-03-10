@@ -44,7 +44,7 @@ export function integrateParams (tradingPair:Coins[], windowType:string) {
     userSymbol1: receiveCoin.symbol,
     fromAddress: defaultAddress(tradingPair, 'pay'),
     slippage: 0,
-    receiveAddress: defaultAddress(tradingPair, 'receive'),
+    toAddress: defaultAddress(tradingPair, 'receive'),
   }
   return params
 }
@@ -128,6 +128,7 @@ function HandleLifiData (data:any) {
 }
 
 function HandleSwftData (data:any) {
+  console.log(data);
   return {
     routeLogo: data.logoUrl,
     routeName: data.dex,
@@ -224,6 +225,20 @@ function getLifiUseTime(steps:any[]){
     time += item.estimate.executionDuration
   })
   return Math.ceil(time / 60)
+}
+
+export function getConfirmDom(tradingPair:Coins[]):string{
+  if(tradingPair[0].chain == tradingPair[1].chain){
+    if(ETHChain.includes(tradingPair[0].chain)){
+      return 'EthPartial'
+    }
+    if(TRONChain.includes(tradingPair[0].chain)){
+      return 'TronPartial'
+    }
+  }else{
+    return 'CrossPartial'
+  }
+  return 'EthPartial'
 }
 
 // export async function getQuery (payCoin:Coins,receiveCoin:Coins) {

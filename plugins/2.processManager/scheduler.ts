@@ -1,6 +1,6 @@
 import type { ComputedRef, Ref, DefineComponent } from "vue"
 import { chainInfo, Coins, } from "~~/helper/chainInfo"
-import { trimCoin, changeChain, integrateParams, integrateDetails, defaultAddress, handleAmount, assembRouteList } from "./core"
+import { trimCoin, changeChain, integrateParams, integrateDetails, defaultAddress, handleAmount, assembRouteList, getConfirmDom } from "./core"
 import useBaseApi from "~~/api/useBaseApi";
 import { getUseCoin } from "~~/modules/homePage/windowes/common";
 import { getStringNum } from "~~/helper/common";
@@ -26,7 +26,7 @@ interface Params {
   userSymbol0: string,
   userSymbol1: string,
   slippage: number|string,
-  receiveAddress: string
+  toAddress: string
 }
 
 interface Detail {
@@ -71,6 +71,8 @@ export default function () {
 //当前选中要使用的路由
   const originalData: Ref<any> = ref({})
 
+  const confirmPartial: Ref<string> = ref('EthPartial')
+
   //获取当前默认的交易对
   const getNowChain = (appChainsInfo:string) => {
     // console.log(window.location.hash);
@@ -107,6 +109,7 @@ export default function () {
     if(windowType == 'pay'){
       changeChain(getUseCoin(tradingPair.value, 'pay').chain)
     }
+    confirmPartial.value = getConfirmDom(tradingPair.value)
     initData()
   }
 
@@ -130,7 +133,7 @@ export default function () {
     const timeout = tradingPair.value[0].chain == tradingPair.value[1].chain ? 30000 : 60000
     const params = integrateParams(tradingPair.value, operateType.value)
     receiveAddress.value = receiveAddress.value ? receiveAddress.value : defaultAddress(tradingPair.value, 'receive')
-    params.receiveAddress = receiveAddress.value
+    params.toAddress = receiveAddress.value
     params.slippage = slippage.value == defaultSlippage.value ? defaultSlippage.value/100 : slippage.value/100
     getQuery(params, timeout)
   }
@@ -279,6 +282,7 @@ export default function () {
     showRouteArray,
     crossIndex,
     originalData,
-    operateType
+    operateType,
+    confirmPartial
   }
 }

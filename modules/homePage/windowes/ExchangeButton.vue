@@ -7,18 +7,20 @@
 				<div class="text-[#7e84a3] text-14px leading-20px mt-20px mb-10px">收款地址</div>
 				<div class="text-14px text-[#191e35] font-500 leading-22px break-words">{{ toAddress }}</div>
 				<div class="h-1px bg-[#e6eaf5] mt-15.5px mb-17.5px"></div>
-				<!-- <MinersCost :pay-coin="payCoin" /> -->
-				<TronPartial :pay-coin="payCoin" />
+				<!-- <EthPartial :pay-coin="payCoin" /> -->
+				<!-- <TronPartial :pay-coin="payCoin" /> -->
+				<CrossPartial />
 			</div>
 		</PopUps>
 	</div>
 </template>
 
 <script setup>
-import MinersCost from "./components/MinersCost.vue";
+import EthPartial from "./components/EthPartial.vue";
+import TronPartial from "./components/TronPartial.vue";
+import CrossPartial from "./components/CrossPartial.vue";
 import useGlobalData from "~~/store/useGlobalData";
 import { checkChain } from "./common";
-import TronPartial from "./components/TronPartial.vue";
 
 const globalData = useGlobalData();
 const { t } = useI18n();
@@ -70,7 +72,9 @@ const payCoin = computed(() => {
 const toAddress = computed(() => {
 	return useNuxtApp().$managerScheduler.receiveAddress.value;
 });
-
+const confirmPartial = computed(() => {
+	return useNuxtApp().$managerScheduler.confirmPartial.value;
+});
 const showConfirmBox = ref(false);
 
 //点击兑换按钮

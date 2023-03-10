@@ -145,7 +145,6 @@
 
 <script setup>
 import { simplifyToken } from "~~/helper/common";
-import Line from "./components/line.vue";
 import { postMessageAppCallback } from "~~/helper/postMessage";
 import { ETHChain, TRONChain } from "~~/helper/chainInfo";
 import { checkTronAddress } from "~~/helper/tron/index";

@@ -4,6 +4,9 @@ import useGoplusApi from "~~/api/useGoPlusApi";
 import { ETHChain, TRONChain } from "~~/helper/chainInfo";
 import { swapExactTokensForTokens, swapTokensForExactTokens, allowance, approve, getGasPrice } from "~~/helper/eth";
 import { getTronGasLimit, getTronAllowance, getApproveLimit, tronApprove, getTronContract } from "~~/helper/tron";
+import { getLifiAllowance, approveLifiBridge,lifiTransaction } from "~~/helper/lifiBridge";
+import { getSocketAllowance, approveSocketBridge, socketTransaction } from "~~/helper/socketBridge";
+import { getSwftAllowance, approveSwftBridge, SwftTransaction } from "~~/helper/swftBridge";
 
 //判断当前的链是否支持
 export function checkChain(chain:string): boolean {
@@ -188,7 +191,7 @@ export const getEstimateGas = async (chain:string, data:any, payCoinToken:string
   if(ETHChain.includes(chain)){
     const gasPrice = await getGasPrice()
     const userAddress = globalData.ownerAddress
-    webContract = createContract(chain, data)
+    webContract = await createContract(chain, data)
   
     const estimateGas = await webContract.estimateGas({
       gas: gasPrice,
@@ -247,6 +250,47 @@ export const transactions = async (chain:string, payCoinToken:string, gasPrice:n
     
   }
 }
+//<=============== Done  ===================>
 
+//<=============== 跨链交易时需要的一些方法 按照交易流程从上往下 （目前 lifi、socket、swft） ===================>
 
+export const getCrossAllowance = async (data:any)=>{
+
+  if(data.bridgeMark == 'LIFI'){
+    return await getLifiAllowance(data.fromToken.address)
+  } 
+  if(data.bridgeMark == 'SOCKET'){
+    return await getSocketAllowance(data)
+  }
+  if(data.bridgeMark == 'SWFT'){
+    return await getSwftAllowance(data)
+  }
+}
+
+export const approveCrossBridge = async (data:any) => {
+  if(data.bridgeMark == 'LIFI'){
+    await  approveLifiBridge(data.fromToken.address)
+  } 
+  if(data.bridgeMark == 'SOCKET'){
+    await approveSocketBridge()
+  }
+  if(data.bridgeMark == 'SWFT'){
+    await approveSwftBridge(data)
+  }
+}
+
+export const crossTransactions = async (data:any) => {
+  console.log(data);
+  if(data.bridgeMark == 'LIFI'){
+    return await lifiTransaction(data)
+  } 
+
+  if(data.bridgeMark == 'SOCKET'){
+    return await socketTransaction()
+  }
+
+  if(data.bridgeMark == 'SWFT'){
+    return await SwftTransaction(data)
+  }
+}
 //<=============== Done  ===================>

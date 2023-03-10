@@ -102,7 +102,6 @@ export const allowance = async (swapContractAddress, tokenContractAddress, owner
 
 //对币种额度进行授权
 export const approve = (swapContractAddress, tokenContractAddress) => {
-    console.log('enter', swapContractAddress, tokenContractAddress);
     const tokenContract = new web3.eth.Contract(erc20Abi, tokenContractAddress)
     const totalSupply = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
     return tokenContract.methods.approve(swapContractAddress, totalSupply)

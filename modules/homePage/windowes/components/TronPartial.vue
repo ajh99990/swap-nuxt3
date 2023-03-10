@@ -45,19 +45,17 @@ const gasLimit = ref(0);
 const estimateGasLoading = ref(true);
 
 const toTransaction = async () => {
-	if (!isMainCost.value) {
-		if (allowance.value == 0) {
-			await toApprove(
-				props.payCoin.chain,
-				props.payCoin.token,
-				originalData.value.contractAddress,
-				false
-			);
-			gasLimit.value = await getEstimateGas(
-				props.payCoin.chain,
-				originalData.value
-			);
-		}
+	if (!isMainCost.value && allowance.value == 0) {
+		await toApprove(
+			props.payCoin.chain,
+			props.payCoin.token,
+			originalData.value.contractAddress,
+			false
+		);
+		gasLimit.value = await getEstimateGas(
+			props.payCoin.chain,
+			originalData.value
+		);
 	}
 	const hash = await transactions(
 		props.payCoin.chain,
