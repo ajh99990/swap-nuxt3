@@ -110,6 +110,7 @@ export default function () {
       changeChain(getUseCoin(tradingPair.value, 'pay').chain)
     }
     confirmPartial.value = getConfirmDom(tradingPair.value)
+    console.log(confirmPartial.value);
     initData()
   }
 

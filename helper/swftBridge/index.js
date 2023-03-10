@@ -68,6 +68,12 @@ export const SwftTransaction = async (data) => {
   const result = await axios.post('https://api.paths.finance/api/commonSwap', params)
   const resultData = result.data.data.txData
   if (ETHChain.includes(payCoin.chain)) {
+    const transactionData = {
+      from: resultData.transferData.fromAddress,
+      to: resultData.to,
+      data: resultData.data,
+      value: resultData.value,
+    }
     const web3 = new Web3(window.ethereum)
     const gasEstimate = await web3.eth.estimateGas(transactionData)
     transactionData.gas = gasEstimate

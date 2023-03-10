@@ -228,17 +228,20 @@ function getLifiUseTime(steps:any[]){
 }
 
 export function getConfirmDom(tradingPair:Coins[]):string{
+  console.log(tradingPair[0]);
+  
+  let dom:string = 'EthPartial'
   if(tradingPair[0].chain == tradingPair[1].chain){
     if(ETHChain.includes(tradingPair[0].chain)){
-      return 'EthPartial'
+      dom = 'EthPartial'
     }
     if(TRONChain.includes(tradingPair[0].chain)){
-      return 'TronPartial'
+      dom = 'TronPartial'
     }
   }else{
-    return 'CrossPartial'
+    dom = 'CrossPartial'
   }
-  return 'EthPartial'
+  return dom
 }
 
 // export async function getQuery (payCoin:Coins,receiveCoin:Coins) {
