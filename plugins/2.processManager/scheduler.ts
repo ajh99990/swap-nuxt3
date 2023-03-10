@@ -158,7 +158,7 @@ export default function () {
             } else {
               originalData.value = res
             }
-            transactionDetails.value = integrateDetails(originalData.value, params.receiveAddress)
+            transactionDetails.value = integrateDetails(originalData.value, params.toAddress)
             slippage.value = transactionDetails.value.slippage != defaultSlippage.value ? transactionDetails.value.slippage : slippage.value
             if(transactionDetails.value.slippage != defaultSlippage.value){
               defaultSlippage.value = transactionDetails.value.slippage

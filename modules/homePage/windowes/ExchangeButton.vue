@@ -7,9 +7,11 @@
 				<div class="text-[#7e84a3] text-14px leading-20px mt-20px mb-10px">收款地址</div>
 				<div class="text-14px text-[#191e35] font-500 leading-22px break-words">{{ toAddress }}</div>
 				<div class="h-1px bg-[#e6eaf5] mt-15.5px mb-17.5px"></div>
-				<!-- <EthPartial :pay-coin="payCoin" /> -->
-				<!-- <TronPartial :pay-coin="payCoin" /> -->
-				<CrossPartial />
+				<!-- <EthPartial :pay-coin="payCoin" />
+				<TronPartial :pay-coin="payCoin" />
+				<CrossPartial />-->
+				{{ confirmPartial }}
+				<component :pay-coin="payCoin" :is="Partial[confirmPartial]" />
 			</div>
 		</PopUps>
 	</div>
@@ -24,6 +26,13 @@ import { checkChain } from "./common";
 
 const globalData = useGlobalData();
 const { t } = useI18n();
+
+enum Partial
+{
+      'EthPartial'= EthPartial,
+			'EthPartial'= TronPartial,
+			'EthPartial'= CrossPartial,
+};
 
 //按钮的状态值
 const buttonText = ref(t("tradingBoxSwap"));
