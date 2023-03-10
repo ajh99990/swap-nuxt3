@@ -7,7 +7,7 @@ import axios from 'axios';
 import { ETHChain, TRONChain } from '../chainInfo';
 import { allowance, approve } from '../eth';
 
-import { getTronAllowance, tronApprove } from '~~/helper/tron'
+import { getTronAllowance, tronApprove, getTronContract } from '~~/helper/tron'
 
 let payCoin, receiveCoin
 // 获取允许额度
@@ -78,6 +78,8 @@ export const SwftTransaction = async (data) => {
     const gasEstimate = await web3.eth.estimateGas(transactionData)
     transactionData.gas = gasEstimate
     transactionData.gasPrice = await web3.eth.getGasPrice()
+    //需要的gas Fee
+    console.log(transactionData.gas * transactionData.gasPrice);
     return new Promise((resolve, reject) => {
       web3.eth.sendTransaction(transactionData)
         .on('transactionHash', function (hash) {
@@ -89,7 +91,7 @@ export const SwftTransaction = async (data) => {
     })
   }
   if (TRONChain.includes(payCoin.chain)) {
-    const contract = await createContract(resultData.to)
+    const contract = await getTronContract(resultData.to)
     let hash = await contract.swap(resultData.parameter[0].value, resultData.parameter[1].value, resultData.parameter[2].value, resultData.parameter[3].value, resultData.parameter[4].value).send({
       feeLimit: resultData.options.feeLimit,
       callValue: resultData.options.callValue,
