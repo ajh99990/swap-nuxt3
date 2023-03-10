@@ -3,7 +3,7 @@ import useGlobalData from "~~/store/useGlobalData";
 import useGoplusApi from "~~/api/useGoPlusApi";
 import { ETHChain, TRONChain } from "~~/helper/chainInfo";
 import { swapExactTokensForTokens, swapTokensForExactTokens, allowance, approve, getGasPrice } from "~~/helper/eth";
-
+import { getTronGasLimit, getTronAllowance, getApproveLimit, tronApprove, getTronContract } from "~~/helper/tron";
 
 //判断当前的链是否支持
 export function checkChain(chain:string): boolean {
@@ -61,7 +61,7 @@ let contractParams:any, webContract:any
 export const getContractParams = (chain:string, data:any, operateType:string)=>{
   const receiveAddress:string = useNuxtApp().$managerScheduler.receiveAddress.value
   const slippage:string = useNuxtApp().$managerScheduler.slippage.value
-  console.log(slippage);
+
   if(ETHChain.includes(chain)){
     console.log('类以太单链交易合约参数');
     let timer = new Date().getTime() + 3 * 60 * 60;
@@ -99,6 +99,26 @@ export const getContractParams = (chain:string, data:any, operateType:string)=>{
 
   if(TRONChain.includes(chain)) {
     console.log('波场单链交易合约参数');
+    const params = [
+      data.firstRouteList[0].token,
+      data.firstRouteList[1].token,
+      data.firstRouteList[2].token,
+      data.firstRouteList[3].token,
+      data.routeList[0],
+      data.routeList[1],
+      data.routeList[2],
+      data.amountIn,
+      Math.ceil((data.amountOut * (100 - Number(slippage))) /
+      100) + '',
+      receiveAddress,
+      (new Date().getTime() + 3 * 60 * 60).toString(),
+    ];
+    if (operateType == "receive") {
+      params[7] = Math.floor((data.amountIn * (100 + Number(slippage))) /
+      100) + '';
+      params[8] = data.amountOut;
+    }
+    contractParams = params;
   }
 }
 
@@ -113,7 +133,7 @@ export const getAllowance = async (chain:string, coinToken:string, contractAddre
   }
 
   if(TRONChain.includes(chain)) {
-    console.log('波场单链交易合约参数');
+    allowanceNum = await getTronAllowance(coinToken, contractAddress)
   }
 
   return allowanceNum
@@ -136,11 +156,17 @@ export const toApprove = async (chain:string, coinToken:string, contractAddress:
     }
   }
   if(TRONChain.includes(chain)) {
+    userAddress = globalData.ownerTronAddress
+    if(estimate){
+      return await getApproveLimit(coinToken, contractAddress)
+    } else {
+      await tronApprove(coinToken, contractAddress)
+    }
   }
 }
 
 //创建合约
-const createContract = (chain:string, data:any) => {
+const createContract = async (chain:string, data:any) => {
   const operateType:string = useNuxtApp().$managerScheduler.operateType.value
   getContractParams(chain, data, operateType)
 
@@ -150,10 +176,12 @@ const createContract = (chain:string, data:any) => {
   }
 
   if(TRONChain.includes(chain)) {
-
+    const webContract = await getTronContract(data.contractAddress)
+    return webContract
   }
 }
 
+//获取预估的gasLimit
 export const getEstimateGas = async (chain:string, data:any, payCoinToken:string) => {
   const globalData = useGlobalData()
 
@@ -171,15 +199,15 @@ export const getEstimateGas = async (chain:string, data:any, payCoinToken:string
   }
 
   if(TRONChain.includes(chain)) {
-
+    webContract = await createContract(chain, data)
+    return await getTronGasLimit(data)
   }
-
-  
 }
 
-
-export const transactions = async (chain:string, data:any, payCoinToken:string, gasPrice:number|string, gas:number) => {
+//调用合约获取hash
+export const transactions = async (chain:string, payCoinToken:string, gasPrice:number|string, gas:number) => {
   const globalData = useGlobalData()
+
   if(ETHChain.includes(chain)){
     const userAddress = globalData.ownerAddress
     let params = {
@@ -200,6 +228,23 @@ export const transactions = async (chain:string, data:any, payCoinToken:string, 
   }
 
   if(TRONChain.includes(chain)) {
+    console.log(payCoinToken, gasPrice, gas);
+    const operateType:string = useNuxtApp().$managerScheduler.operateType.value
+
+    if(operateType == 'pay'){
+     return await webContract.swapExactTokensForTokens(...contractParams).send({
+        feeLimit: Number(gasPrice) * Number(gas),
+        callValue: payCoinToken == '0x000' ? contractParams[7] : 0,
+        shouldPollResponse: false,
+    })
+    } else {
+      return await webContract.swapTokensForExactTokens(...contractParams).send({
+        feeLimit: Number(gasPrice) * Number(gas),
+        callValue: payCoinToken == '0x000' ? contractParams[7] : 0,
+        shouldPollResponse: false,
+    })
+    }
+    
   }
 }
 

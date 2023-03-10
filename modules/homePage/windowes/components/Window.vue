@@ -48,6 +48,7 @@ import useGlobalData from "~~/store/useGlobalData";
 import BigNumber from "bignumber.js";
 import { getEstimateGas } from "~~/modules/homePage/windowes/common";
 import { getGasPrice } from "~~/helper/eth";
+import { getTronGasPrice } from "~~/helper/tron";
 
 const baseApi = useBaseApi();
 const props = defineProps({
@@ -90,7 +91,7 @@ watch(
 				gasPrice = await getGasPrice();
 			} else {
 				address = globalData.ownerTronAddress;
-				gasPrice = 1;
+				gasPrice = await getTronGasPrice();
 			}
 			const params = {
 				amount0In: BigNumber(totalAmount.value).shiftedBy(
@@ -120,7 +121,7 @@ watch(
 						availableMainAmount.value =
 							totalAmount.value -
 							BigNumber(estimateGas * gasPrice * 2)
-								.shiftedBy(-18)
+								.shiftedBy(-payCoin.value.decimals)
 								.toNumber();
 						console.log(
 							"主币可交易最大额度",

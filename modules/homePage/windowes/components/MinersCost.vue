@@ -56,7 +56,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="w-165px h-44px mt-36px m-auto">
+		<div class="w-165px h-44px mt-36px fixed bottom-50px left-90px">
 			<van-button class="w-165px h-44px ripple-btn overflow-hidden" :loading="estimateGasLoading" round @click="toTransaction" color="#597BF6">确认兑换</van-button>
 		</div>
 	</div>
@@ -128,9 +128,7 @@ const allowance = ref(0);
 watch(
 	() => advanced.value,
 	(newVal) => {
-		if (newVal) {
-			//进入高级设置界面
-		} else {
+		if (!newVal) {
 			//默认界面
 			changePrice(chooseIndex.value);
 			sliderValue.value =
@@ -206,7 +204,6 @@ const toTransaction = async () => {
 	}
 	const hash = await transactions(
 		props.payCoin.chain,
-		originalData.value,
 		props.payCoin.token,
 		gas.value,
 		gasLimit.value
