@@ -1,7 +1,7 @@
 <template>
 	<van-popup v-model:show="showProps" @close="closwPropup" @open="openContent" @closed="closeContent" lazy-render position="bottom" round :close-icon="iconClose" close-icon-position="top-right" class="close_icon" :transition-appear="true" closeable>
 		<p class="w-375px bg-[#F5F6FA] py-15px px-20px text-size-18px font-500">{{ popupTitle }}</p>
-		<div class="h-550px overflow-hidden">
+		<div class="overflow-hidden">
 			<slot v-if="showContent"></slot>
 		</div>
 	</van-popup>
