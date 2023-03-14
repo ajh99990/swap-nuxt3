@@ -3,7 +3,7 @@ import useBaseApi from "~~/api/useBaseApi";
 
 //格式化展示的token
 export const simplifyToken = (token:string) => {
-  if(token == '0x000') return ''
+  if(token == '0x000' || token == '') return ''
   if(token.length>8){
     return token.substring(0, 8) + "......" + token.substring(token.length - 8, token.length)
   } else{

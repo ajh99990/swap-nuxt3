@@ -1,11 +1,11 @@
 <template>
-	<div v-if="preface.length" class="flex items-center justify-center text-14px text-minor mt-12px">
+	<div v-if="preface.length" :class=" showImg ? 'text-minor': 'text-[#191e35]'" class="flex items-center justify-center text-14px">
 		<p @click="exchangePrice">
 			<span class="mr-3px font-500 max-w-120px overflow-hidden truncate">{{ order ? preface[0].value + preface[0].symbol : Backwards[0].value + Backwards[0].symbol }}</span>
 			<span class="mr-3px inline-block font-500">=</span>
 			<span class="mr-3px font-500 max-w-120px overflow-hidden truncate">{{ order ? preface[1].value + preface[1].symbol : Backwards[1].value + Backwards[1].symbol }}</span>
 		</p>
-		<img @click="getReta()" id="refresh-price" src="@/assets/images/homeRefresh.png" :class="loading ? 'animate-spin': ''" class="ml-8px w-14px h-14px" />
+		<img v-if="showImg" @click="getReta()" id="refresh-price" src="@/assets/images/homeRefresh.png" :class="loading ? 'animate-spin': ''" class="ml-8px w-14px h-14px" />
 		<!-- <img @click="refreshPrice('click')" id="refresh-price" src="@/assets/images/home/home_refresh.png" class="ml-8px w-14px h-14px" /> -->
 	</div>
 </template>
@@ -14,11 +14,20 @@
 import useBaseApi from "~~/api/useBaseApi";
 import { getStringNum } from "~~/helper/common";
 
+const props = defineProps({
+	showImg: {
+		type: Boolean,
+		default: true,
+	},
+});
+
 let timer = null;
 const baseApi = useBaseApi();
 const order = ref(true);
 const exchangePrice = () => {
-	order.value = !order.value;
+	if (props.showImg) {
+		order.value = !order.value;
+	}
 };
 const loading = ref(false);
 const preface = ref([]);
@@ -94,7 +103,6 @@ const getReta = async () => {
 	}, 60000);
 };
 onMounted(() => {
-	console.log();
 	getReta();
 });
 

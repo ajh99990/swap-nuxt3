@@ -15,7 +15,7 @@
 			</div>
 		</div>
 		<div class="w-165px h-44px mt-36px fixed bottom-50px left-90px">
-			<van-button class="w-165px h-44px ripple-btn overflow-hidden" :loading="estimateGasLoading" round @click="toTransaction" color="#597BF6">确认兑换</van-button>
+			<van-button class="w-165px h-44px ripple-btn overflow-hidden" :loading="estimateGasLoading || buttonLoading" round @click="toTransaction" color="#597BF6">确认兑换</van-button>
 		</div>
 	</div>
 </template>
@@ -44,28 +44,41 @@ const gasPrice = ref(0);
 const gasLimit = ref(0);
 const estimateGasLoading = ref(true);
 
+const operateType = computed(() => {
+	return useNuxtApp().$managerScheduler.operateType.value;
+});
+
+const emits = defineEmits(["overdoing"]);
+const buttonLoading = ref(false);
 const toTransaction = async () => {
-	if (!isMainCost.value && allowance.value == 0) {
-		await toApprove(
+	buttonLoading.value = true;
+	try {
+		if (!isMainCost.value && allowance.value == 0) {
+			await toApprove(
+				props.payCoin.chain,
+				props.payCoin.token,
+				originalData.value.contractAddress,
+				false
+			);
+			gasLimit.value = await getEstimateGas(
+				props.payCoin.chain,
+				originalData.value,
+				operateType
+			);
+		}
+		const hash = await transactions(
 			props.payCoin.chain,
 			props.payCoin.token,
-			originalData.value.contractAddress,
-			false
+			gasPrice.value,
+			gasLimit.value
 		);
-		gasLimit.value = await getEstimateGas(
-			props.payCoin.chain,
-			originalData.value
-		);
+		console.log(hash);
+		emits("overdoing", hash);
+	} catch (error) {
+		buttonLoading.value = false;
 	}
-	const hash = await transactions(
-		props.payCoin.chain,
-		props.payCoin.token,
-		gasPrice.value,
-		gasLimit.value
-	);
-	console.log(hash);
 };
-
+const { addSwapTime } = useNuxtApp().$managerScheduler;
 onMounted(async () => {
 	gasPrice.value = await getTronGasPrice();
 
@@ -94,9 +107,11 @@ onMounted(async () => {
 		//主币或已授权
 		gasLimit.value = await getEstimateGas(
 			props.payCoin.chain,
-			originalData.value
+			originalData.value,
+			operateType
 		);
 	}
+	addSwapTime("1min");
 	estimateGasLoading.value = false;
 });
 </script>

@@ -16,7 +16,7 @@
 			</div>
 		</div>
 		<div class="w-165px h-44px mt-36px fixed bottom-50px left-90px">
-			<van-button class="w-165px h-44px ripple-btn overflow-hidden" round @click="toTransaction" color="#597BF6">确认兑换</van-button>
+			<van-button class="w-165px h-44px ripple-btn overflow-hidden" :loading="estimateGasLoading || buttonLoading" round @click="toTransaction" color="#597BF6">确认兑换</van-button>
 		</div>
 	</div>
 </template>
@@ -44,24 +44,28 @@ const allowance = ref(0);
 const isMainCost = ref(false);
 const estimateGasLoading = ref(true);
 
+const buttonLoading = ref(false);
 const toTransaction = async () => {
-	if (!isMainCost.value && allowance.value == 0) {
-		await approveCrossBridge(originalData.value);
+	buttonLoading.value = true;
+	try {
+		if (!isMainCost.value && allowance.value == 0) {
+			await approveCrossBridge(originalData.value);
+		}
+		const hash = await crossTransactions(originalData.value);
+		console.log(hash);
+		emits("overdoing", hash);
+	} catch (error) {
+		buttonLoading.value = false;
 	}
-	const hash = await crossTransactions(originalData.value);
-	console.log(hash);
 };
-
+const emits = defineEmits(["overdoing"]);
 onMounted(async () => {
-	console.log(originalData.value);
 	isMainCost.value = payCoin.value.token == "0x000";
 	//先判断授权额度
 	if (!isMainCost.value) {
-		console.log("enter gat allowance");
 		allowance.value = await getCrossAllowance(originalData.value);
 	}
 	estimateGasLoading.value = false;
-	console.log(allowance.value);
 });
 </script>
 

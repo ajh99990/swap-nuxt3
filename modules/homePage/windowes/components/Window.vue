@@ -116,7 +116,8 @@ watch(
 						const estimateGas = await getEstimateGas(
 							props.coinData.chain,
 							res,
-							"0x000"
+							"0x000",
+							"pay"
 						);
 						availableMainAmount.value =
 							totalAmount.value -
@@ -201,7 +202,6 @@ const clearField = () => {
 let timer = null;
 const isMainCost = () => {
 	if (availableMainAmount.value > 0) {
-		console.log("have");
 		clearTimeout(timer);
 		emits(
 			"getInputValue",
@@ -210,7 +210,6 @@ const isMainCost = () => {
 			availableMainAmount.value
 		);
 	} else if (availableMainAmount.value <= 0) {
-		console.log("error");
 		designatedStatus();
 	} else {
 		timer = setTimeout(() => {

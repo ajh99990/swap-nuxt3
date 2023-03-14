@@ -1,12 +1,13 @@
 import { Coin } from "./scheduler";
 import { Coins, } from "~~/helper/chainInfo"
 import useGlobalData from "~~/store/useGlobalData"
-import { addChain } from "~~/helper/eth";
+import { addChain, approve } from "~~/helper/eth";
 import BigNumber from "bignumber.js";
 import { scientificString, getAmountToUsdt } from "~~/helper/common";
 import { ETHChain, TRONChain } from "~~/helper/chainInfo";
 import { simplifyToken, getStringNum } from "~~/helper/common";
-// import useBaseApi from "~~/api/useBaseApi";
+import { getSwftAllowance, swftEthEstimateGas, approveSwftEstimateGas } from '~~/helper/swftBridge'
+import useBaseApi from "~~/api/useBaseApi";
 
 export function trimCoin (coin:Coin, windowType:string){
   return {
@@ -78,7 +79,7 @@ export function handleAmount (data:any, operateType:string, decimals:number ):nu
   return 0
 }
 
-export function integrateDetails (data:any, receiveAddress:string) {
+export async function integrateDetails (data:any, receiveAddress:string) {
   let crossData, slippageVal
   if(data.bridgeMark){
     slippageVal = 1
@@ -89,7 +90,7 @@ export function integrateDetails (data:any, receiveAddress:string) {
       crossData = HandleLifiData(data)
     }
     if(data.bridgeMark == 'SWFT'){
-      crossData = HandleSwftData(data)
+      crossData = await HandleSwftData(data)
     }
   }
   const priceImpact = data.price < 0.0001 ? 0.01 : Number(getStringNum(data.price * 100, 2));
@@ -127,12 +128,36 @@ function HandleLifiData (data:any) {
   }
 }
 
-function HandleSwftData (data:any) {
-  console.log(data);
+async function HandleSwftData (data:any) {
+  const tradingPair:Coins[] = useNuxtApp().$managerScheduler.tradingPair.value
+  const payCoin = tradingPair.filter(item => item.type == 'pay')[0]
+  const allowance = await getSwftAllowance(data)
+  let GasLimit:number|string = 2, Str:string = 'bsc_0x55d398326f99059ff775485246999027b3197955'
+  if(ETHChain.includes(payCoin.chain)){
+  Str = `${payCoin.chain}_${payCoin.token}`;
+    if(allowance > 0 || payCoin.token == '0x000'){
+      GasLimit = await swftEthEstimateGas(data)
+    } else {
+      GasLimit = await approveSwftEstimateGas(data, payCoin)
+    }
+  }
+  if(TRONChain.includes(payCoin.chain)){
+    Str = `tron_0x000`;
+    GasLimit = 30
+  }
+
+  const baseApi = useBaseApi()
+  const usdtReta = await baseApi.post(({ api }) => {
+    return {
+      api: api.getCoinPrice,
+      data: [Str],
+    };
+  });
+
   return {
     routeLogo: data.logoUrl,
     routeName: data.dex,
-    GasFee: data.chainFee,
+    GasFee: Number(GasLimit) * usdtReta[Str] > 0.1 ? getStringNum(Number(GasLimit) * usdtReta[Str], 2) : 0.1,
     swapTime: data.estimatedTime * 3 + ' min',
   }
 }
@@ -228,8 +253,6 @@ function getLifiUseTime(steps:any[]){
 }
 
 export function getConfirmDom(tradingPair:Coins[]):string{
-  console.log(tradingPair[0]);
-  
   let dom:string = 'EthPartial'
   if(tradingPair[0].chain == tradingPair[1].chain){
     if(ETHChain.includes(tradingPair[0].chain)){
@@ -243,8 +266,3 @@ export function getConfirmDom(tradingPair:Coins[]):string{
   }
   return dom
 }
-
-// export async function getQuery (payCoin:Coins,receiveCoin:Coins) {
-//   const baseApi = useBaseApi()
-//   console.log('getQuery', payCoin, receiveCoin);
-// }

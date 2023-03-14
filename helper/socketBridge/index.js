@@ -35,7 +35,7 @@ export const getSocketAllowance = async (route) => {
 // 将授权额度设为最大值
 export const approveSocketBridge = async () => {
   const globalData = useGlobalData()
-  await approve(socketData.approveData.allowanceTarget, socketData.approvalData.approvalTokenAddress).send({ from: globalData.ownerAddress })
+  await approve(socketData.approvalData.allowanceTarget, socketData.approvalData.approvalTokenAddress).send({ from: globalData.ownerAddress })
 }
 
 //使用socket bridge 进行交易

@@ -1,17 +1,17 @@
 <template>
-	<div class="mt-16px w-345px h-44px overflow-hidden">
+	<div class="mt-16px w-345px h-44px overflow-hidden relative">
 		<van-button class="w-345px h-44px ripple-btn" :disabled="disabled || notChain" round color="#597BF6" :loading="loading" :loading-text="$t('searching')" @click="exchange">{{ notSupport ? notSupport : buttonText }}</van-button>
 		<PopUps propHeight="560px" popupTitle="确认兑换" :showState="showConfirmBox" @closePropUp="closeConfirmBox">
 			<div class="flex h-548px w-375px overflow-hidden relative">
-				<div :class=" !getHashDone ? '-left-375px' : 'left-0px'" class="h-548px flex absolute transform duration-300">
+				<div :class="getHashDone ? '-left-375px' : '-left-0px'" class="h-548px flex absolute transform duration-300">
 					<div class="h-548px w-375px pt-16px px-15px relative">
 						<TradingPair :tradingPair="tradingPair"></TradingPair>
 						<div class="text-[#7e84a3] text-14px leading-20px mt-20px mb-10px">收款地址</div>
 						<div class="text-14px text-[#191e35] font-500 leading-22px break-words">{{ toAddress }}</div>
 						<div class="h-1px bg-[#e6eaf5] mt-15.5px mb-17.5px"></div>
-						<!-- <component :pay-coin="payCoin" :is="confirmPartial == 'EthPartial' ? EthPartial : confirmPartial == 'TronPartial'? TronPartial : CrossPartial" /> -->
+						<component :pay-coin="payCoin" @overdoing="overdoing" :is="confirmPartial == 'EthPartial' ? EthPartial : confirmPartial == 'TronPartial'? TronPartial : CrossPartial" />
 					</div>
-					<Trading />
+					<Trading :localHash="localHash" @closeBox="closeBox" />
 				</div>
 			</div>
 		</PopUps>
@@ -83,10 +83,10 @@ const originalData = computed(() => {
 	return useNuxtApp().$managerScheduler.originalData.value;
 });
 
-const showConfirmBox = ref(true);
+const showConfirmBox = ref(false);
 
 //点击兑换按钮
-const { stopQuery, swapQuery } = useNuxtApp().$managerScheduler;
+const { stopQuery, swapQuery, initData } = useNuxtApp().$managerScheduler;
 const exchange = async () => {
 	//判断是否有输入值
 	if (!payCoin.value.amount) {
@@ -110,16 +110,23 @@ const exchange = async () => {
 };
 
 const closeConfirmBox = () => {
-	showConfirmBox.value = false;
 	swapQuery();
+	showConfirmBox.value = false;
+};
+const closeBox = () => {
+	initData();
+	showConfirmBox.value = false;
 };
 
 const getHashDone = ref(false);
-const toTrading = () => {
+const localHash = ref("");
+const overdoing = (hash) => {
 	getHashDone.value = true;
+	localHash.value = hash;
 };
+
 onMounted(() => {
-	console.log(getHashDone.value);
+	// console.log(getHashDone.value);
 	// setTimeout(() => {
 	// 	toTrading();
 	// }, 5000);

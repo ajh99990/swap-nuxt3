@@ -8,7 +8,6 @@
 					<van-switch v-model="advanced" active-color="#597BF6" inactive-color="#f5f6fa" />
 				</p>
 			</div>
-
 			<!-- 矿工费选择 -->
 			<div v-if=" !advanced " class="mt-10px flex justify-between h-143px overflow-hidden">
 				<div @click="changePrice(index)" v-for="item,index in efficiencyArray" :class="chooseIndex==index ? 'border-[#597bf6]' : 'border-[#ebeef7]'" class="w-110px h-124px border-1px border-solid rounded-8px relative overflow-hidden">
@@ -56,8 +55,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="w-165px h-44px mt-36px fixed bottom-50px left-90px">
-			<van-button class="w-165px h-44px ripple-btn overflow-hidden" :loading="estimateGasLoading" round @click="toTransaction" color="#597BF6">确认兑换</van-button>
+		<div class="w-165px h-44px mt-36px fixed bottom-50px left-90px overflow-hidden">
+			<van-button class="w-165px h-44px ripple-btn" :loading="estimateGasLoading || buttonLoading" round @click="toTransaction" color="#597BF6">确认兑换</van-button>
 		</div>
 	</div>
 </template>
@@ -95,6 +94,7 @@ const gas = ref(0);
 const efficiencyArray = [1, 1.2, 1.4];
 const chooseIndex = ref(0);
 
+const { addSwapTime } = useNuxtApp().$managerScheduler;
 const changePrice = (index) => {
 	chooseIndex.value = index;
 	gas.value = BigNumber(gasPrice.value)
@@ -103,7 +103,9 @@ const changePrice = (index) => {
 	sliderValue.value =
 		efficiencyArray[index] *
 		BigNumber(gasPrice.value).shiftedBy(-9).toNumber();
-	console.log(gas.value);
+	addSwapTime(
+		getTime(BigNumber(gasPrice.value).times(efficiencyArray[index])) + "min"
+	);
 };
 
 const getAdvancedVal = (val) => {
@@ -120,7 +122,13 @@ const getAdvancedVal = (val) => {
 	gas.value = BigNumber(gasPrice.value)
 		.times(val / BigNumber(gasPrice.value).shiftedBy(-9).toNumber())
 		.toString();
-	console.log(gas.value);
+	addSwapTime(
+		getTime(
+			BigNumber(gasPrice.value).times(
+				val / BigNumber(gasPrice.value).shiftedBy(-9).toNumber()
+			)
+		) + "min"
+	);
 };
 
 const allowance = ref(0);
@@ -184,33 +192,6 @@ const getTime = (gasPrice) => {
 
 const isMainCost = ref(false);
 
-const toTransaction = async () => {
-	//非主币交易
-	if (allowance.value == 0 && !isMainCost.value) {
-		console.log("开始授权");
-		await toApprove(
-			props.payCoin.chain,
-			props.payCoin.token,
-			originalData.value.contractAddress,
-			false
-		);
-		console.log("授权结束,重新预估gas");
-		gasLimit.value =
-			(await getEstimateGas(
-				props.payCoin.chain,
-				originalData.value,
-				props.payCoin.token
-			)) * 2;
-	}
-	const hash = await transactions(
-		props.payCoin.chain,
-		props.payCoin.token,
-		gas.value,
-		gasLimit.value
-	);
-	console.log(hash);
-};
-
 onMounted(async () => {
 	isMainCost.value = props.payCoin.token == "0x000";
 	//获取类以太单链gas
@@ -224,9 +205,11 @@ onMounted(async () => {
 			props.payCoin.token,
 			originalData.value.contractAddress
 		);
-		console.log(allowance.value);
 	}
 
+	const operateType = computed(() => {
+		return useNuxtApp().$managerScheduler.operateType.value;
+	});
 	//拿到gasLimit
 	if (allowance.value > 0 || isMainCost.value) {
 		//已对合约授权
@@ -235,7 +218,8 @@ onMounted(async () => {
 			(await getEstimateGas(
 				props.payCoin.chain,
 				originalData.value,
-				props.payCoin.token
+				props.payCoin.token,
+				operateType
 			)) * 2;
 	} else {
 		//第一次使用合约
@@ -253,9 +237,47 @@ onMounted(async () => {
 
 	//获取主币对应的汇率
 	await getDollar();
-	await getGasTimeByServe();
+	if (props.payCoin.chain == "eth") {
+		await getGasTimeByServe();
+	}
+	addSwapTime(getTime(BigNumber(gasPrice.value).times(1)) + "min");
 	estimateGasLoading.value = false;
 });
+
+const buttonLoading = ref(false);
+const emits = defineEmits(["overdoing"]);
+const toTransaction = async () => {
+	buttonLoading.value = true;
+	try {
+		if (allowance.value == 0 && !isMainCost.value) {
+			console.log("开始授权");
+			await toApprove(
+				props.payCoin.chain,
+				props.payCoin.token,
+				originalData.value.contractAddress,
+				false
+			);
+			console.log("授权结束,重新预估gas");
+			gasLimit.value =
+				(await getEstimateGas(
+					props.payCoin.chain,
+					originalData.value,
+					props.payCoin.token,
+					operateType
+				)) * 2;
+		}
+		const hash = await transactions(
+			props.payCoin.chain,
+			props.payCoin.token,
+			gas.value,
+			gasLimit.value
+		);
+		console.log(hash);
+		emits("overdoing", hash);
+	} catch (error) {
+		buttonLoading.value = false;
+	}
+};
 </script>
 
 <style lang="scss" scoped>

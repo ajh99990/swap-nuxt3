@@ -1,7 +1,7 @@
 <template>
 	<div class="pt-12px px-16px h-100vh">
 		<TradingBox />
-		<ExchangeRate />
+		<ExchangeRate class="mt-12px" />
 		<TradeDetails />
 	</div>
 </template>

@@ -64,7 +64,6 @@ const boxText = {
 const showText = ref({});
 
 const openBox = () => {
-	console.log(boxText, props.codeTypes);
 	showText.value = boxText[props.codeTypes];
 	showBox.value = true;
 };

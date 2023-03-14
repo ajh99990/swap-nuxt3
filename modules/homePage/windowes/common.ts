@@ -6,7 +6,7 @@ import { swapExactTokensForTokens, swapTokensForExactTokens, allowance, approve,
 import { getTronGasLimit, getTronAllowance, getApproveLimit, tronApprove, getTronContract } from "~~/helper/tron";
 import { getLifiAllowance, approveLifiBridge,lifiTransaction } from "~~/helper/lifiBridge";
 import { getSocketAllowance, approveSocketBridge, socketTransaction } from "~~/helper/socketBridge";
-import { getSwftAllowance, approveSwftBridge, SwftTransaction } from "~~/helper/swftBridge";
+import { getSwftAllowance, approveSwftBridge, swftTransaction } from "~~/helper/swftBridge";
 
 //判断当前的链是否支持
 export function checkChain(chain:string): boolean {
@@ -169,8 +169,7 @@ export const toApprove = async (chain:string, coinToken:string, contractAddress:
 }
 
 //创建合约
-const createContract = async (chain:string, data:any) => {
-  const operateType:string = useNuxtApp().$managerScheduler.operateType.value
+const createContract = async (chain:string, data:any ,operateType:string) => {
   getContractParams(chain, data, operateType)
 
   if(ETHChain.includes(chain)){
@@ -185,13 +184,13 @@ const createContract = async (chain:string, data:any) => {
 }
 
 //获取预估的gasLimit
-export const getEstimateGas = async (chain:string, data:any, payCoinToken:string) => {
+export const getEstimateGas = async (chain:string, data:any, payCoinToken:string, operateType:string) => {
   const globalData = useGlobalData()
 
   if(ETHChain.includes(chain)){
     const gasPrice = await getGasPrice()
     const userAddress = globalData.ownerAddress
-    webContract = await createContract(chain, data)
+    webContract = await createContract(chain, data, operateType)
   
     const estimateGas = await webContract.estimateGas({
       gas: gasPrice,
@@ -202,7 +201,7 @@ export const getEstimateGas = async (chain:string, data:any, payCoinToken:string
   }
 
   if(TRONChain.includes(chain)) {
-    webContract = await createContract(chain, data)
+    webContract = await createContract(chain, data, operateType)
     return await getTronGasLimit(data)
   }
 }
@@ -231,7 +230,6 @@ export const transactions = async (chain:string, payCoinToken:string, gasPrice:n
   }
 
   if(TRONChain.includes(chain)) {
-    console.log(payCoinToken, gasPrice, gas);
     const operateType:string = useNuxtApp().$managerScheduler.operateType.value
 
     if(operateType == 'pay'){
@@ -280,7 +278,6 @@ export const approveCrossBridge = async (data:any) => {
 }
 
 export const crossTransactions = async (data:any) => {
-  console.log(data);
   if(data.bridgeMark == 'LIFI'){
     return await lifiTransaction(data)
   } 
@@ -290,7 +287,7 @@ export const crossTransactions = async (data:any) => {
   }
 
   if(data.bridgeMark == 'SWFT'){
-    return await SwftTransaction(data)
+    return await swftTransaction(data)
   }
 }
 //<=============== Done  ===================>

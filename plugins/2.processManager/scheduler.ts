@@ -110,7 +110,6 @@ export default function () {
       changeChain(getUseCoin(tradingPair.value, 'pay').chain)
     }
     confirmPartial.value = getConfirmDom(tradingPair.value)
-    console.log(confirmPartial.value);
     initData()
   }
 
@@ -129,14 +128,17 @@ export default function () {
   //<---开始请求接口流程
   let timer: ReturnType<typeof setTimeout>
   const swapQuery = ()=> {
-    loading.value = true
-    stopQuery()
-    const timeout = tradingPair.value[0].chain == tradingPair.value[1].chain ? 30000 : 60000
-    const params = integrateParams(tradingPair.value, operateType.value)
-    receiveAddress.value = receiveAddress.value ? receiveAddress.value : defaultAddress(tradingPair.value, 'receive')
-    params.toAddress = receiveAddress.value
-    params.slippage = slippage.value == defaultSlippage.value ? defaultSlippage.value/100 : slippage.value/100
-    getQuery(params, timeout)
+    const amount = tradingPair.value.filter(item => item.type == operateType.value)[0].amount
+    if(amount){
+      loading.value = true
+      stopQuery()
+      const timeout = tradingPair.value[0].chain == tradingPair.value[1].chain ? 30000 : 60000
+      const params = integrateParams(tradingPair.value, operateType.value)
+      receiveAddress.value = receiveAddress.value ? receiveAddress.value : defaultAddress(tradingPair.value, 'receive')
+      params.toAddress = receiveAddress.value
+      params.slippage = slippage.value == defaultSlippage.value ? defaultSlippage.value/100 : slippage.value/100
+      getQuery(params, timeout)
+    }
   }
 
   const getQuery = (params:Params, timeout:number)=> {
@@ -159,7 +161,7 @@ export default function () {
             } else {
               originalData.value = res
             }
-            transactionDetails.value = integrateDetails(originalData.value, params.toAddress)
+            transactionDetails.value = await integrateDetails(originalData.value, params.toAddress)
             slippage.value = transactionDetails.value.slippage != defaultSlippage.value ? transactionDetails.value.slippage : slippage.value
             if(transactionDetails.value.slippage != defaultSlippage.value){
               defaultSlippage.value = transactionDetails.value.slippage
@@ -173,13 +175,13 @@ export default function () {
           }
         },
         fail:(err)=>{
+          console.log(err);
           if(err.code.toString() === '301'){
             loading.value = false
             isStatus.value = 'error'
             showDetail.value = false
             showHistory.value = true
-          } else if(err.code.toString() === '500' || err.code.toString() === '502') {
-            console.log(err.code,'^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+          } else if(err.code.toString() === '999') {
             loading.value = false
             isStatus.value = 'empty'
             showDetail.value = false
@@ -246,11 +248,15 @@ export default function () {
     swapQuery()
   }
 
-  const changeRoute = (index:number) => {
+  const addSwapTime = (val:string) => {
+    transactionDetails.value.swapTime = val
+  }
+
+  const changeRoute = async (index:number) => {
     let receiveAddress = tradingPair.value.filter(item => item.type == 'receive')[0].token
     crossIndex.value = index
     originalData.value = tradeRouteArray.value[crossIndex.value]
-    transactionDetails.value = integrateDetails(originalData.value, receiveAddress)
+    transactionDetails.value = await integrateDetails(originalData.value, receiveAddress)
     inputOtherFiled(originalData.value)
   }
 
@@ -270,6 +276,7 @@ export default function () {
     designatedStatus,
     getAvailableMainAmount,
     designatedLoading,
+    addSwapTime,
 
     tradingPair,
     showHistory,
