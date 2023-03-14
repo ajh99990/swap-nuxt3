@@ -134,7 +134,7 @@ async function HandleSwftData (data:any) {
   const allowance = await getSwftAllowance(data)
   let GasLimit:number|string = 2, Str:string = 'bsc_0x55d398326f99059ff775485246999027b3197955'
   if(ETHChain.includes(payCoin.chain)){
-  Str = `${payCoin.chain}_${payCoin.token}`;
+  Str = `${payCoin.chain}_0x000`;
     if(allowance > 0 || payCoin.token == '0x000'){
       GasLimit = await swftEthEstimateGas(data)
     } else {
@@ -153,6 +153,8 @@ async function HandleSwftData (data:any) {
       data: [Str],
     };
   });
+
+  console.log('swft单独计算的gasFee', usdtReta[Str] ,getStringNum(Number(GasLimit) * usdtReta[Str], 2));
 
   return {
     routeLogo: data.logoUrl,
