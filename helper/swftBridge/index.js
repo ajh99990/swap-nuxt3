@@ -9,7 +9,7 @@ import { allowance, approve } from '../eth';
 
 import { getTronAllowance, tronApprove, getTronContract } from '~~/helper/tron'
 
-let payCoin, receiveCoin, resultData
+let payCoin, receiveCoin, resultData, Tron
 // 获取允许额度
 export const getSwftAllowance = async (data) => {
   const globalData = useGlobalData()
@@ -31,7 +31,9 @@ export const approveSwftBridge = async (data) => {
   const globalData = useGlobalData()
 
   if (ETHChain.includes(payCoin.chain)) {
-    await approve(data.contractAddress, payCoin.token).send({ from: globalData.ownerAddress })
+    const web3 = new Web3(window.ethereum)
+    const gasPrice = await web3.eth.getGasPrice()
+    await approve(data.contractAddress, payCoin.token).send({ from: globalData.ownerAddress, gasPrice: gasPrice })
   }
   if (TRONChain.includes(payCoin.chain)) {
     await tronApprove(payCoin.token, data.contractAddress)
@@ -51,6 +53,9 @@ const getSwaftQuery = async (data) => {
   const globalData = useGlobalData()
   const receiveAddress = useNuxtApp().$managerScheduler.receiveAddress.value
   const slippage = useNuxtApp().$managerScheduler.slippage.value
+  const tradingPair = useNuxtApp().$managerScheduler.tradingPair.value
+  payCoin = tradingPair.filter(item => item.type == 'pay')[0]
+  receiveCoin = tradingPair.filter(item => item.type == 'receive')[0]
   const params = {
     fromTokenAddress: payCoin.token == '0x000' ? '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' : payCoin.token,
     toTokenAddress: receiveCoin.token == '0x000' ? '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' : receiveCoin.token,
@@ -77,6 +82,8 @@ const getSwaftQuery = async (data) => {
 }
 
 export const swftTransaction = async (data) => {
+  const tradingPair = useNuxtApp().$managerScheduler.tradingPair.value
+  payCoin = tradingPair.filter(item => item.type == 'pay')[0]
   if (ETHChain.includes(payCoin.chain)) {
     if (!resultData) await getSwaftQuery(data)
     const transactionData = {
@@ -89,6 +96,7 @@ export const swftTransaction = async (data) => {
     transactionData.gas = await web3.eth.estimateGas(transactionData)
     transactionData.gasPrice = await web3.eth.getGasPrice()
     //需要的gas Fee
+    console.log('发起签名');
     return new Promise((resolve, reject) => {
       web3.eth.sendTransaction(transactionData)
         .on('transactionHash', function (hash) {
@@ -101,8 +109,9 @@ export const swftTransaction = async (data) => {
   }
   if (TRONChain.includes(payCoin.chain)) {
     await getSwaftQuery(data)
+    const unitValue = Array.from(resultData.parameter, ({ value }) => value);
     const contract = await getTronContract(resultData.to)
-    let hash = await contract.swap(resultData.parameter[0].value, resultData.parameter[1].value, resultData.parameter[2].value, resultData.parameter[3].value, resultData.parameter[4].value).send({
+    const hash = await contract[resultData.functionName](...unitValue).send({
       feeLimit: resultData.options.feeLimit,
       callValue: resultData.options.callValue,
       shouldPollResponse: false

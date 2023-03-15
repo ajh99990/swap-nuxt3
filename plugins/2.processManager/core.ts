@@ -115,7 +115,7 @@ function handleSocketData (data:any) {
     routeLogo: `https://swap-jp.s3-accelerate.amazonaws.com/file/${data.bridgeMark}/${routeName}.png`,
     routeName: routeName,
     GasFee: getStringNum(data.totalGasFeesInUsd, 3),
-    swapTime: (data.serviceTime/60) + 'mins',
+    swapTime: (data.serviceTime/60),
   }
 }
 
@@ -131,7 +131,10 @@ function HandleLifiData (data:any) {
 async function HandleSwftData (data:any) {
   const tradingPair:Coins[] = useNuxtApp().$managerScheduler.tradingPair.value
   const payCoin = tradingPair.filter(item => item.type == 'pay')[0]
-  const allowance = await getSwftAllowance(data)
+  let allowance
+  if(payCoin.token != '0x000'){
+    allowance = await getSwftAllowance(data)
+  }
   let GasLimit:number|string = 2, Str:string = 'bsc_0x55d398326f99059ff775485246999027b3197955'
   if(ETHChain.includes(payCoin.chain)){
   Str = `${payCoin.chain}_0x000`;
@@ -157,10 +160,10 @@ async function HandleSwftData (data:any) {
   console.log('swft单独计算的gasFee', usdtReta[Str] ,getStringNum(Number(GasLimit) * usdtReta[Str], 2));
 
   return {
-    routeLogo: data.logoUrl,
-    routeName: data.dex,
+    routeLogo: 'https://swap-jp.s3-accelerate.amazonaws.com/file/SWFT/swft.png',
+    routeName: 'Swft',
     GasFee: Number(GasLimit) * usdtReta[Str] > 0.1 ? getStringNum(Number(GasLimit) * usdtReta[Str], 2) : 0.1,
-    swapTime: data.estimatedTime * 3 + ' min',
+    swapTime: data.estimatedTime * 3,
   }
 }
 
@@ -169,7 +172,7 @@ function getLifiTime(array:any[]) {
   array.map(item=>{
     time = time + item.estimate.executionDuration
   })
-  return Math.ceil(time / 60) + 'mins'
+  return Math.ceil(time / 60)
 }
 
 export async function assembRouteList(array:any[], tradingPair:Coins[]){

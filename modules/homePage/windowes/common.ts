@@ -7,6 +7,8 @@ import { getTronGasLimit, getTronAllowance, getApproveLimit, tronApprove, getTro
 import { getLifiAllowance, approveLifiBridge,lifiTransaction } from "~~/helper/lifiBridge";
 import { getSocketAllowance, approveSocketBridge, socketTransaction } from "~~/helper/socketBridge";
 import { getSwftAllowance, approveSwftBridge, swftTransaction } from "~~/helper/swftBridge";
+import BigNumber from "bignumber.js";
+import useBaseApi from "~~/api/useBaseApi";
 
 //判断当前的链是否支持
 export function checkChain(chain:string): boolean {
@@ -291,3 +293,87 @@ export const crossTransactions = async (data:any) => {
   }
 }
 //<=============== Done  ===================>
+
+
+//<=============== 向后端提交hash时对数据做的一些整理 ===================>
+
+export const getSubmitAmount = (crossChain:boolean, data:any) => {
+  console.log(data);
+  
+  let amountObject = {
+    payAmount: '',
+    receiveAmount: ''
+  }
+  if(crossChain){
+    if(data.bridgeMark == 'LIFI' || data.bridgeMark == 'SOCKET'){
+      amountObject.payAmount = data.fromAmount
+      amountObject.receiveAmount = data.toAmount
+    }
+    if(data.bridgeMark == 'SWFT'){
+      amountObject.payAmount = data.fromTokenAmount
+      amountObject.receiveAmount = data.amountOutMin
+    }
+  } else {
+    amountObject.payAmount = data.amountIn
+    amountObject.receiveAmount = data.amountOut
+  }
+  console.log(amountObject);
+  return amountObject
+}
+
+export const getCrossData = async (data:any, receiveCoin:Coins) => {
+  let crossData = {
+    fee: '',
+    feeUsdt: '',
+    feeToken: '',
+    bridgeKey: '',
+  }
+  
+  if(data.bridgeMark == 'LIFI'){
+    const feeData = getCostFee(data.steps[0].estimate.feeCosts);
+    crossData.fee = feeData.fee
+    crossData.feeUsdt = feeData.feeUsdt
+    crossData.feeToken = feeData.feeToken
+    crossData.bridgeKey = data.steps[0].tool
+  }
+
+  if(data.bridgeMark == 'SOCKET' || data.bridgeMark == 'SWFT'){
+    const baseApi = useBaseApi()
+    const Str = `${receiveCoin.chain}_${receiveCoin.token}`
+    const receiveToUsdt = await baseApi.post(({ api }) => {
+      return {
+        api: api.getCoinPrice,
+        data: [Str],
+      };
+    });
+
+    if(data.bridgeMark == 'SOCKET'){
+      crossData.fee = data.integratorFee.amount
+      crossData.feeUsdt = BigNumber(data.integratorFee.amount).shiftedBy(-data.integratorFee.asset.decimals).times(receiveToUsdt[Str]).toString()
+      crossData.feeToken = data.integratorFee.asset.address
+      crossData.bridgeKey = data.userTxs[0].steps[0].type == "bridge" ? data.userTxs[0].steps[0].protocol.name : data.userTxs[0].steps[1].protocol.name
+    }
+    if(data.bridgeMark == 'SWFT'){
+      crossData.fee = BigNumber(data.chainFee).shiftedBy(receiveCoin.decimals).toString()
+      crossData.feeUsdt = BigNumber(data.chainFee).times(receiveToUsdt[Str]).toString()
+      crossData.feeToken = receiveCoin.token
+      crossData.bridgeKey = data.dex
+    }
+  }
+
+  return crossData
+}
+
+const getCostFee = (data:any[]) => {
+  const feeData = data.filter(item => item.name == 'Integrator Fee')[0]
+  const fee = feeData.amount
+  const x = Number(BigNumber(feeData.amount).shiftedBy(-feeData.token.decimals).toString())
+  const feeUsdt = BigNumber(x).multipliedBy(feeData.token.priceUSD).toString()
+  const feeToken = feeData.token.address
+  const exportData = { feeUsdt, feeToken, fee }
+  return exportData
+}
+
+
+
+//<=============== Done ===================>

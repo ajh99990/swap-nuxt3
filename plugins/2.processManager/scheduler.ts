@@ -131,7 +131,7 @@ export default function () {
     const amount = tradingPair.value.filter(item => item.type == operateType.value)[0].amount
     if(amount){
       loading.value = true
-      stopQuery()
+      stopQuery()      
       const timeout = tradingPair.value[0].chain == tradingPair.value[1].chain ? 30000 : 60000
       const params = integrateParams(tradingPair.value, operateType.value)
       receiveAddress.value = receiveAddress.value ? receiveAddress.value : defaultAddress(tradingPair.value, 'receive')

@@ -104,7 +104,7 @@ const changePrice = (index) => {
 		efficiencyArray[index] *
 		BigNumber(gasPrice.value).shiftedBy(-9).toNumber();
 	addSwapTime(
-		getTime(BigNumber(gasPrice.value).times(efficiencyArray[index])) + "min"
+		getTime(BigNumber(gasPrice.value).times(efficiencyArray[index]))
 	);
 };
 
@@ -127,7 +127,7 @@ const getAdvancedVal = (val) => {
 			BigNumber(gasPrice.value).times(
 				val / BigNumber(gasPrice.value).shiftedBy(-9).toNumber()
 			)
-		) + "min"
+		)
 	);
 };
 
@@ -240,7 +240,7 @@ onMounted(async () => {
 	if (props.payCoin.chain == "eth") {
 		await getGasTimeByServe();
 	}
-	addSwapTime(getTime(BigNumber(gasPrice.value).times(1)) + "min");
+	addSwapTime(getTime(BigNumber(gasPrice.value).times(1)));
 	estimateGasLoading.value = false;
 });
 

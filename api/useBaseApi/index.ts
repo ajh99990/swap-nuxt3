@@ -19,11 +19,13 @@ export const getToken = async () => {
 export default await defineService('baseApi', {
   api() {
     return {
-      getHistorySwap:"swaps/getHistorySwap",//首页最近交易记录
-      delHistorySwap: "swaps/delHistorySwap",//清空首页的最近交易
-      coinList: 'swaps/query/coinType/new',//获取币种列表
+      getHistorySwap:"swaps/getHistorySwap", //首页最近交易记录
+      delHistorySwap: "swaps/delHistorySwap", //清空首页的最近交易
+      coinList: 'swaps/query/coinType/new', //获取币种列表
       getCoinPrice: '/swaps/getCoinPrice', //获取用户对应币的余额
       queryRate: '/swaps/query/rate/v1', //获取输入框内值对应的金额
+      submitHash: '/swaps/order/submit', //提交订单编号
+      getDetailByOrderNo: '/swaps/order/getDetailByOrderNo'
       // getChainList: "swaps/getChain",//获取当前项目支持的链
     }
   },

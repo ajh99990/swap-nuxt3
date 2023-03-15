@@ -4,7 +4,7 @@
 		<div class="bg-[#f7f9fe] rounded-6px h-120px w-343px">
 			<div class="bg-[#ecf0ff] rounded-t-6px w-343px h-38px px-12px py-9px flex items-center">
 				<img :src="transactionDetails.routeLogo" class="rounded-full mr-6px w-20px" />
-				<span class="text-[#191e35] font-500 text-14px leading-20px">Multichain</span>
+				<span class="text-[#191e35] font-500 text-14px leading-20px">{{ transactionDetails.routeName }}</span>
 			</div>
 			<div class="p-12px pr-0">
 				<Line :label="$t('GasFee')" :showIcon="false" class="mb-14px">

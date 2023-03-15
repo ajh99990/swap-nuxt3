@@ -53,7 +53,11 @@ import ExchangeRate from "../../ExchangeRate.vue";
 import Line from "~~/components/Line.vue";
 import lottie from "lottie-web";
 import jumpCoin from "~~/public/jsonImg/jumpCoin/data.json";
-import { simplifyToken } from "~~/helper/common";
+import { getStringNum, simplifyToken } from "~~/helper/common";
+import useBaseApi from "~~/api/useBaseApi";
+import useGlobalData from "~~/store/useGlobalData";
+import { getSubmitAmount, getCrossData } from "../common";
+import BigNumber from "bignumber.js";
 export default {
 	components: { ProgressImg, Line, ExchangeRate },
 	props: {
@@ -67,6 +71,7 @@ export default {
 			preHash: "loading",
 			postHash: "none",
 			waitingResult: "",
+			timer: null,
 		};
 	},
 	watch: {
@@ -76,6 +81,8 @@ export default {
 					this.preHash = "dones";
 					setTimeout(() => {
 						this.postHash = "loading";
+						this.waitingResult = "loading";
+						this.submitHash(val);
 					}, 1000);
 				}
 			},
@@ -112,28 +119,131 @@ export default {
 			);
 		},
 	},
-	mounted() {
-		// setTimeout(() => {
-		// 	this.preHash = "dones";
-		// 	setTimeout(() => {
-		// 		this.postHash = "loading";
-		// 		setTimeout(() => {
-		// 			this.postHash = "dones";
-		// 			setTimeout(() => {
-		// 				this.waitingResult = "loading";
-		// 				setTimeout(() => {
-		// 					this.waitingResult = "success";
-		// 				}, 3000);
-		// 			}, 1000);
-		// 		}, 3000);
-		// 	}, 1000);
-		// }, 3000);
-	},
 	methods: {
 		backHome() {
 			this.$emit("closeBox");
 		},
+		async submitHash(hash) {
+			console.log(hash, "submit");
+			const globalData = useGlobalData();
+
+			const tradingPair =
+				useNuxtApp().$managerScheduler.tradingPair.value;
+			const payCoin = tradingPair.filter((item) => item.type == "pay")[0];
+			const receiveCoin = tradingPair.filter(
+				(item) => item.type == "receive"
+			)[0];
+
+			//当前之判断波场和evm
+			const fromAddress =
+				payCoin.chain == "tron"
+					? globalData.ownerTronAddress
+					: globalData.ownerAddress;
+			const receiveAddress =
+				useNuxtApp().$managerScheduler.receiveAddress.value;
+			const slippage = useNuxtApp().$managerScheduler.slippage.value;
+
+			const originalData =
+				useNuxtApp().$managerScheduler.originalData.value;
+			const transactionDetails =
+				useNuxtApp().$managerScheduler.transactionDetails.value;
+
+			console.log(originalData, transactionDetails);
+
+			const crossChain = payCoin.chain != receiveCoin.chain;
+
+			const amountObject = getSubmitAmount(crossChain, originalData);
+			console.log("amountObject", amountObject);
+			let params = {
+				hash: hash,
+				from: fromAddress,
+				to: receiveAddress,
+				address: fromAddress,
+				token0: payCoin.token,
+				token1: receiveCoin.token,
+				token0_chain: payCoin.chain,
+				token1_chain: receiveCoin.chain,
+
+				name: crossChain ? originalData.bridgeMark : originalData.name,
+				amount0: amountObject.payAmount,
+				amount1: amountObject.receiveAmount,
+
+				pre_time: Number(transactionDetails.swapTime),
+			};
+
+			const baseApi = useBaseApi();
+			if (crossChain) {
+				const Str = `${payCoin.chain}_${payCoin.token}`;
+				const payToUsdt = await baseApi.post(({ api }) => {
+					return {
+						api: api.getCoinPrice,
+						data: [Str],
+					};
+				});
+				const crossData = await getCrossData(originalData, receiveCoin);
+				const crossParams = {
+					fee: crossData.fee,
+					fee_usdt: crossData.feeUsdt,
+					fee_token: crossData.feeToken,
+					bridge_key: crossData.bridgeKey,
+
+					token0_usdt: getStringNum(
+						BigNumber(payToUsdt[Str]).times(payCoin.amount),
+						2
+					),
+					bridge_type: originalData.bridgeMark,
+					channel_fee_usdt: 0,
+					slippage: slippage,
+					bridge_order_id: hash,
+				};
+				params = Object.assign(params, crossParams);
+			}
+
+			baseApi.post(({ api }) => {
+				return {
+					api: api.submitHash,
+					data: params,
+					success: async (res) => {
+						this.getResultState(res);
+					},
+					fail: (err) => {
+						this.submitHash(hash);
+					},
+				};
+			});
+		},
+		getResultState(orderNo) {
+			const baseApi = useBaseApi();
+			baseApi.get(({ api }) => {
+				return {
+					api: api.getDetailByOrderNo,
+					params: { orderNo },
+					success: async (res) => {
+						console.log(res);
+						if (res.status == "trade_success") {
+							this.postHash = "dones";
+							setTimeout(() => {
+								this.waitingResult = "success";
+							}, 1000);
+						} else if (res.status == "trade_fail") {
+							this.postHash = "dones";
+							setTimeout(() => {
+								this.waitingResult = "fail";
+							}, 1000);
+						} else {
+							this.timer = setTimeout(() => {
+								this.getResultState(orderNo);
+							}, 5000);
+						}
+					},
+					fail: (err) => {
+						console.log(err);
+					},
+				};
+			});
+		},
 	},
+	unmounted() {},
 };
 </script>
 
