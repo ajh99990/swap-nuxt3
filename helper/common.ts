@@ -61,3 +61,14 @@ export const getAmountToUsdt = async (chain:string, token:string) => {
   return dollar[`${chain}_${token}`]
 }
 
+//将时间戳转换为时分秒
+export const getShowTime = (timesTamp:number) => {
+  const second = timesTamp/1000
+  if(second < 60){
+    return second
+  } else if (second >= 36000 && second < 3600 ){
+    return Math.ceil(second / 60)
+  } else {
+    return Math.ceil(second / 3600)
+  } 
+}

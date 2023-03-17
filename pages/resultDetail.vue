@@ -64,8 +64,17 @@
 			<Loading />
 		</div>
 		<van-popup v-model:show="showScanChoose" :transition-appear="true" duration="0.2" round position="bottom">
-			<div>
-				<div></div>
+			<div class="h-277px">
+				<div class="pt-15px px-16px pb-15px text-[#191e35] text-18px font-500 leading-25px border-style">选择区块链浏览器</div>
+				<div class="h-60px py-14px px-16px flex items-center border-style" @click="browserScan(tradeInfo.payChain, tradeInfo.firstHash)">
+					<Images :logo="`https://swap-jp.s3-accelerate.amazonaws.com/chain/${tradeInfo.payChain}_l.png`" logoWidth="32px" :logoName="tradeInfo.payChain" :smallCoin="false" class="mr-10px flex-shrink-0" />
+					<p class="text-[#191e35] leading-22px text-16px">{{ chainInfo[tradeInfo.payChain].fullName }}</p>
+				</div>
+				<div class="h-60px py-14px px-16px flex items-center border-b-8px border-solid border-[#f2f4f7]" @click="browserScan(tradeInfo.receiveChain, tradeInfo.secondHash)">
+					<Images :logo="`https://swap-jp.s3-accelerate.amazonaws.com/chain/${tradeInfo.receiveChain}_l.png`" logoWidth="32px" :logoName="tradeInfo.payChain" :smallCoin="false" class="mr-10px flex-shrink-0" />
+					<p class="text-[#191e35] leading-22px text-16px">{{ chainInfo[tradeInfo.receiveChain].fullName }}</p>
+				</div>
+				<div class="py-19px text-center text-16px leading22px" @click="closePropUp">取消</div>
 			</div>
 		</van-popup>
 	</div>
@@ -77,7 +86,7 @@ import Line from "~~/components/Line.vue";
 import { getStringNum, simplifyToken } from "~~/helper/common";
 import BigNumber from "bignumber.js";
 import useBaseApi from "~~/api/useBaseApi";
-import { chainInfo } from "~~/helper/chainInfo";
+import { chainInfo, chainList } from "~~/helper/chainInfo";
 import { postMessageApp } from "~~/helper/postMessage";
 
 let timer = null;
@@ -210,6 +219,9 @@ const getScanHash = () => {
 		browserScan(tradeInfo.value.payChain, tradeInfo.value.firstHash);
 	}
 };
+const closePropUp = () => {
+	showScanChoose.value = false;
+};
 const browserScan = (chain, hash) => {
 	console.log(chainInfo);
 	postMessageApp(
@@ -229,4 +241,9 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.border-style {
+	border-bottom: calc(0.5px);
+	border-color: #e6eaf5;
+	border-style: solid;
+}
 </style>
