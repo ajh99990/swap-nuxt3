@@ -214,36 +214,37 @@ export default {
 		},
 		getResultState(orderNo) {
 			const baseApi = useBaseApi();
-			baseApi.get(({ api }) => {
-				return {
-					api: api.getDetailByOrderNo,
-					params: { orderNo },
-					success: async (res) => {
-						console.log(res);
-						if (res.status == "trade_success") {
-							this.postHash = "dones";
-							setTimeout(() => {
-								this.waitingResult = "success";
-							}, 1000);
-						} else if (res.status == "trade_fail") {
-							this.postHash = "dones";
-							setTimeout(() => {
-								this.waitingResult = "fail";
-							}, 1000);
-						} else {
-							this.timer = setTimeout(() => {
-								this.getResultState(orderNo);
-							}, 5000);
-						}
-					},
-					fail: (err) => {
-						console.log(err);
-					},
-				};
-			});
+			this.timer = setInterval(() => {
+				baseApi.get(({ api }) => {
+					return {
+						api: api.getDetailByOrderNo,
+						params: { orderNo },
+						success: async (res) => {
+							if (res.status == "trade_success") {
+								this.postHash = "dones";
+								clearInterval(this.timer);
+								setTimeout(() => {
+									this.waitingResult = "success";
+								}, 1000);
+							} else if (res.status == "trade_fail") {
+								this.postHash = "dones";
+								clearInterval(this.timer);
+								setTimeout(() => {
+									this.waitingResult = "fail";
+								}, 1000);
+							}
+						},
+						fail: (err) => {
+							console.log(err);
+						},
+					};
+				});
+			}, 5000);
 		},
 	},
-	unmounted() {},
+	unmounted() {
+		clearInterval(this.timer);
+	},
 };
 </script>
 

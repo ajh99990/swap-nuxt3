@@ -63,8 +63,8 @@ const getSwaftQuery = async (data) => {
     amountOutMin: data.amountOutMin,
     routerPath: data.path,
     dex: data.dex,
-    fromTokenChain: payCoin.chain.toUpperCase(),
-    toTokenChain: receiveCoin.chain.toUpperCase(),
+    fromTokenChain: payCoin.chain.toUpperCase() == 'OPTIMISTIC' ? 'OPTIMISM' : payCoin.chain.toUpperCase(),
+    toTokenChain: receiveCoin.chain.toUpperCase() == 'OPTIMISTIC' ? 'OPTIMISM' : receiveCoin.chain.toUpperCase(),
     fromTokenAmount: data.fromTokenAmount,
     slippage: slippage,
     source: new Date().getTime()

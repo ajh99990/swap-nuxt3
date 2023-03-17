@@ -25,7 +25,8 @@ export default await defineService('baseApi', {
       getCoinPrice: '/swaps/getCoinPrice', //获取用户对应币的余额
       queryRate: '/swaps/query/rate/v1', //获取输入框内值对应的金额
       submitHash: '/swaps/order/submit', //提交订单编号
-      getDetailByOrderNo: '/swaps/order/getDetailByOrderNo'
+      getDetailByOrderNo: '/swaps/order/getDetailByOrderNo', //获取订单状态
+      ordePpage :"/swaps/order/page",
       // getChainList: "swaps/getChain",//获取当前项目支持的链
     }
   },
