@@ -190,6 +190,7 @@ export async function assembRouteList(array:any[], tradingPair:Coins[]){
         receiveSymbol: receiveCoin.symbol,
         receiveChain: receiveCoin.chain,
 
+        id:item.id,
         bridgeMark: item.bridgeMark,
         routeName: item.steps[0].toolDetails.name,
         routeKey: item.steps[0].toolDetails.key,
@@ -212,6 +213,7 @@ export async function assembRouteList(array:any[], tradingPair:Coins[]){
         receiveSymbol: receiveCoin.symbol,
         receiveChain: receiveCoin.chain,
 
+        routeId: item.routeId,
         bridgeMark: item.bridgeMark,
         routeName: item.userTxs[0].steps[0].type == 'bridge' ? item.userTxs[0].steps[0].protocol.displayName : item.userTxs[0].steps[1].protocol.displayName,
         routeKey: item.userTxs[0].steps[0].type == 'bridge' ? item.userTxs[0].steps[0].protocol.name : item.userTxs[0].steps[1].protocol.name,
@@ -233,6 +235,8 @@ export async function assembRouteList(array:any[], tradingPair:Coins[]){
         receiveSymbol: receiveCoin.symbol,
         receiveChain: receiveCoin.chain,
 
+        contractAddress: item.contractAddress,
+        dex: item.dex,
         bridgeMark: item.bridgeMark,
         routeName: 'SWFT',
         routeKey: 'swft',

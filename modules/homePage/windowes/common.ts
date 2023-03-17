@@ -54,8 +54,8 @@ export const getDangerNum = async (chain:string, token:string,) => {
         score += Number(data?.[item]) || 0;
         }
     });
-    score += Number(data?.buy_tax) >= 0.5 ? 1 : 0;
-    score += Number(data?.sell_tax) >= 0.5 ? 1 : 0;
+    score += Number(data?.buy_tax) >= 0.2 ? 1 : 0;
+    score += Number(data?.sell_tax) >= 0.2 ? 1 : 0;
     return score
 };
 

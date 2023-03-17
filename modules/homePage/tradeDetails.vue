@@ -31,13 +31,18 @@
 				</p>
 			</Line>
 		</div>
-		<Line :label="$t('TX.Fee')" codeTypes="TXFee" class="mb-10px">
-			<span class="pr-19px">{{ detailInfo.TXFee }}</span>
-		</Line>
-		<Line :label="$t('ReceivingAddress')" codeTypes="receiveAddress" class="mb-10px">
-			<span class="mr-4px">{{ simplifyToken(receiveAddress) }}</span>
-			<img @click="editPageReceiveAddress" src="~~/assets/images/setAddress.png" class="w-15px h-15px" />
-		</Line>
+		<div v-if=" !detailInfo.routeName || showBottomLine">
+			<Line :label="$t('TX.Fee')" codeTypes="TXFee" class="mb-10px">
+				<span class="pr-19px">{{ detailInfo.TXFee }}</span>
+			</Line>
+			<Line :label="$t('ReceivingAddress')" codeTypes="receiveAddress" class="mb-10px">
+				<span class="mr-4px">{{ simplifyToken(receiveAddress) }}</span>
+				<img @click="editPageReceiveAddress" src="~~/assets/images/setAddress.png" class="w-15px h-15px" />
+			</Line>
+		</div>
+		<div v-else class="w-343px flex justify-center" @click="openBottomLine">
+			<img src="~~/assets/images/showMore_route.png" class="w-16px h-16px" />
+		</div>
 		<PopUps propHeight="323px" popupTitle="修改滑点" :showState="showSlippageBox" @closePropUp="closeSlippageBox">
 			<div class="h-260px pt-24px px-15px relative overflow-hidden">
 				<div class="slippage_input">
@@ -149,6 +154,7 @@ import { postMessageAppCallback } from "~~/helper/postMessage";
 import { ETHChain, TRONChain } from "~~/helper/chainInfo";
 import { checkTronAddress } from "~~/helper/tron/index";
 import { checkAddress } from "~~/helper/eth";
+import { showToast } from "vant";
 
 const { t } = useI18n();
 
@@ -200,6 +206,7 @@ const slippageIndex = computed(() => {
 	}
 });
 const showSlippage = () => {
+	pageSlippage.value = slippage.value;
 	showSlippageBox.value = true;
 };
 const changeSlippageVal = (value) => {
@@ -226,6 +233,7 @@ watch(
 const showAddressBox = ref(false);
 const showAddressError = ref(false);
 const closeAddressBox = () => {
+	pageReceiveAddress.value = receiveAddress.value;
 	showAddressBox.value = false;
 };
 const editPageReceiveAddress = () => {
@@ -262,11 +270,18 @@ const resetJudge = () => {
 };
 
 const showRouteArray = ref([]);
+const showRouteBox = ref(false);
 
 watch(
 	() => useNuxtApp().$managerScheduler.showRouteArray.value,
 	(newVal) => {
 		showRouteArray.value = newVal;
+		if (showRouteArray.value.length && showRouteBox.value) {
+			showToast({
+				message: "通道已更新",
+				position: "bottom",
+			});
+		}
 	},
 	{
 		deep: true,
@@ -279,7 +294,7 @@ const crossIndex = computed(() => {
 });
 const showGasFeeFlag = ref([]);
 const showUseTimeFlag = ref([]);
-const showRouteBox = ref(false);
+
 const showRouteList = () => {
 	showRouteBox.value = true;
 };
@@ -296,6 +311,11 @@ const { changeRoute } = useNuxtApp().$managerScheduler;
 const chooseRoute = (index) => {
 	changeRoute(index);
 	closeRouteBox();
+};
+
+const showBottomLine = ref(false);
+const openBottomLine = () => {
+	showBottomLine.value = true;
 };
 </script>
 

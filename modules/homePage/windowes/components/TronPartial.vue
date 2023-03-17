@@ -29,6 +29,7 @@ import {
 	transactions,
 } from "../common";
 import { getTronGasPrice } from "~~/helper/tron/index";
+import { showSomeingError } from "~~/helper/common";
 
 const props = defineProps({
 	payCoin: Object,
@@ -75,6 +76,7 @@ const toTransaction = async () => {
 		console.log(hash);
 		emits("overdoing", hash);
 	} catch (error) {
+		showSomeingError();
 		buttonLoading.value = false;
 	}
 };

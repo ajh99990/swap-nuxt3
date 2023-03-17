@@ -28,6 +28,8 @@ import {
 	crossTransactions,
 } from "../common";
 
+import { showSomeingError } from "~~/helper/common";
+
 const transactionDetails = computed(() => {
 	return useNuxtApp().$managerScheduler.transactionDetails.value;
 });
@@ -55,6 +57,7 @@ const toTransaction = async () => {
 		console.log(hash);
 		emits("overdoing", hash);
 	} catch (error) {
+		showSomeingError();
 		buttonLoading.value = false;
 	}
 };

@@ -71,7 +71,7 @@ import {
 	toApprove,
 	transactions,
 } from "../common";
-import { getStringNum } from "~~/helper/common";
+import { getStringNum, showSomeingError } from "~~/helper/common";
 import useBaseApi from "~~/api/useBaseApi";
 import useGasTimeApi from "~~/api/useGasTimeApi";
 
@@ -275,6 +275,7 @@ const toTransaction = async () => {
 		console.log(hash);
 		emits("overdoing", hash);
 	} catch (error) {
+		showSomeingError();
 		buttonLoading.value = false;
 	}
 };

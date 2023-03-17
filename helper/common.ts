@@ -1,4 +1,6 @@
 import useBaseApi from "~~/api/useBaseApi";
+import { showToast } from "vant";
+import someingError from '~~/assets/images/soming_erroe.png'
 
 
 //格式化展示的token
@@ -71,4 +73,12 @@ export const getShowTime = (timesTamp:number) => {
   } else {
     return Math.ceil(second / 3600)
   } 
+}
+
+export const showSomeingError = () => {
+  showToast({
+    message: '似乎遇到一些问题',
+    icon: someingError,
+    className: 'someing-error'
+  });
 }
