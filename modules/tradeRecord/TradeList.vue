@@ -32,7 +32,6 @@
 
 <script setup>
 import BigNumber from "bignumber.js";
-import path from "path";
 import useBaseApi from "~~/api/useBaseApi";
 import { getShowTime, getStringNum } from "~~/helper/common";
 import useGlobalData from "~~/store/useGlobalData";
