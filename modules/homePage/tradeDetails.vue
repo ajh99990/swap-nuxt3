@@ -1,6 +1,6 @@
 <template>
 	<div v-if="showDetail" class="mt-22px">
-		<Line v-if="detailInfo.routeName" :label="$t('routeName')" :showIcon="false" class="mb-10px">
+		<Line v-if="detailInfo.routeName" :label="$t('ChannelSelect')" :showIcon="false" class="mb-10px">
 			<img :src="detailInfo.routeLogo" class="mr-6px h-22px rounded-full" />
 			<span class="mr-4px">{{ detailInfo.routeName }}</span>
 			<img src="~~/assets/images/rightArrow.png" @click="showRouteList" class="w-15px h-15px" />
@@ -43,7 +43,7 @@
 		<div v-else class="w-343px flex justify-center" @click="openBottomLine">
 			<img src="~~/assets/images/showMore_route.png" class="w-16px h-16px" />
 		</div>
-		<PopUps propHeight="323px" popupTitle="修改滑点" :showState="showSlippageBox" @closePropUp="closeSlippageBox">
+		<PopUps propHeight="323px" :popupTitle="$t('SetSlippage')" :showState="showSlippageBox" @closePropUp="closeSlippageBox">
 			<div class="h-260px pt-24px px-15px relative overflow-hidden">
 				<div class="slippage_input">
 					<van-field v-model="pageSlippage" maxlength="6" type="number" label-align="left">
@@ -65,7 +65,7 @@
 				</div>
 			</div>
 		</PopUps>
-		<PopUps propHeight="323px" popupTitle="修改收款地址" :showState="showAddressBox" @closePropUp="closeAddressBox">
+		<PopUps propHeight="323px" :popupTitle="$t('SetReceivingAddress')" :showState="showAddressBox" @closePropUp="closeAddressBox">
 			<div class="relative address_input h-260px pt-35px px-15px">
 				<van-field v-model="pageReceiveAddress" autosize clearable @focus="resetJudge" rows="1" type="textarea" :placeholder="$t('inputAddress')" label-align="left" />
 				<p v-if="showAddressError" class="mt-10px min-h-16px text-[#EC585E] text-14px font-500">{{ $t('checkToAddress') }}</p>
@@ -75,7 +75,7 @@
 				</div>
 			</div>
 		</PopUps>
-		<PopUps propHeight="600px" popupTitle="选择通道" :showState="showRouteBox" @closePropUp="closeRouteBox">
+		<PopUps propHeight="600px" :popupTitle="$t('ChannelSelect')" :showState="showRouteBox" @closePropUp="closeRouteBox">
 			<div class="h-552px overflow-y-auto px-15px bg-[#f7f9fe] pt-12px pb-15px">
 				<div @click="chooseRoute(index)" v-for="item,index in showRouteArray" :key="index" :class="crossIndex == index ? 'border-1.5px border-solid border-[#597bf6] bg-[#ecf0ff]' : 'bg-[#ffffff]'" class="w-345px mb-12px pt-26px rounded-12px px-12px pb-19px">
 					<div class="flex justify-between mb-12px">
@@ -94,7 +94,7 @@
 								</template>
 							</van-popover>
 							<van-popover v-model:show="showUseTimeFlag[index]" placement="bottom-end" theme="dark">
-								<p class="text-size-12px text-[#fff] px-8px py-6px leading-18px">预计用时: {{ item.useTime }} min</p>
+								<p class="text-size-12px text-[#fff] px-8px py-6px leading-18px">{{ $t('EstTimes',{val:item.useTime}) }}</p>
 								<template #reference>
 									<p class="flex items-center">
 										<img src="~~/assets/images/timeIcon.png" class="w-20px h-20px" />
@@ -278,7 +278,7 @@ watch(
 		showRouteArray.value = newVal;
 		if (showRouteArray.value.length && showRouteBox.value) {
 			showToast({
-				message: "通道已更新",
+				message: t("ChannelRefreshed"),
 				position: "bottom",
 			});
 		}

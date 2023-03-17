@@ -10,9 +10,9 @@ export default async function() {
         const chainInfoArray:ChainInfo[] = Object.values(chainInfo)
         const chainKeysArray:string[] = Object.keys(chainInfo)
         chainInfoArray.map((item:ChainInfo, index:number )=>{
-          // if(chainKeysArray[index] == 'tron'){
+          if(chainKeysArray[index] == 'tron'){
             appChainsInfo[chainKeysArray[index]] = {rpc:item.rpc}
-          // }
+          }
         })
       }
   return appChainsInfo

@@ -2,9 +2,9 @@
 	<div>
 		<div>
 			<div class="miners-cost flex justify-between items-center">
-				<span class="text-[#7e84a3] text-14px leading-20px">矿工费用</span>
+				<span class="text-[#7e84a3] text-14px leading-20px">{{ $t('EstGasfee') }}</span>
 				<p>
-					<span class="text-[#7e84a3] text-12px leading-17px mr-8px">高级设置</span>
+					<span class="text-[#7e84a3] text-12px leading-17px mr-8px">{{ $t('AdvancedSettings') }}</span>
 					<van-switch v-model="advanced" active-color="#597BF6" inactive-color="#f5f6fa" />
 				</p>
 			</div>
@@ -16,7 +16,7 @@
 						<p v-else :class="chooseIndex==index ? 'text-[#597bf6]' : 'text-[#191e35]'" class="mb-4px font-500 text-13px leading-15px">{{ getStringNum(BigNumber(gasLimit).times(item).times(gasPrice).shiftedBy(-18), 8) }}</p>
 						<p :class="chooseIndex==index ? 'text-[#597bf6]' : 'text-[#191e35]'" class="font-500 text-12px leading-14px">{{ chainInfo[payCoin.chain].coinUnit }}</p>
 					</div>
-					<div :class="chooseIndex==index ? 'text-[#597bf6]' : 'text-[#191e35]'" class="absolute bottom-0 bg-[#f1f5ff] h-28px w-108px text-center leading-28px text-12px">预计{{ estimateGasLoading ? '--' : getTime(BigNumber(gasPrice).times(item)) }}分钟</div>
+					<div :class="chooseIndex==index ? 'text-[#597bf6]' : 'text-[#191e35]'" class="absolute bottom-0 bg-[#f1f5ff] h-28px w-108px text-center leading-28px text-12px">{{ $t('EstTimes',{val: estimateGasLoading ? '--' : getTime(BigNumber(gasPrice).times(item)) }) }}</div>
 				</div>
 			</div>
 			<!-- 高级设置 -->
@@ -27,7 +27,7 @@
 						<span>&nbsp;{{ chainInfo[payCoin.chain].coinUnit }}&nbsp;</span>
 						<span class="font-500">≈ ${{ getStringNum(BigNumber(gas).times(gasLimit).shiftedBy(-18).times(usdtReta), 2) }}</span>
 					</p>
-					<p class="text-[#191e35] text-12px leading-14px">预计{{getTime(BigNumber(sliderValue).shiftedBy(9))}}分钟</p>
+					<p class="text-[#191e35] text-12px leading-14px">{{ $t('EstTimes',{val: getTime(BigNumber(sliderValue).shiftedBy(9)) }) }}</p>
 				</div>
 				<div class="flex justify-between mt-11px text-[#7e84a3] text-12px leading-14px">
 					<span>Gas Limit</span>
@@ -56,7 +56,7 @@
 			</div>
 		</div>
 		<div class="w-165px h-44px mt-36px fixed bottom-50px left-90px overflow-hidden">
-			<van-button class="w-165px h-44px ripple-btn" :loading="estimateGasLoading || buttonLoading" round @click="toTransaction" color="#597BF6">确认兑换</van-button>
+			<van-button class="w-165px h-44px ripple-btn" :loading="estimateGasLoading || buttonLoading" round @click="toTransaction" color="#597BF6">{{ $t('swapConfirm') }}</van-button>
 		</div>
 	</div>
 </template>

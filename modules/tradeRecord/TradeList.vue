@@ -4,14 +4,14 @@
 			<Loading />
 		</div>
 		<div v-if="finished && !pageList.length" class="h-100vh flex items-center justify-center">
-			<Empty emptyStr="暂无历史记录" emptyType="coin" />
+			<Empty :emptyStr="$t('NoHistoricalToken')" emptyType="coin" />
 		</div>
-		<van-list v-else v-model:loading="listLoading" :finished="finished" :immediate-check="false" finished-text="-我是有底线的-" @load="onLoad">
+		<van-list v-else v-model:loading="listLoading" :finished="finished" :immediate-check="false" :finished-text="$t('NoDataAvailable')" @load="onLoad">
 			<div @click="toDetailPage(item.orderNo)" v-for="item,index in pageList" :key="index" class="bg-[#FFF] rounded-8px pt-1px pb-12px mb-12px">
 				<TradingPair :tradingPair="item.tradingPair" :showImg="true" />
 				<div class="bg-[#e6eaf5] h-1px border-style border-solid border-[#e6eaf5] w-313px ml-15px"></div>
 				<div class="flex items-center justify-between text-12px leading-17px text-[#7e84a3] px-15px mt-11.5px">
-					<p>下单时间 {{ item.createTime }}</p>
+					<p>{{ $t('Created',{val:item.createTime}) }}</p>
 					<p class="flex items-center">
 						<span class="mr-6px">用时{{ item.preTime }}</span>
 						<img src="~~/assets/images/successState.png" class="w-14px" />

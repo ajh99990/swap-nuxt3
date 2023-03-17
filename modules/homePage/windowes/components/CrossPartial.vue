@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<p class="text-[#7e84a3] text-14px leading-20px mb-12px">通道选择</p>
+		<p class="text-[#7e84a3] text-14px leading-20px mb-12px">{{ $t('ChannelSelect') }}</p>
 		<div class="bg-[#f7f9fe] rounded-6px h-120px w-343px">
 			<div class="bg-[#ecf0ff] rounded-t-6px w-343px h-38px px-12px py-9px flex items-center">
 				<img :src="transactionDetails.routeLogo" class="rounded-full mr-6px w-20px" />
@@ -16,7 +16,7 @@
 			</div>
 		</div>
 		<div class="w-165px h-44px mt-36px fixed bottom-50px left-90px">
-			<van-button class="w-165px h-44px ripple-btn overflow-hidden" :loading="estimateGasLoading || buttonLoading" round @click="toTransaction" color="#597BF6">确认兑换</van-button>
+			<van-button class="w-165px h-44px ripple-btn overflow-hidden" :loading="estimateGasLoading || buttonLoading" round @click="toTransaction" color="#597BF6">{{ $t('swapConfirm') }}</van-button>
 		</div>
 	</div>
 </template>

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<p class="text-[#7e84a3] text-14px leading-20px mb-12px">矿工费</p>
+		<p class="text-[#7e84a3] text-14px leading-20px mb-12px">{{ $t($t('EstGasfee')) }}</p>
 		<div class="bg-[#f5f6fa] rounded-12px h-74px w-345px p-15px">
 			<div class="border-1px border-solid border-[#597bf6] bg-[#ffffff] w-315px h-44px rounded-8px text-[#597bf6] p-15px flex justify-between items-center font-500 text-12px leading-14px">
 				<p>
@@ -11,11 +11,11 @@
 					</span>
 					<span>&nbsp;TRX</span>
 				</p>
-				<p>预计1分钟</p>
+				<p>{{ $t('EstTimes',{val:1}) }}</p>
 			</div>
 		</div>
 		<div class="w-165px h-44px mt-36px fixed bottom-50px left-90px">
-			<van-button class="w-165px h-44px ripple-btn overflow-hidden" :loading="estimateGasLoading || buttonLoading" round @click="toTransaction" color="#597BF6">确认兑换</van-button>
+			<van-button class="w-165px h-44px ripple-btn overflow-hidden" :loading="estimateGasLoading || buttonLoading" round @click="toTransaction" color="#597BF6">{{ $t('swapConfirm') }}</van-button>
 		</div>
 	</div>
 </template>
@@ -113,7 +113,7 @@ onMounted(async () => {
 			operateType
 		);
 	}
-	addSwapTime("1min");
+	addSwapTime("1");
 	estimateGasLoading.value = false;
 });
 </script>

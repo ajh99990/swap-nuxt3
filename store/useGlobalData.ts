@@ -10,6 +10,7 @@ interface Info {
 }
 
 interface GlobalDataState {
+  language: string,
   appChainsInfo: AppChainsInfo,
   presentChain: string,
   privateKey: boolean,
@@ -23,6 +24,7 @@ interface GlobalDataState {
 export default defineStore<string,GlobalDataState>("globalData", {
   state: () =>  {
     return {
+      language: '',
       appChainsInfo: {},
       presentChain: '',
       privateKey: false,
@@ -34,6 +36,6 @@ export default defineStore<string,GlobalDataState>("globalData", {
   },
   /** 需要缓存的state的key值 */
   persistentState: (names) => {
-    return [names.allCoinList]
+    return [names.allCoinList,names.appChainsInfo]
   },
 })

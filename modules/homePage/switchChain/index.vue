@@ -11,7 +11,7 @@
 			<div class="w-72px h-497px overflow-y-auto hidder-scrollbar bg-[#f5f6fa]">
 				<div v-for=" ( item , index ) in coinTypeArray " :key="index" @click="changeIndex(index,item.code)" :class="chooseIndex == index ? 'bg-[#FFF] font-500' : '' " class="py-12.5px flex items-center justify-center flex-col">
 					<img :src=" chooseIndex == index ? item.lightIcon : item.darkIcon" class="w-27px rounded-full mb-5px" />
-					<p :class="chooseIndex == index ? 'text-[#191e35]' : 'text-[#7e84a3]'" class="text-10px">{{ item.title }}</p>
+					<p :class="chooseIndex == index ? 'text-[#191e35]' : 'text-[#7e84a3]'" class="text-10px">{{ item.code == 'history' ? $t('historyCoin') : item.title }}</p>
 				</div>
 			</div>
 			<div v-for="item,index in coinTypeArray" :key="item.code">

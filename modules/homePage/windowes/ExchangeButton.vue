@@ -1,12 +1,12 @@
 <template>
 	<div class="mt-16px w-345px h-44px overflow-hidden relative">
 		<van-button class="w-345px h-44px ripple-btn" :disabled="disabled || notChain" round color="#597BF6" :loading="loading" :loading-text="$t('searching')" @click="exchange">{{ notSupport ? notSupport : buttonText }}</van-button>
-		<PopUps propHeight="560px" popupTitle="确认兑换" :showState="showConfirmBox" @closePropUp="closeConfirmBox">
+		<PopUps propHeight="560px" :popupTitle="popupsTitle" :showState="showConfirmBox" @closePropUp="closeConfirmBox">
 			<div class="flex h-548px w-375px overflow-hidden relative">
 				<div :class="getHashDone ? '-left-375px' : '-left-0px'" class="h-548px flex absolute transform duration-300">
 					<div class="h-548px w-375px pt-16px px-15px relative">
 						<TradingPair :tradingPair="tradingPair"></TradingPair>
-						<div class="text-[#7e84a3] text-14px leading-20px mt-20px mb-10px">收款地址</div>
+						<div class="text-[#7e84a3] text-14px leading-20px mt-20px mb-10px">{{ }}</div>
 						<div class="text-14px text-[#191e35] font-500 leading-22px break-words">{{ toAddress }}</div>
 						<div class="h-1px bg-[#e6eaf5] mt-15.5px mb-17.5px"></div>
 						<component :pay-coin="payCoin" @overdoing="overdoing" :is="confirmPartial == 'EthPartial' ? EthPartial : confirmPartial == 'TronPartial'? TronPartial : CrossPartial" />
@@ -120,8 +120,10 @@ const closeBox = () => {
 
 const getHashDone = ref(false);
 const localHash = ref("");
+const popupsTitle = ref(t("swapConfirm"));
 const overdoing = (hash) => {
 	getHashDone.value = true;
+	popupsTitle.value = t("SubmitResults");
 	localHash.value = hash;
 };
 

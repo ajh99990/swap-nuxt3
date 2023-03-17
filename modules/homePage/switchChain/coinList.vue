@@ -48,7 +48,6 @@ import useBaseApi from "~~/api/useBaseApi";
 import { chainInfo } from "~~/helper/chainInfo";
 import { simplifyToken } from "~~/helper/common";
 import { coinSort } from "./orderByCoin";
-import { isEmpty } from "lodash";
 
 const baseApi = useBaseApi();
 const globalData = useGlobalData();

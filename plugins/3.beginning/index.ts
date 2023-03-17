@@ -26,18 +26,21 @@ export default defineNuxtPlugin(async (NuxtApp) => {
     const ownerTronAddress = await useBeginTron()
 
     //初始化默认的交易对
-    const { getNowChain } = useNuxtApp().$managerScheduler
+    const { getNowChain } = NuxtApp.$managerScheduler
     getNowChain(presentChain)
 
-    //根据appChainsInfo 判断是否是同一个钱包不是的话清楚币种选择列表
-    if (localStorage.appChainsInfo != appChainsInfo) {
-      // Object.keys(JSON.parse(appChainsInfo)).map(item => {
-      //   store.commit("editAllList", {
-      //     [item]: []
-      //   });
-      // })
-    }
     const globalData = useGlobalData()
+    //根据appChainsInfo 判断是否是同一个钱包不是的话清楚币种选择列表
+    console.log('move'); 
+    console.log(JSON.stringify(localStorage.appChainsInfo), JSON.stringify(appChainsInfo));
+    
+    if (JSON.stringify(localStorage.sr_globalData_appChainsInfo) != JSON.stringify(appChainsInfo)) {
+      console.log('enter');
+      globalData.$patch({
+        allCoinList: {}
+      })
+    }
+    console.log(appChainsInfo);
     globalData.$patch({
       appChainsInfo,
       presentChain,

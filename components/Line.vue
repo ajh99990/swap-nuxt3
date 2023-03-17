@@ -12,7 +12,7 @@
 				<p class="text-center text-[#191e35] font-500 text-18px leading-25px mb-20px">{{showText.title}}</p>
 				<div class="text-[#191e35] text-14px leading-22px mb-20px">{{ showText.content }}</div>
 				<p v-if="showText.warnText" class="text-[#EC585E] text-size-14px font-500 leading-22px mb-20px">{{ showText.warnText }}</p>
-				<van-button type="primary" round @click="closeBox">好的</van-button>
+				<van-button type="primary" round @click="closeBox">{{ $t('gotIt') }}</van-button>
 			</div>
 		</van-popup>
 	</div>

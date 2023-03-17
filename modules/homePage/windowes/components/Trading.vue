@@ -1,23 +1,23 @@
 <template>
 	<div class="mt-30px px-15px">
-		<p class="text-[#191e35] font-500 text-20px leading-28px text-center w-345px mb-21px">订单提交中</p>
+		<p class="text-[#191e35] font-500 text-20px leading-28px text-center w-345px mb-21px">{{ topTitle }}</p>
 		<div class="relative mb-42px">
 			<div class="flex justify-between">
 				<div class="ml-5px flex flex-col justify-center items-center z-20">
 					<img src="~~/assets/images/submitOrder.png" class="w-55px" />
-					<span class="text-[#7e84a3] text-12px leading-17px">订单已提交</span>
+					<span class="text-[#7e84a3] text-12px leading-17px">{{ $t('OrderSubmit')}}</span>
 				</div>
 				<div class="mr-5px flex flex-col justify-center items-center z-20">
 					<img v-if="postHash == 'loading' || postHash == 'dones'" src="~~/assets/images/tradingDone.png" class="w-55px" />
 					<img v-else src="~~/assets/images/trading.png" class="w-55px" />
-					<span class="text-[#7e84a3] text-12px leading-17px">订单已提交</span>
+					<span class="text-[#7e84a3] text-12px leading-17px">{{ $t('InProgress') }}</span>
 				</div>
 				<div class="mr-5px flex flex-col justify-center items-center z-20">
 					<img v-if="waitingResult == ''" src="~~/assets/images/submitResult.png" class="w-55px" />
 					<div v-if="waitingResult == 'loading'" ref="jumpCoinTarget" class="w-50px mb-3px"></div>
 					<img v-if="waitingResult == 'success'" src="~~/assets/images/submitSuccess.png" class="w-55px transform duration-150 scale-100" />
 					<img v-if="waitingResult == 'fail'" src="~~/assets/images/submitFail.png" class="w-55px" />
-					<span class="text-[#7e84a3] text-12px leading-17px">订单已提交</span>
+					<span class="text-[#7e84a3] text-12px leading-17px">{{ exchangeResults }}</span>
 				</div>
 			</div>
 			<div class="absolute left-40px top-20px w-120px h-9px">
@@ -30,19 +30,19 @@
 		<TradingPair :tradingPair="tradingPair"></TradingPair>
 		<div class="h-1px bg-[#e6eaf5] my-18px"></div>
 		<div class="mb-35px">
-			<Line label="价格" :showIcon="false" class="mb-10px">
+			<Line :label="$t('Price')" :showIcon="false" class="mb-10px">
 				<ExchangeRate :showImg="false" />
 			</Line>
-			<Line label="预计完成时间" :showIcon="false" class="mb-10px">
+			<Line :label="$t('timeEnd')" :showIcon="false" class="mb-10px">
 				<span class="mr-5px font-500">{{ detailInfo.swapTime }}</span>
 			</Line>
-			<Line label="收款地址" :showIcon="false" class="mb-10px">
+			<Line :label="$t('ReceivingAddress')" :showIcon="false" class="mb-10px">
 				<span class="mr-5px font-500">{{ receiveAddress }}</span>
 			</Line>
 		</div>
 		<div class="flex justify-between overflow-hidden">
-			<van-button class="w-165px h-44px ripple-btn mr-15px" round @click="backHome">返回首页</van-button>
-			<van-button class="w-165px h-44px ripple-btn" round color="#597BF6">查看详情</van-button>
+			<van-button class="w-165px h-44px ripple-btn mr-15px" round @click="backHome">{{ $t('BackHome') }}</van-button>
+			<van-button class="w-165px h-44px ripple-btn" round color="#597BF6">{{ $t('viewDetails') }}</van-button>
 		</div>
 	</div>
 </template>
@@ -72,6 +72,8 @@ export default {
 			postHash: "none",
 			waitingResult: "",
 			timer: null,
+			topTitle: this.$t("OrderSubmit"),
+			exchangeResults: this.$t("exchangeResults"),
 		};
 	},
 	watch: {
@@ -80,6 +82,7 @@ export default {
 				if (val) {
 					this.preHash = "dones";
 					setTimeout(() => {
+						this.topTitle = this.$t("InProgress");
 						this.postHash = "loading";
 						this.waitingResult = "loading";
 						this.submitHash(val);
@@ -224,12 +227,16 @@ export default {
 								this.postHash = "dones";
 								clearInterval(this.timer);
 								setTimeout(() => {
+									this.topTitle = this.$t("Success") + "!";
+									this.exchangeResults = this.$t("Success");
 									this.waitingResult = "success";
 								}, 1000);
 							} else if (res.status == "trade_fail") {
 								this.postHash = "dones";
 								clearInterval(this.timer);
 								setTimeout(() => {
+									this.topTitle = this.$t("Failed") + "!";
+									this.exchangeResults = this.$t("Failed");
 									this.waitingResult = "fail";
 								}, 1000);
 							}

@@ -1,6 +1,7 @@
 import useBaseApi from "~~/api/useBaseApi";
 import { showToast } from "vant";
 import someingError from '~~/assets/images/soming_erroe.png'
+import useGlobalData from "~~/store/useGlobalData";
 
 
 //格式化展示的token
@@ -65,19 +66,26 @@ export const getAmountToUsdt = async (chain:string, token:string) => {
 
 //将时间戳转换为时分秒
 export const getShowTime = (timesTamp:number) => {
+  const globalData = useGlobalData()
   const second = timesTamp/1000
   if(second < 60){
-    return second
+    const unit = globalData.language == 'zh' ? '秒' : 's'
+    return second + unit
   } else if (second >= 36000 && second < 3600 ){
-    return Math.ceil(second / 60)
+    const min = Math.ceil(second / 60)
+    const unit = globalData.language == 'zh' ? '分': min > 1 ? 'mins' :'min'
+    return min + unit
   } else {
-    return Math.ceil(second / 3600)
+    const hour = Math.ceil(second / 3600)
+    const unit = globalData.language == 'zh' ? '时': hour > 1 ? 'h' :'hs'
+    return hour + unit
   } 
 }
 
 export const showSomeingError = () => {
+  const { t } = useI18n()
   showToast({
-    message: '似乎遇到一些问题',
+    message: t('seemsProblem'),
     icon: someingError,
     className: 'someing-error'
   });
