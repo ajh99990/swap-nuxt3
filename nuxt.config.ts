@@ -27,7 +27,19 @@ export default defineNuxtConfig({
       link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.png" }],
     },
   },
+  i18n: {
+    locales: [
+      { code: 'en', file: 'en.json' }, 
+      { code: 'zh', file: 'zh.json' }
+    ],
+    langDir:'./locales/',
+    defaultLocale: 'en',
+    vueI18n: {
+      fallbackLocale: 'zh',
+    }
+  },
   modules: [
+    "@nuxtjs/i18n",
     "@pinia/nuxt",//按照pinia官方文档的用法是放在buildMdules里面就足够了
     '@vueuse/nuxt',//按vueuse文档配置
     "nuxt-windicss",
