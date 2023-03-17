@@ -296,84 +296,104 @@ interface LeftCoin {
   chain: any
 }
 
+import home_history_l from '~~/assets/images/home_history_l.png'
+import home_history_d from '~~/assets/images/home_history_d.png'
+import home_allCoin_l from '~~/assets/images/home_allCoin_l.png'
+import home_allCoin_d from '~~/assets/images/home_allCoin_d.png'
+import home_bsc_l from '~~/assets/images/home_bsc_l.png'
+import home_bsc_d from '~~/assets/images/home_bsc_d.png'
+import home_eth_l from '~~/assets/images/home_eth_l.png'
+import home_eth_d from '~~/assets/images/home_eth_d.png'
+import home_polygon_l from '~~/assets/images/home_polygon_l.png'
+import home_polygon_d from '~~/assets/images/home_polygon_d.png'
+import home_tron_l from '~~/assets/images/home_tron_l.png'
+import home_tron_d from '~~/assets/images/home_tron_d.png'
+import home_arbitrum_l from '~~/assets/images/home_arbitrum_l.png'
+import home_arbitrum_d from '~~/assets/images/home_arbitrum_d.png'
+import home_optimistic_l from '~~/assets/images/home_optimistic_l.png'
+import home_optimistic_d from '~~/assets/images/home_optimistic_d.png'
+import home_heco_l from '~~/assets/images/home_heco_l.png'
+import home_heco_d from '~~/assets/images/home_heco_d.png'
+import home_okex_l from '~~/assets/images/home_okex_l.png'
+import home_okex_d from '~~/assets/images/home_okex_d.png'
 export function chainList ():LeftCoin[] {
     const { t } = useI18n()
     return [
         {
-          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/history_l.png",
-          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/history.png",
+          lightIcon: home_history_l,
+          darkIcon: home_history_d,
           title: t("historical"),
           code: "history",
           queryType: 'history',
           chain: null
         },
         {
-          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/allCoin_l.png",
-          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/allCoin.png",
+          lightIcon: home_allCoin_l,
+          darkIcon: home_allCoin_d,
           title: t("allCoin"),
           code: "allChain",
           queryType: 'allChain',
           chain: null
         },
         {
-          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/bsc_l.png",
-          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/bsc.png",
+          lightIcon: home_bsc_l,
+          darkIcon: home_bsc_d,
           title: 'BNB Chain',
           code: "bsc",
           queryType: 'chain',
           chain: 'bsc'
         },
         {
-          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/eth_l.png",
-          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/eth.png",
+          lightIcon: home_eth_l,
+          darkIcon: home_eth_d,
           title: 'Ethereum',
           code: "eth",
           queryType: 'chain',
           chain: 'eth'
         },
         {
-          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/polygon_l.png",
-          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/polygon.png",
+          lightIcon: home_polygon_l,
+          darkIcon: home_polygon_d,
           title: 'Polygon',
           code: "polygon",
           queryType: 'chain',
           chain: 'polygon'
         },
         {
-          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/tron_l.png",
-          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/tron.png",
+          lightIcon: home_tron_l,
+          darkIcon: home_tron_d,
           title: "Tron",
           code: "tron",
           queryType: 'chain',
           chain: 'tron'
         },
         {
-          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/arbitrum_l.png",
-          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/arbitrum.png",
+          lightIcon: home_arbitrum_l,
+          darkIcon: home_arbitrum_d,
           title: "Arbitrum",
           code: "arbitrum",
           queryType: 'chain',
           chain: 'arbitrum'
         },
         {
-          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/optimistic_l.png",
-          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/optimistic.png",
+          lightIcon: home_optimistic_l,
+          darkIcon: home_optimistic_d,
           title: "Optimism",
           code: "optimistic",
           queryType: 'chain',
           chain: 'optimistic'
         },
         {
-          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/heco_l.png",
-          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/heco.png",
+          lightIcon: home_heco_l,
+          darkIcon: home_heco_d,
           title: "Heco",
           code: "heco",
           queryType: 'chain',
           chain: 'heco'
         },
         {
-          lightIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/okex_l.png",
-          darkIcon: "https://swap-jp.s3-accelerate.amazonaws.com/chain/okex.png",
+          lightIcon: home_okex_l,
+          darkIcon: home_okex_d,
           title: "OKX",
           code: "okex",
           queryType: 'chain',

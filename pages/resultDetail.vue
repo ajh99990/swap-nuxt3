@@ -86,7 +86,7 @@ import Line from "~~/components/Line.vue";
 import { getStringNum, simplifyToken } from "~~/helper/common";
 import BigNumber from "bignumber.js";
 import useBaseApi from "~~/api/useBaseApi";
-import { chainInfo, chainList } from "~~/helper/chainInfo";
+import { chainInfo } from "~~/helper/chainInfo";
 import { postMessageApp } from "~~/helper/postMessage";
 
 let timer = null;
