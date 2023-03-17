@@ -210,6 +210,7 @@ onMounted(async () => {
 	const operateType = computed(() => {
 		return useNuxtApp().$managerScheduler.operateType.value;
 	});
+
 	//拿到gasLimit
 	if (allowance.value > 0 || isMainCost.value) {
 		//已对合约授权

@@ -16,6 +16,14 @@
 						<span class="mr-6px">用时{{ item.preTime }}</span>
 						<img src="~~/assets/images/successState.png" class="w-14px" />
 					</p>
+					<!-- <p class="flex items-center">
+						<span class="mr-6px">用时{{ item.preTime }}</span>
+						<img src="~~/assets/images/successState.png" class="w-14px" />
+					</p>
+					<p class="flex items-center">
+						<span class="mr-6px">预计用时{{ item.preTime }}</span>
+						<img src="~~/assets/images/successState.png" class="w-14px" />
+					</p>-->
 				</div>
 			</div>
 		</van-list>
@@ -130,7 +138,7 @@ const getResultState = (orderNo) => {
 				if (res.status == "proccessing") {
 					setTimeout(() => {
 						getResultState(orderNo);
-					}, 3000);
+					}, 30000);
 				} else {
 					state = res.status;
 				}
@@ -151,7 +159,6 @@ const getResultState = (orderNo) => {
 };
 
 const onLoad = () => {
-	console.log(pageList.value.length, listTotal.value);
 	if (pageList.value.length >= listTotal.value) {
 		listLoading.value = false;
 		finished.value = false;
