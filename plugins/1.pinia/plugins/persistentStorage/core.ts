@@ -1,4 +1,5 @@
 import type { _DeepPartial, PiniaPluginContext, StateTree, _GettersTree } from "pinia"
+import { MutationType } from "pinia"
 import { storageHanlder } from "./storageHanlder"
 /**
 * 按照options.persistentState返回的属性名列表从localStorage中取出缓存值，
@@ -37,8 +38,18 @@ export function saveStateValueOnChange({ options, store }: PiniaPluginContext) {
     const { setItem } = storageHanlder({ prefix: store.$id })
     const psn = store.persistentStateNames
     if (psn.size <= 0) return;
-    for (let name of psn) {
-      setItem(name, JSON.stringify(state[name]))
+    if (mutation.type === MutationType.direct || mutation.type === MutationType.patchFunction) {
+      for (let name of psn) {
+        setItem(name, JSON.stringify(state[name]))
+      }
+    } else if (mutation.type === MutationType.patchObject) {
+      for (let name of Object.keys(mutation.payload)) {
+        if (psn.has(name)) {
+          setItem(name, JSON.stringify(mutation.payload[name]))
+        }
+      } 
+    } else {
+      return new Error('pinia_persistentStorage:Incorrect update method');
     }
   })
 }

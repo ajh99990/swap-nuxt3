@@ -1,4 +1,7 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import topLevelAwait from 'vite-plugin-top-level-await'
+import commonjs from '@rollup/plugin-commonjs';
+
 export default defineNuxtConfig({
   ssr: false,//不使用服务端渲染能力
   imports: {
@@ -8,6 +11,15 @@ export default defineNuxtConfig({
     ]
   },
   vite: {
+    plugins: [
+      //处理await defineService()方式的函数调用
+      topLevelAwait({
+        promiseExportName: '__tla',
+        promiseImportName: i => `__tla_${i}`
+      }),
+      //lottie-web是commonjs模块
+      commonjs()
+    ]
   },
   app: {
     head: {
