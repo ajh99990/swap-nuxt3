@@ -1,4 +1,6 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import topLevelAwait from 'vite-plugin-top-level-await'
+
 export default defineNuxtConfig({
   ssr: false,//不使用服务端渲染能力
   imports: {
@@ -7,7 +9,14 @@ export default defineNuxtConfig({
       'composables/*/index.{ts,js,mjs,mts}',
     ]
   },
-  vite: { },
+  vite: {
+    plugins: [
+      topLevelAwait({
+        promiseExportName: '__tla',
+        promiseImportName: i => `__tla_${i}`
+      })
+    ]
+   },
   runtimeConfig:{
     public:{
       nodeEnv:process.env.NODE_ENV

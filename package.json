@@ -23,6 +23,7 @@
     "lodash": "^4.17.21",
     "nuxt-windicss": "^2.5.5",
     "sass": "^1.56.1",
-    "sass-loader": "^13.2.0"
+    "sass-loader": "^13.2.0",
+    "vite-plugin-top-level-await": "^1.3.0"
   }
 }
