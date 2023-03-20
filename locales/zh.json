@@ -83,5 +83,11 @@
   "LastMonth": "近1月",
   "Last3Months": "近3月",
   "Last6Months": "近半年",
-  "lastYarn": "近1年"
+  "lastYarn": "近1年",
+  "Hash": "交易哈希",
+  "SwapAgain": "再次交易",
+  "ViewInBrowser": "前往第三方网站查看交易详情",
+  "SelectBrowser": "选择区块链浏览器",
+  "Cancel": "取消",
+  "OrderNo": "订单编号"
 }

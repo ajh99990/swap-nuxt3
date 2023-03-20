@@ -83,5 +83,11 @@
   "LastMonth": "Last month",
   "Last3Months": "Last 3 months",
   "Last6Months": "Last 6 months",
-  "lastYarn": "Last year"
+  "lastYarn": "Last year",
+  "SwapAgain": "Swap again",
+  "ViewInBrowser": "View in browser",
+  "SelectBrowser": "Select browser",
+  "Cancel": "Cancel",
+  "Hash": "Hash",
+  "OrderNo": "Order NO."
 }

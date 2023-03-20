@@ -1,51 +1,47 @@
 <template>
 	<div class="h-100vh px-15px">
 		<div v-if="tradeInfo.status">
-			<div class="flex flex-col items-center justify-center mt-30px mb-32px">
-				<img src="~~/assets/images/successState.png" class="w-50px" />
-				<p class="text-[#191e35] font-500 text-18px leading-25px mt-8px">兑换成功</p>
-				<p class="text-[#7e84a3] text-12px leading-12px mt-6px">用时2分钟</p>
-			</div>
+			<ResultTop :statusType="tradeInfo.status" :swapTime="useTime" />
 			<TradingPair :tradingPair="tradeArray" />
-			<div>
-				<Line v-if="tradeInfo.bridgeName" label="通道选择" :showIcon="false" class="mb-10px mt-30px">
+			<div class="mt-30px">
+				<Line v-if="tradeInfo.bridgeName" :label="$t('ChannelSelect')" :showIcon="false" class="mb-10px">
 					<img :src="tradeInfo.appLogo" class="mr-6px h-22px rounded-full" />
 					<span class="mr-20px">{{ tradeInfo.bridgeName }}</span>
 				</Line>
-				<!-- <Line v-else :label="$t('bestChannel')" :showIcon="false" class="mb-10px">
-			<img :src="detailInfo.platform" class="h-22px mr-19px" />
-				</Line>-->
-				<Line label="价格" :showIcon="false" class="mb-10px">
+				<Line v-else :label="$t('Platform')" :showIcon="false" class="mb-10px">
+					<img :src="tradeInfo.appLogo" class="h-22px mr-19px" />
+				</Line>
+				<Line :label="$t('Price')" :showIcon="false" class="mb-10px">
 					<p v-if="rateOrder">{{ rateArray[0][0] }} = {{ rateArray[0][1] }}</p>
 					<p v-else>{{ rateArray[1][0] }} = {{ rateArray[1][1] }}</p>
 					<img @click="changeRate" src="~~/assets/images/switchRate.png" class="w-16px ml-4px" />
 				</Line>
-				<Line label="手续费" :showIcon="false" class="mb-10px">
+				<Line :label="$t('TxFee')" :showIcon="false" class="mb-10px">
 					<p class="pr-20px">{{ tradeInfo.fee }}</p>
 				</Line>
-				<Line label="创建时间" :showIcon="false" class="mb-10px">
+				<Line :label="$t('CreatedTime')" :showIcon="false" class="mb-10px">
 					<p class="pr-20px">{{ tradeInfo.createTime }}</p>
 				</Line>
-				<Line label="完成时间" :showIcon="false" class="mb-10px">
-					<p class="pr-20px">{{ tradeInfo.completeTime }}</p>
+				<Line v-if="tradeInfo.completeTime" :label="$t('Updated')" :showIcon="false" class="mb-10px">
+					<p class="pr-20px">{{ tradeInfo.completeTime || '--' }}</p>
 				</Line>
-				<Line label="订单编号" :showIcon="false" class="mb-10px">
+				<Line :label="$t('OrderNo')" :showIcon="false" class="mb-10px">
 					<p>{{ simplifyToken(tradeInfo.orderNo) }}</p>
 					<img src="~~/assets/images/copyString.png" class="w-16px ml-4px" />
 				</Line>
-				<Line label="收款地址" :showIcon="false" class="mb-10px">
+				<Line :label="$t('ReceivingAddress')" :showIcon="false" class="mb-10px">
 					<p>{{ simplifyToken(tradeInfo.receiveAddress) }}</p>
 					<img src="~~/assets/images/copyString.png" class="w-16px ml-4px" />
 				</Line>
-				<Line label="交易哈希" :showIcon="false" class="mb-10px">
+				<Line :label="$t('Hash')" :showIcon="false" class="mb-10px">
 					<div class="h-21px flex flex-col items-end">
-						<p class="mb-10px">
-							<img src alt />
+						<p class="mb-10px flex items-center">
+							<img :src="`https://swap-jp.s3-accelerate.amazonaws.com/swapImg/${tradeInfo.payChain}Logo.png`" class="w-20px h-20px rounded-full mr-6px" />
 							<span>{{ simplifyToken(tradeInfo.firstHash) }}</span>
 							<img src="~~/assets/images/copyString.png" class="w-16px ml-4px" />
 						</p>
-						<p>
-							<img src alt />
+						<p v-if="tradeInfo.secondHash" class="flex items-center">
+							<img :src="`https://swap-jp.s3-accelerate.amazonaws.com/swapImg/${tradeInfo.receiveChain}Logo.png`" class="w-20px h-20px rounded-full mr-6px" />
 							<span>{{ simplifyToken(tradeInfo.secondHash) }}</span>
 							<img src="~~/assets/images/copyString.png" class="w-16px ml-4px" />
 						</p>
@@ -53,10 +49,10 @@
 				</Line>
 			</div>
 			<div class="w-165px h-44px mt-36px fixed bottom-60px left-105px">
-				<van-button class="w-165px h-44px ripple-btn overflow-hidden" round @click="tradeAgain" color="#597BF6">再次交易</van-button>
+				<van-button class="w-165px h-44px ripple-btn overflow-hidden" round @click="tradeAgain" color="#597BF6">{{ $t("SwapAgain") }}</van-button>
 			</div>
 			<div @click="getScanHash" class="fixed bottom-20px w-375px left-0 flex justify-center items-center">
-				<p class="text-[#597bf6] text-14px leading-20px mr-5px">前往第三方网站查看交易详情</p>
+				<p class="text-[#597bf6] text-14px leading-20px mr-5px">{{ $t('ViewInBrowser') }}</p>
 				<img src="~~/assets/images/rightArrow_detail.png" class="w-10px h-10px" />
 			</div>
 		</div>
@@ -65,25 +61,26 @@
 		</div>
 		<van-popup v-model:show="showScanChoose" :transition-appear="true" duration="0.2" round position="bottom">
 			<div class="h-277px">
-				<div class="pt-15px px-16px pb-15px text-[#191e35] text-18px font-500 leading-25px border-style">选择区块链浏览器</div>
+				<div class="pt-15px px-16px pb-15px text-[#191e35] text-18px font-500 leading-25px border-style">{{$t('SelectBrowser')}}</div>
 				<div class="h-60px py-14px px-16px flex items-center border-style" @click="browserScan(tradeInfo.payChain, tradeInfo.firstHash)">
-					<Images :logo="`https://swap-jp.s3-accelerate.amazonaws.com/chain/${tradeInfo.payChain}_l.png`" logoWidth="32px" :logoName="tradeInfo.payChain" :smallCoin="false" class="mr-10px flex-shrink-0" />
+					<Images :logo="`https://swap-jp.s3-accelerate.amazonaws.com/swapImg/${tradeInfo.payChain}Logo.png`" logoWidth="32px" :logoName="tradeInfo.payChain" :smallCoin="false" class="mr-10px flex-shrink-0" />
 					<p class="text-[#191e35] leading-22px text-16px">{{ chainInfo[tradeInfo.payChain].fullName }}</p>
 				</div>
 				<div class="h-60px py-14px px-16px flex items-center border-b-8px border-solid border-[#f2f4f7]" @click="browserScan(tradeInfo.receiveChain, tradeInfo.secondHash)">
-					<Images :logo="`https://swap-jp.s3-accelerate.amazonaws.com/chain/${tradeInfo.receiveChain}_l.png`" logoWidth="32px" :logoName="tradeInfo.payChain" :smallCoin="false" class="mr-10px flex-shrink-0" />
+					<Images :logo="`https://swap-jp.s3-accelerate.amazonaws.com/swapImg/${tradeInfo.receiveChain}Logo.png`" logoWidth="32px" :logoName="tradeInfo.payChain" :smallCoin="false" class="mr-10px flex-shrink-0" />
 					<p class="text-[#191e35] leading-22px text-16px">{{ chainInfo[tradeInfo.receiveChain].fullName }}</p>
 				</div>
-				<div class="py-19px text-center text-16px leading22px" @click="closePropUp">取消</div>
+				<div class="py-19px text-center text-16px leading22px" @click="closePropUp">{{ $t('Cancel') }}</div>
 			</div>
 		</van-popup>
 	</div>
 </template>
 
 <script setup>
+import ResultTop from "../modules/resultPage/ResultTop.vue";
 import TradingPair from "~~/components/TradingPair.vue";
 import Line from "~~/components/Line.vue";
-import { getStringNum, simplifyToken } from "~~/helper/common";
+import { getStringNum, simplifyToken, getShowTime } from "~~/helper/common";
 import BigNumber from "bignumber.js";
 import useBaseApi from "~~/api/useBaseApi";
 import { chainInfo } from "~~/helper/chainInfo";
@@ -93,6 +90,7 @@ let timer = null;
 
 const tradeArray = ref([]);
 const tradeInfo = ref({});
+const useTime = ref("");
 
 const getPageDetail = (orderNo) => {
 	const baseApi = useBaseApi();
@@ -108,6 +106,8 @@ const getPageDetail = (orderNo) => {
 							logo: res.token0_logo,
 							symbol: res.symbol0,
 							chain: res.token0_chain,
+							token: res.token0,
+							decimals: res.decimals0,
 							amount: getStringNum(
 								BigNumber(res.amount0).shiftedBy(
 									-res.decimals0
@@ -120,6 +120,8 @@ const getPageDetail = (orderNo) => {
 							logo: res.token1_logo,
 							symbol: res.symbol1,
 							chain: res.token1_chain,
+							token: res.token1,
+							decimals: res.decimals1,
 							amount: getStringNum(
 								BigNumber(res.amount1).shiftedBy(
 									-res.decimals1
@@ -143,9 +145,17 @@ const getPageDetail = (orderNo) => {
 						receiveChain: res.token1_chain,
 					};
 					getRate(res);
-					tradeAgain(res);
-					console.log(tradeInfo.value);
-					clearInterval(timer);
+					// tradeAgain(res);
+					if (res.status != "proccessing") {
+						useTime.value = res.pre_time;
+						clearInterval(timer);
+					} else {
+						useTime.value = getShowTime(
+							new Date(res.complete_time) -
+								new Date(res.create_time)
+						);
+					}
+					console.log(useTime.value);
 				},
 				fail: (err) => {},
 			};
@@ -180,35 +190,16 @@ const getRate = (data) => {
 			}`,
 		],
 	];
-	console.log(rateArray.value);
 };
 const changeRate = () => {
 	rateOrder.value = !rateOrder.value;
 };
 
 const { replaceTradingPair } = useNuxtApp().$managerScheduler;
-const tradeAgain = (res) => {
-	let tradingPair = [
-		{
-			type: "pay",
-			chain: res.token0_chain,
-			symbol: res.token0_chain,
-			token: res.token0_chain,
-			decimals: res.token0_chain,
-			logo: res.token0_chain,
-			amount: "",
-		},
-		{
-			type: "receive",
-			chain: res.token0_chain,
-			symbol: res.token0_chain,
-			token: res.token0_chain,
-			decimals: res.token0_chain,
-			logo: res.token0_chain,
-			amount: "",
-		},
-	];
-	replaceTradingPair(tradingPair);
+const tradeAgain = () => {
+	const router = useRouter();
+	replaceTradingPair(tradeArray.value);
+	router.push("/");
 };
 
 const showScanChoose = ref(false);
@@ -230,7 +221,8 @@ const browserScan = (chain, hash) => {
 			title: "",
 		})
 	);
-	const url = chainInfo[chain] + hash;
+	const url = chainInfo[chain].scanAddress + hash;
+	// window.open(url);
 	postMessageApp("openWebview", url);
 };
 

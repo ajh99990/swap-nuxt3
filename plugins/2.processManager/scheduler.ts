@@ -84,6 +84,7 @@ export default function () {
   const replaceTradingPair = (newTradingPair:Coins[])=>{
     tradingPair.value = newTradingPair
     initData()
+    confirmPartial.value = getConfirmDom(tradingPair.value)
   }
 
   //将界面初始化
