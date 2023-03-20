@@ -73,5 +73,15 @@
   "ChannelRefreshed": "通道已刷新",
   "NoHistoricalToken": "暂无历史交易币种",
   "NoDataAvailable": "-我是有底线的-",
-  "Created": "下单时间 {val}"
+  "Created": "下单时间 {val}",
+  "Status": "交易状态",
+  "Duration": "交易时间",
+  "All": "全部",
+  "tradeSuccess": "交易成功",
+  "tradeInProgress": "交易中",
+  "tradeFailed": "交易失败",
+  "LastMonth": "近1月",
+  "Last3Months": "近3月",
+  "Last6Months": "近半年",
+  "lastYarn": "近1年"
 }

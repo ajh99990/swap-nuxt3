@@ -13,7 +13,7 @@
 				<span class="mr-5px">$ {{ detailInfo.GasFee }}</span>
 			</Line>
 			<Line :label="$t('swapTime')" codeTypes="swapTime">
-				<span class="mr-5px">~{{ detailInfo.swapTime }}</span>
+				<span class="mr-5px">~{{ detailInfo.swapTime }} {{ language == 'zh'? '分钟' : detailInfo.swapTime > 1 ? 'mins' : 'min' }}</span>
 			</Line>
 		</div>
 		<Line :label="$t('Slippage')" codeTypes="slippage" class="mb-10px">
@@ -155,8 +155,11 @@ import { ETHChain, TRONChain } from "~~/helper/chainInfo";
 import { checkTronAddress } from "~~/helper/tron/index";
 import { checkAddress } from "~~/helper/eth";
 import { showToast } from "vant";
+import useGlobalData from "~~/store/useGlobalData";
 
 const { t } = useI18n();
+const globalData = useGlobalData();
+const language = globalData.language;
 
 //底部处接收地址和滑点意外的信息展示
 const detailInfo = computed(() => {

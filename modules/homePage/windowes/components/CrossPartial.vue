@@ -11,7 +11,7 @@
 					<span class="pr-19px">~ ${{ transactionDetails.GasFee }}</span>
 				</Line>
 				<Line :label="$t('swapTime')" :showIcon="false">
-					<span class="pr-19px">~ {{ transactionDetails.swapTime }}</span>
+					<span class="pr-19px">~ {{ transactionDetails.swapTime }} {{ language == 'zh'? '分钟' : transactionDetails.swapTime > 1 ? 'mins' : 'min' }}</span>
 				</Line>
 			</div>
 		</div>
@@ -27,8 +27,11 @@ import {
 	approveCrossBridge,
 	crossTransactions,
 } from "../common";
-
 import { showSomeingError } from "~~/helper/common";
+import useGlobalData from "~~/store/useGlobalData";
+
+const globalData = useGlobalData();
+const language = globalData.language;
 
 const transactionDetails = computed(() => {
 	return useNuxtApp().$managerScheduler.transactionDetails.value;

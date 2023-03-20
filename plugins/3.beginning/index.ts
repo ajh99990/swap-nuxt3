@@ -32,14 +32,14 @@ export default defineNuxtPlugin(async (NuxtApp) => {
 
     const globalData = useGlobalData()
     //根据appChainsInfo 判断是否是同一个钱包不是的话清楚币种选择列表
-    console.log(localStorage?.sr_globalData_appChainsInfo);
+    console.log(localStorage?.sr_globalData_appChainsInfo,appChainsInfo);
     const localAppChainsInfo = localStorage?.sr_globalData_appChainsInfo ? JSON.parse(localStorage?.sr_globalData_appChainsInfo) : {}
     if (deepEqual(localAppChainsInfo, appChainsInfo)) {
       console.log('enter');
       console.log(appChainsInfo);
       const allCoinList:any = {history:[], allChain:[],bsc:[],eth:[],polygon:[],tron:[],arbitrum:[],optimistic:[],heco:[],okex:[]}
       globalData.$patch({
-        allCoinList,
+        allCoinList
       })
     }
     globalData.$patch({
