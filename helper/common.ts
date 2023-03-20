@@ -2,6 +2,7 @@ import useBaseApi from "~~/api/useBaseApi";
 import { showToast } from "vant";
 import someingError from '~~/assets/images/soming_erroe.png'
 import useGlobalData from "~~/store/useGlobalData";
+import { AppChainsInfo } from "~~/store/useGlobalData";
 
 
 //格式化展示的token
@@ -82,6 +83,7 @@ export const getShowTime = (timesTamp:number) => {
   } 
 }
 
+//似乎遇到一些问题错误弹框
 export const showSomeingError = () => {
   const { t } = useI18n()
   showToast({
@@ -89,4 +91,23 @@ export const showSomeingError = () => {
     icon: someingError,
     className: 'someing-error'
   });
+}
+
+//比较两次的助记词
+export const deepEqual = (x:AppChainsInfo, y:AppChainsInfo) => {
+  const Xkeys = Object.keys(x);
+  const Ykeys = Object.keys(y);
+
+  if (Xkeys.length !== Ykeys.length) {
+    return true;
+  }
+  Xkeys.map(item=>{
+    if(x[item].address != y[item].address){
+      return true
+    }
+    if(x[item].rpc != y[item].rpc){
+      return true
+    }
+  })
+  return false
 }

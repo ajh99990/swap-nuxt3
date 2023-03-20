@@ -1,10 +1,11 @@
 
 // import { chainInfo } from "~~/helper/chainInfo"
 
-import useGlobalData from "~~/store/useGlobalData"
+import useGlobalData, { AppChainsInfo } from "~~/store/useGlobalData"
 import useAppChainInfo from './appChainsInfo'
 import useBeginETh from './beginEth'
 import useBeginTron from './beginTron'
+import { deepEqual } from "~~/helper/common"
 
 export default defineNuxtPlugin(async (NuxtApp) => {
     const appChainsInfo = await useAppChainInfo()
@@ -31,16 +32,16 @@ export default defineNuxtPlugin(async (NuxtApp) => {
 
     const globalData = useGlobalData()
     //根据appChainsInfo 判断是否是同一个钱包不是的话清楚币种选择列表
-    console.log('move'); 
-    console.log(JSON.stringify(localStorage.appChainsInfo), JSON.stringify(appChainsInfo));
-    
-    if (JSON.stringify(localStorage.sr_globalData_appChainsInfo) != JSON.stringify(appChainsInfo)) {
+    console.log(localStorage?.sr_globalData_appChainsInfo);
+    const localAppChainsInfo = localStorage?.sr_globalData_appChainsInfo ? JSON.parse(localStorage?.sr_globalData_appChainsInfo) : {}
+    if (deepEqual(localAppChainsInfo, appChainsInfo)) {
       console.log('enter');
+      console.log(appChainsInfo);
+      const allCoinList:any = {history:[], allChain:[],bsc:[],eth:[],polygon:[],tron:[],arbitrum:[],optimistic:[],heco:[],okex:[]}
       globalData.$patch({
-        allCoinList: {}
+        allCoinList,
       })
     }
-    console.log(appChainsInfo);
     globalData.$patch({
       appChainsInfo,
       presentChain,
