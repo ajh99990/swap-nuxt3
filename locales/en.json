@@ -73,5 +73,15 @@
   "ChannelRefreshed": "Channel refreshed",
   "NoHistoricalToken": "No historical token traded",
   "NoDataAvailable": "-No data available-",
-  "Created": "Created {val}"
+  "Created": "Created {val}",
+  "Status": "Status",
+  "Duration": "Duration",
+  "All": "All",
+  "tradeSuccess": "Success",
+  "tradeInProgress": "In progress",
+  "tradeFailed": "Failed",
+  "LastMonth": "Last month",
+  "Last3Months": "Last 3 months",
+  "Last6Months": "Last 6 months",
+  "lastYarn": "Last year"
 }

@@ -34,7 +34,7 @@
 				<ExchangeRate :showImg="false" />
 			</Line>
 			<Line :label="$t('timeEnd')" :showIcon="false" class="mb-10px">
-				<span class="mr-5px font-500">{{ detailInfo.swapTime }}</span>
+				<span class="mr-5px font-500">{{ detailInfo.swapTime }} {{ language == 'zh'? '分钟' : detailInfo.swapTime > 1 ? 'mins' : 'min' }}</span>
 			</Line>
 			<Line :label="$t('ReceivingAddress')" :showIcon="false" class="mb-10px">
 				<span class="mr-5px font-500">{{ receiveAddress }}</span>
@@ -74,6 +74,7 @@ export default {
 			timer: null,
 			topTitle: this.$t("OrderSubmit"),
 			exchangeResults: this.$t("exchangeResults"),
+			language: "",
 		};
 	},
 	watch: {
@@ -121,6 +122,10 @@ export default {
 				useNuxtApp().$managerScheduler.receiveAddress.value
 			);
 		},
+	},
+	mounted() {
+		const globalData = useGlobalData();
+		this.language = globalData.language;
 	},
 	methods: {
 		backHome() {

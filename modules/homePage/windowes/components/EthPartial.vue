@@ -16,7 +16,7 @@
 						<p v-else :class="chooseIndex==index ? 'text-[#597bf6]' : 'text-[#191e35]'" class="mb-4px font-500 text-13px leading-15px">{{ getStringNum(BigNumber(gasLimit).times(item).times(gasPrice).shiftedBy(-18), 8) }}</p>
 						<p :class="chooseIndex==index ? 'text-[#597bf6]' : 'text-[#191e35]'" class="font-500 text-12px leading-14px">{{ chainInfo[payCoin.chain].coinUnit }}</p>
 					</div>
-					<div :class="chooseIndex==index ? 'text-[#597bf6]' : 'text-[#191e35]'" class="absolute bottom-0 bg-[#f1f5ff] h-28px w-108px text-center leading-28px text-12px">{{ $t('EstTimes',{val: estimateGasLoading ? '--' : getTime(BigNumber(gasPrice).times(item)) }) }}</div>
+					<div :class="chooseIndex==index ? 'text-[#597bf6]' : 'text-[#191e35]'" class="absolute bottom-0 bg-[#f1f5ff] min-h-28px w-108px text-center leading-28px text-12px">{{ $t('EstTimes',{val: estimateGasLoading ? '--' : getTime(BigNumber(gasPrice).times(item)) }) }}</div>
 				</div>
 			</div>
 			<!-- 高级设置 -->

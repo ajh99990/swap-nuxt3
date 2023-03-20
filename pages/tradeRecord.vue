@@ -21,27 +21,23 @@
 <script setup>
 import TradeListVue from "../modules/tradeRecord/TradeList.vue";
 
-// definePageMeta({
-// 	keepalive: {
-// 		include: "tradeRecord",
-// 	},
-// });
+const { t } = useI18n();
 const typeArray = [
-	{ label: "交易状态", value: "state" },
-	{ label: "交易时间", value: "time" },
+	{ label: t("Status"), value: "state" },
+	{ label: t("Duration"), value: "time" },
 ];
 const stateArray = [
-	{ label: "全部", value: "" },
-	{ label: "交易成功", value: "trade_success" },
-	{ label: "交易中", value: "proccessing" },
-	{ label: "交易失败", value: "trade_fail" },
+	{ label: t("All"), value: "" },
+	{ label: t("tradeSuccess"), value: "trade_success" },
+	{ label: t("tradeInProgress"), value: "proccessing" },
+	{ label: t("tradeFailed"), value: "trade_fail" },
 ];
 const timeArray = [
-	{ label: "全部", value: "" },
-	{ label: "近1月", value: "1" },
-	{ label: "近3月", value: "2" },
-	{ label: "近半年", value: "3" },
-	{ label: "近1年", value: "4" },
+	{ label: t("All"), value: "" },
+	{ label: t("LastMonth"), value: "1" },
+	{ label: t("Last3Months"), value: "2" },
+	{ label: t("Last6Months"), value: "3" },
+	{ label: t("lastYarn"), value: "4" },
 ];
 
 const showTop = ref(false);
@@ -81,12 +77,6 @@ const changeType = (val) => {
 		showTop.value = !showTop.value;
 	}
 };
-
-onMounted(() => {});
-
-onActivated(() => {
-	document.getElementById("listContent").scrollTo(100, 0);
-});
 </script>
 
 <style lang="scss" scoped>

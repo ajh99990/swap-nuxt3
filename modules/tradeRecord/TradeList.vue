@@ -12,18 +12,18 @@
 				<div class="bg-[#e6eaf5] h-1px border-style border-solid border-[#e6eaf5] w-313px ml-15px"></div>
 				<div class="flex items-center justify-between text-12px leading-17px text-[#7e84a3] px-15px mt-11.5px">
 					<p>{{ $t('Created',{val:item.createTime}) }}</p>
-					<p class="flex items-center">
-						<span class="mr-6px">用时{{ item.preTime }}</span>
+					<p v-if="item.stageType == 'trade_success'" class="flex items-center">
+						<span class="mr-6px">{{ $t("EstTimesDone",{val:item.completeTime}) }}</span>
 						<img src="~~/assets/images/successState.png" class="w-14px" />
 					</p>
-					<!-- <p class="flex items-center">
-						<span class="mr-6px">用时{{ item.preTime }}</span>
-						<img src="~~/assets/images/successState.png" class="w-14px" />
+					<p v-if="item.stageType == 'trade_fail'" class="flex items-center">
+						<span class="mr-6px">{{ $t("EstTimes",{val:item.completeTime}) }}</span>
+						<img src="~~/assets/images/failState.png" class="w-14px" />
 					</p>
-					<p class="flex items-center">
-						<span class="mr-6px">预计用时{{ item.preTime }}</span>
-						<img src="~~/assets/images/successState.png" class="w-14px" />
-					</p>-->
+					<p v-if="item.stageType == 'proccessing'" class="flex items-center">
+						<span class="mr-6px">{{ $t("EstTimes",{val:item.preTime}) }}</span>
+						<img src="~~/assets/images/proccessingState.png" class="w-14px" />
+					</p>
 				</div>
 			</div>
 		</van-list>
@@ -34,6 +34,7 @@
 import BigNumber from "bignumber.js";
 import useBaseApi from "~~/api/useBaseApi";
 import { getShowTime, getStringNum } from "~~/helper/common";
+import { judgePlatform, postMessageApp } from "~~/helper/postMessage";
 import useGlobalData from "~~/store/useGlobalData";
 
 const props = defineProps({
@@ -140,12 +141,12 @@ const getResultState = (orderNo) => {
 					}, 30000);
 				} else {
 					state = res.status;
+					pageList.value.map((item) => {
+						if (item.orderNo == orderNo) {
+							item.stageType = state;
+						}
+					});
 				}
-				pageList.value.map((item) => {
-					if (item.orderNo == orderNo) {
-						item.stageType = state;
-					}
-				});
 			},
 			fail: (err) => {
 				console.log(err);
@@ -160,7 +161,7 @@ const getResultState = (orderNo) => {
 const onLoad = () => {
 	if (pageList.value.length >= listTotal.value) {
 		listLoading.value = false;
-		finished.value = false;
+		finished.value = true;
 		return;
 	}
 
@@ -169,8 +170,16 @@ const onLoad = () => {
 };
 
 const toDetailPage = (orderNo) => {
-	const router = useRouter();
-	router.push(`/resultDetail?orderNo=${orderNo}`);
+	// const router = useRouter();
+	// router.push(`/resultDetail?orderNo=${orderNo}`);
+	console.log(window.location);
+	const Url = `${window.location.origin}/resultDetail?orderNo=${orderNo}`;
+	console.log(Url);
+	if (judgePlatform("openWebview")) {
+		postMessageApp("openWebview", Url);
+	} else {
+		window.open(Url);
+	}
 };
 
 onMounted(() => {
