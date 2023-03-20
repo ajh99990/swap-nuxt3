@@ -1,6 +1,15 @@
 import { defineNuxtConfig } from 'nuxt/config'
 import topLevelAwait from 'vite-plugin-top-level-await'
 import commonjs from '@rollup/plugin-commonjs';
+const path = require("path");
+const fs = require('fs');
+
+if (process.env.NODE_ENV == 'production') {
+  const time = new Date().getTime()
+  process.env.VUE_APP_VERSION = `${time}`
+  fs.writeFileSync('./version', time + '')
+}
+
 
 export default defineNuxtConfig({
   ssr: false,//不使用服务端渲染能力
@@ -11,6 +20,7 @@ export default defineNuxtConfig({
     ]
   },
   vite: {
+    base: process.env.BASE_URL || '/',
     plugins: [
       //处理await defineService()方式的函数调用
       topLevelAwait({
