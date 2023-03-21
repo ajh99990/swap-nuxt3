@@ -1,0 +1,1 @@
+aws s3 cp ./dist s3://wallet-news-dev-jp/Swap/ --recursive --profile assureDev

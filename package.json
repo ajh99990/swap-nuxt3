@@ -6,7 +6,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "release": "yarn run generate && node ./compressing.js && yarn run generate --mode release && node ./compressing.js release"
+    "release": "yarn run generate && node ./compressing.js && nuxt generate --mode release && node ./compressing.js release",
+    "testRelease": "nuxt generate --mode test && node ./compressing.js test && sh ./s3.test.sh"
   },
   "devDependencies": {
     "@nuxtjs/i18n": "^8.0.0-beta.9",

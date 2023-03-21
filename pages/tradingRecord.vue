@@ -20,6 +20,19 @@
 
 <script setup>
 import TradeListVue from "../modules/tradeRecord/TradeList.vue";
+import useGlobalData from "~~/store/useGlobalData";
+
+onBeforeRouteUpdate((to, from) => {
+	const globalData = useGlobalData();
+	const title = globalData.language == "zh" ? "交易记录" : "Exchange History";
+	document.title = title;
+	postMessageApp(
+		"setTitle",
+		JSON.stringify({
+			title,
+		})
+	);
+});
 
 const { t } = useI18n();
 const typeArray = [

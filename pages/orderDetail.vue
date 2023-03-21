@@ -85,6 +85,19 @@ import BigNumber from "bignumber.js";
 import useBaseApi from "~~/api/useBaseApi";
 import { chainInfo } from "~~/helper/chainInfo";
 import { postMessageApp } from "~~/helper/postMessage";
+import useGlobalData from "~~/store/useGlobalData";
+
+onBeforeRouteUpdate((to, from) => {
+	const globalData = useGlobalData();
+	const title = globalData.language == "zh" ? "交易结果" : "Swap Results";
+	document.title = title;
+	postMessageApp(
+		"setTitle",
+		JSON.stringify({
+			title,
+		})
+	);
+});
 
 let timer = null;
 

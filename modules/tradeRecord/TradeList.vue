@@ -173,7 +173,7 @@ const toDetailPage = (orderNo) => {
 	// const router = useRouter();
 	// router.push(`/resultDetail?orderNo=${orderNo}`);
 	console.log(window.location);
-	const Url = `${window.location.origin}/resultDetail?orderNo=${orderNo}`;
+	const Url = `${window.location.origin}${window.location.pathname}#/orderDetail?orderNo=${orderNo}`;
 	console.log(Url);
 	if (judgePlatform("openWebview")) {
 		postMessageApp("openWebview", Url);
