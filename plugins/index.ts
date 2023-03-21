@@ -27,7 +27,7 @@ export default defineNuxtPlugin(async (NuxtApp) => {
     // const ownerTronAddress = await useBeginTron()
 
     //初始化默认的交易对
-    const { getNowChain } = NuxtApp.$managerScheduler
+    const { getNowChain } = useNuxtApp().$managerScheduler
     getNowChain(presentChain)
 
     const globalData = useGlobalData()
