@@ -2,9 +2,9 @@
 // import { chainInfo } from "~~/helper/chainInfo"
 
 import useGlobalData, { AppChainsInfo } from "~~/store/useGlobalData"
-import useAppChainInfo from './appChainsInfo'
-import useBeginETh from './beginEth'
-import useBeginTron from './beginTron'
+import useAppChainInfo from './3.beginning/appChainsInfo'
+import useBeginETh from './3.beginning/beginEth'
+// import useBeginTron from './beginTron'
 import { deepEqual } from "~~/helper/common"
 
 export default defineNuxtPlugin(async (NuxtApp) => {
@@ -24,7 +24,7 @@ export default defineNuxtPlugin(async (NuxtApp) => {
     const ownerAddress = await useBeginETh(presentChain)
 
     //默认获取tron的用户地址，并支持tron的交易
-    const ownerTronAddress = await useBeginTron()
+    // const ownerTronAddress = await useBeginTron()
 
     //初始化默认的交易对
     const { getNowChain } = NuxtApp.$managerScheduler
@@ -47,6 +47,6 @@ export default defineNuxtPlugin(async (NuxtApp) => {
       presentChain,
       privateKey,
       ownerAddress,
-      ownerTronAddress
+      // ownerTronAddress
     })
 })

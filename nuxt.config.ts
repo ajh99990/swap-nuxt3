@@ -9,6 +9,7 @@ if (process.env.NODE_ENV == 'production') {
   process.env.VUE_APP_VERSION = `${time}`
   fs.writeFileSync('./version', time + '')
 }
+console.log(process.env.BASE_URL);
 
 
 export default defineNuxtConfig({
@@ -20,7 +21,7 @@ export default defineNuxtConfig({
     ]
   },
   vite: {
-    base: process.env.BASE_URL || '/',
+    base: process.env.BASE_URL || './',
     plugins: [
       //处理await defineService()方式的函数调用
       topLevelAwait({
@@ -42,8 +43,15 @@ export default defineNuxtConfig({
           content: "闪兑重构",
         },
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.png" }],
+      link: [{ rel: "icon", type: "image/x-icon", href: "./favicon.png" }],
+      script: [{ src: 'https://cdnjs.cloudflare.com/ajax/libs/vConsole/3.14.6/vconsole.min.js' }],
     },
+    baseURL: process.env.NODE_ENV == 'production' ? './' : '/'
+  },
+  router:{
+    options:{
+      hashMode: true
+    }
   },
   css: [
     '@/assets/style/index.scss',
